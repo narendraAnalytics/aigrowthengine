@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { CASES, TESTIMONIAL } from "./content";
+import { CASES } from "./content";
 import { SectionHeading } from "./primitives";
 import { Reveal } from "./reveal";
+import { TestimonialCarousel } from "./testimonial-carousel";
 
 export function SuccessStories() {
   return (
@@ -55,41 +56,8 @@ export function SuccessStories() {
             ))}
           </div>
 
-          <Reveal
-            delay={120}
-            className="glass-panel flex flex-col justify-between gap-6 rounded-2xl p-7"
-          >
-            <div>
-              <div className="font-heading text-4xl leading-none text-gold-300">
-                &ldquo;
-              </div>
-              <p className="mt-3 text-[0.95rem] leading-relaxed text-cream-dim italic">
-                {TESTIMONIAL.quote}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Image
-                src={TESTIMONIAL.avatar}
-                alt={TESTIMONIAL.name}
-                width={44}
-                height={44}
-                className="size-11 shrink-0 rounded-full object-cover"
-              />
-              <div>
-                <div className="text-[0.88rem] font-bold text-cream">
-                  {TESTIMONIAL.name}
-                </div>
-                <div className="text-[0.78rem] text-faint">
-                  {TESTIMONIAL.role}
-                </div>
-              </div>
-            </div>
-            <div
-              aria-label="5 out of 5 stars"
-              className="tracking-[0.2em] text-gold-400"
-            >
-              ★★★★★
-            </div>
+          <Reveal delay={120} className="h-full">
+            <TestimonialCarousel />
           </Reveal>
         </div>
       </div>

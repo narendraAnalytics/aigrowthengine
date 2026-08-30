@@ -169,10 +169,43 @@ export const CASES = [
   },
 ];
 
-export const TESTIMONIAL = {
-  quote:
-    "AI Growth Engine helped us turn complex challenges into real growth opportunities. Their team delivered measurable results from day one.",
-  name: "Rohan Mehta",
-  role: "CTO, Nexora",
-  avatar: IMAGES.person1,
-};
+export const TESTIMONIALS = [
+  {
+    quote:
+      "AI Growth Engine helped us turn complex challenges into real growth opportunities. Their team delivered measurable results from day one.",
+    name: "Rohan Mehta",
+    role: "CTO, Nexora",
+    avatar: IMAGES.person1,
+    rating: 5,
+  },
+  {
+    quote:
+      "The assessment pinpointed automation wins we'd overlooked for years. We recovered 30 hours a week across the ops team in the first quarter.",
+    name: "Sarah Chen",
+    role: "VP Operations, CloudFin",
+    avatar: null,
+    rating: 5,
+  },
+  {
+    quote:
+      "What stood out was the honesty — a clear, explainable score and a roadmap we could actually execute, not a black box.",
+    name: "Marcus Lindqvist",
+    role: "Founder, ScaleFlow",
+    avatar: null,
+    rating: 5,
+  },
+  {
+    quote:
+      "From first conversation to a live pilot took six weeks. The forecasting model is now core to how we plan inventory.",
+    name: "Priya Nair",
+    role: "Head of Data, Brightpath",
+    avatar: null,
+    rating: 5,
+  },
+] satisfies ReadonlyArray<{
+  quote: string;
+  name: string;
+  role: string;
+  avatar: string | null;
+  rating: number;
+}>;
