@@ -1,6 +1,5 @@
-import Image from "next/image";
-import { IMAGES } from "@/lib/site";
 import { TRUST_LOGOS } from "./content";
+import { HeroCarousel } from "./hero-carousel";
 import { Icon } from "./icons";
 import { GoldLink, GlassLink } from "./primitives";
 import { Reveal } from "./reveal";
@@ -9,15 +8,7 @@ import { StatsPanel } from "./stats-panel";
 export function Hero() {
   return (
     <section className="relative isolate min-h-[52rem] overflow-hidden">
-      <Image
-        src={IMAGES.heroBanner}
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="-z-10 object-cover object-[center_30%]"
-      />
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(31,18,32,0.88)_0%,rgba(37,20,40,0.55)_35%,rgba(28,14,26,0.7)_75%,#1f1220_100%)]" />
+      <HeroCarousel />
 
       <div className="mx-auto max-w-[1360px] px-4 pt-28 pb-14 sm:px-6 sm:pt-36 lg:px-14">
         <Reveal>

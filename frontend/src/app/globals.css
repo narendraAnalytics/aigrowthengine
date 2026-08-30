@@ -224,3 +224,37 @@
     text-transform: uppercase;
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Hero carousel — crossfade + slow Ken Burns pan/zoom
+ * ------------------------------------------------------------------ */
+@keyframes hero-kenburns {
+  from {
+    transform: scale(1.04) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.16) translate3d(-1.5%, -2%, 0);
+  }
+}
+
+.hero-slide {
+  opacity: 0;
+  transition: opacity 1400ms ease-in-out;
+}
+
+.hero-slide[data-active="true"] {
+  opacity: 1;
+}
+
+.hero-slide[data-active="true"] img {
+  animation: hero-kenburns 9000ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide {
+    transition-duration: 400ms;
+  }
+  .hero-slide[data-active="true"] img {
+    animation: none;
+  }
+}
