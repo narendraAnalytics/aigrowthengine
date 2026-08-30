@@ -1,13 +1,34 @@
 import Image from "next/image";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { FOOTER_COLUMNS, IMAGES, SITE } from "@/lib/site";
 import { Icon } from "./icons";
 
 const SOCIALS = [
-  { label: "LinkedIn", icon: Icon.linkedin, href: "#" },
-  { label: "Twitter", icon: Icon.twitter, href: "#" },
-  { label: "YouTube", icon: Icon.youtube, href: "#" },
-  { label: "Instagram", icon: Icon.instagram, href: "#" },
+  {
+    label: "LinkedIn",
+    icon: Icon.linkedin,
+    href: "#",
+    hover: "hover:border-[#0A66C2]/60 hover:bg-[#0A66C2]/15 hover:text-[#4aa3ff]",
+  },
+  {
+    label: "Twitter",
+    icon: Icon.twitter,
+    href: "#",
+    hover: "hover:border-white/60 hover:bg-white/10 hover:text-white",
+  },
+  {
+    label: "YouTube",
+    icon: Icon.youtube,
+    href: "#",
+    hover: "hover:border-[#FF0000]/60 hover:bg-[#FF0000]/15 hover:text-[#ff5c5c]",
+  },
+  {
+    label: "Instagram",
+    icon: Icon.instagram,
+    href: "#",
+    hover: "hover:border-[#E4405F]/60 hover:bg-[#E4405F]/15 hover:text-[#f27196]",
+  },
 ] as const;
 
 export function SiteFooter() {
@@ -41,7 +62,10 @@ export function SiteFooter() {
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className="flex size-9 items-center justify-center rounded-lg border border-gold-400/20 bg-white/5 text-muted-warm transition hover:border-gold-400/40 hover:text-cream"
+                  className={cn(
+                    "flex size-9 items-center justify-center rounded-lg border border-gold-400/20 bg-white/5 text-muted-warm transition duration-200 hover:-translate-y-0.5",
+                    s.hover,
+                  )}
                 >
                   <Glyph className="size-4" />
                 </a>
