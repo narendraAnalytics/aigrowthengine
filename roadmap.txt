@@ -214,20 +214,33 @@ PHASE 0 — SPECIFICATION FREEZE                                    (PROD/SEC)
 Goal: nothing ambiguous remains before production code is written.
 ================================================================================
 
+  NOTE (2026-08-30): team chose to author Phase 0 as typed CODE, not docs/*.md.
+  Capability library = frontend/src/lib/capabilities/ (schema.ts + data.ts +
+  index.ts, validated by npm run check:capabilities). Assessment questions +
+  "no confident match" copy = frontend/src/lib/assessment/questions.ts.
+  Anchor verticals: manufacturing/distribution, healthcare, financial services.
+
 0.1 Product definition
-  [ ] Write docs/PRD.md — problem, ICP, personas, non-goals
+  [ ] Write docs/PRD.md — problem, ICP, personas, non-goals   (PRD prose still TODO)
   [ ] Lock user types: Prospect, Client, Investor, Admin, Sales, Engineer, Security, Mgmt
   [ ] Lock org model: external orgs (client companies) + internal org (our company)
-  [ ] Define the 8–10 assessment questions verbatim (final copy, not placeholders)
-  [ ] Write the "no confident match" copy + Request Expert Review flow
+  [~] Define the 8–10 assessment questions verbatim — DRAFT (10 Qs) in
+      frontend/src/lib/assessment/questions.ts; needs final marketing copy sign-off
+  [~] "no confident match" copy — DRAFT in questions.ts (NO_CONFIDENT_MATCH);
+      Request Expert Review flow (routing/notification) still TODO
 
 0.2 Capability taxonomy  (BLOCKS Phase 3 — do this early)
-  [ ] Define the Capability schema (name, description, problem_types[], industries[],
-      integrations[], technologies[], security_requirements[], delivery_status,
-      typical_implementation, related_case_studies[])
-  [ ] Author 10–20 REAL capabilities we can actually deliver. No filler entries.
-  [ ] Define problem_type controlled vocabulary (the classifier's label set)
-  [ ] Define industry controlled vocabulary (NAICS-lite, ~20 values)
+  [x] Define the Capability schema — frontend/src/lib/capabilities/schema.ts
+      (Zod: id, name, oneLiner, description, problemTypes[], industries[],
+      integrations[], technologies[], securityRequirements[], prerequisites[],
+      deliveryStatus, typicalImplementation, typicalOutcomes[], pricingModel[],
+      relatedCaseStudies[])
+  [~] Author 10–20 REAL capabilities — 12 authored in data.ts. Names/descriptions/
+      integrations/tech are real; deliveryStatus / typicalImplementation /
+      typicalOutcomes left null/empty on purpose — DELIVERY TEAM MUST FILL before
+      any capability is shown to a prospect.
+  [x] problem_type controlled vocabulary — 17 labels + no_confident_match sentinel
+  [x] industry controlled vocabulary — 20 values (schema.ts INDUSTRIES)
   [ ] Peer-review with whoever will actually deliver these projects
 
 0.3 Lead scoring specification
