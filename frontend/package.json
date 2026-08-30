@@ -14,7 +14,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "check:capabilities": "tsx scripts/check-capabilities.ts"
+    "check:capabilities": "tsx scripts/check-capabilities.ts",
+    "check:scoring": "tsx scripts/check-scoring.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
