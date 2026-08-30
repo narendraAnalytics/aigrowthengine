@@ -16,8 +16,8 @@ export function SiteFooter() {
       id="about"
       className="scroll-mt-24 border-t border-gold-400/15 px-4 sm:px-6 lg:px-14"
     >
-      <div className="mx-auto grid max-w-[1360px] gap-10 py-12 sm:grid-cols-2 lg:grid-cols-6">
-        <div className="sm:col-span-2 lg:col-span-2">
+      <div className="mx-auto grid max-w-[1360px] grid-cols-2 gap-x-6 gap-y-9 py-12 sm:gap-10 sm:grid-cols-2 lg:grid-cols-6">
+        <div className="col-span-2 lg:col-span-2">
           <div className="flex items-center gap-2.5">
             <Image
               src={IMAGES.logo}
@@ -68,7 +68,7 @@ export function SiteFooter() {
           </nav>
         ))}
 
-        <div className="sm:col-span-2 lg:col-span-2">
+        <div className="col-span-2 lg:col-span-2">
           <h3 className="text-[0.8rem] font-bold text-cream">Stay Updated</h3>
           <p className="mt-4 text-[0.82rem] leading-relaxed text-muted-warm">
             Get the latest insights on AI and business transformation.
@@ -91,7 +91,7 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-[1360px] flex-wrap items-center justify-between gap-3 border-t border-gold-400/12 py-6">
+      <div className="mx-auto flex max-w-[1360px] flex-col items-center gap-3 border-t border-gold-400/12 py-6 text-center sm:flex-row sm:justify-between sm:text-left">
         <span className="text-[0.78rem] text-faint">
           &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
         </span>
