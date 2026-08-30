@@ -9,7 +9,7 @@ function resolveSiteUrl() {
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }
-  return "https://aigrowthengine.com";
+  return "https://aigrowthengine.vercel.app";
 }
 
 export const SITE = {

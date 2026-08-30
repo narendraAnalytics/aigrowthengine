@@ -2,6 +2,8 @@
 
 > **Turn Business Challenges Into Growth Opportunities.**
 
+**Live:** [aigrowthengine.vercel.app](https://aigrowthengine.vercel.app/)
+
 AI Growth Engine is an AI-powered business-growth platform. A business describes a
 real operational problem in plain language; the platform runs an AI assessment,
 matches it to a capability the company can **actually deliver**, produces an
@@ -69,9 +71,19 @@ aigrowthengine/
 ```bash
 cd frontend
 npm install
-cp .env.example .env.local   # fill in Clerk / PostHog / API keys
+cp .env.example .env.local   # all vars optional for now
 npm run dev                    # http://localhost:3000
 ```
+
+## Deployment
+
+The web app is deployed on **Vercel** at
+[aigrowthengine.vercel.app](https://aigrowthengine.vercel.app/).
+
+- **Root Directory:** `frontend` (repo root has no `package.json`)
+- **Framework / build:** pinned in `frontend/vercel.json`
+  (`npm run build` → `next build --webpack`, required for Serwist)
+- Every push to `main` auto-deploys; pull requests get preview URLs.
 
 ## Core principles
 

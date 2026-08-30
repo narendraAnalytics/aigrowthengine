@@ -154,9 +154,11 @@ MISSING ENTIRELY:
   [ ] Any AI integration (no Gemini SDK)
   [ ] Linting/formatting (no ESLint, no Prettier — `next lint` was removed in v16)
   [ ] Testing (no Vitest, no Playwright, no pytest)
-  [ ] CI/CD (no .github/)
-  [ ] Monorepo root (frontend/ owns the only .git — repo layout must be fixed)
-  [ ] .env.example, .nvmrc, .editorconfig
+  [~] CI/CD: Vercel git integration live (auto-deploy main + PR previews).
+      No .github/ workflows yet (lint/typecheck/test gates still TODO).
+  [x] Repo root fixed 2026-08-30 — git root at aigrowthengine/, frontend/ nested,
+      pushed to github.com/narendraAnalytics/aigrowthengine, deployed on Vercel.
+  [~] .env.example + .nvmrc added (frontend/). .editorconfig still TODO.
   [x] Real metadata (layout.tsx — done 2026-08-30)
 
 VERSION-SPECIFIC LANDMINES (Next.js 16 — differs from most training data / tutorials):
@@ -351,8 +353,9 @@ Goal: a production-shaped skeleton that deploys on day one.
   [ ] Backend CI: ruff · mypy · pytest · alembic upgrade head against ephemeral DB
   [ ] Dependency scanning (Dependabot) + npm audit / pip-audit gate
   [ ] Secret scanning (gitleaks)
-  [ ] Preview deploys per PR (Vercel) + Neon branch per PR
-  [ ] Staging auto-deploy on main; production behind manual approval
+  [x] Preview deploys per PR (Vercel) — live. Neon branch per PR still TODO.
+  [~] main auto-deploys to Vercel (production). Separate staging env + manual
+      approval gate for a real production still TODO.
   [ ] Migrations run as a separate, ordered deploy step — never inside app startup
 
 PHASE 1 EXIT: `git push` → CI green → staging URL live with a real health check.
@@ -732,10 +735,17 @@ CROSS-CUTTING TRACK 3 — ANALYTICS & KPIs                          (PROD)
 ================================================================================
 CROSS-CUTTING TRACK 4 — DEPLOYMENT                                (OPS)
 ================================================================================
-Development   [ ] Local Next.js + local FastAPI + Neon dev branch + docker-compose
-Staging       [ ] Vercel preview + Cloud Run/Render staging + Neon staging branch
-Production    [ ] Vercel + Cloud Run/Render + Neon prod + R2 + Sentry + PostHog
-  [ ] Custom domain + TLS + HSTS preload
+LIVE (2026-08-30): frontend deployed to Vercel → https://aigrowthengine.vercel.app/
+  Repo github.com/narendraAnalytics/aigrowthengine, Root Directory = frontend,
+  framework/build pinned via frontend/vercel.json (npm run build → next build
+  --webpack for Serwist). Every push to main auto-deploys; PRs get previews.
+
+Development   [~] Local Next.js works. FastAPI + Neon + docker-compose still TODO.
+Staging       [~] Vercel gives per-PR previews. Dedicated staging env + Neon
+                  staging branch + API staging still TODO.
+Production    [~] Vercel hosts the web app (aigrowthengine.vercel.app). Still:
+                  Cloud Run/Render (API), Neon prod, R2, Sentry, PostHog.
+  [ ] Custom domain + TLS + HSTS preload  (currently the .vercel.app subdomain)
   [ ] Dockerfile for the API (multi-stage, non-root user, distroless-ish base)
   [ ] Zero-downtime deploys; readiness gates
   [ ] Migration strategy: expand → deploy → contract (never a breaking migration
