@@ -258,3 +258,12 @@
     animation: none;
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Clerk modal — the GitHub / Apple provider marks ship as solid black
+ * SVGs and vanish on our dark modal. Force them to render light.
+ * ------------------------------------------------------------------ */
+.cl-socialButtonsProviderIcon__github,
+.cl-socialButtonsProviderIcon__apple {
+  filter: brightness(0) invert(1);
+}
