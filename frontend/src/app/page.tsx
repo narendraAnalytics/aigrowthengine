@@ -7,6 +7,7 @@ import { SuccessStories } from "@/components/landing/success-stories";
 import { CtaBanner } from "@/components/landing/cta-banner";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { PwaPrompt } from "@/components/pwa-prompt";
+import { IntroVideo } from "@/components/landing/intro-video";
 
 export default function HomePage() {
   return (
@@ -28,6 +29,7 @@ export default function HomePage() {
       </main>
       <SiteFooter />
       <PwaPrompt />
+      <IntroVideo />
     </>
   );
 }
