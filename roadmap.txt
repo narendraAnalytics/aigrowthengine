@@ -133,11 +133,12 @@ Installed stack (frontend/package.json):
   posthog-js 1.422.5 · @tanstack/react-query 5.102.8 · react-hook-form 7.87.0
   zod 4.5.4 · @hookform/resolvers 5.9.1 · @t3-oss/env-nextjs 0.13.11
   axios 1.20.0 · @base-ui/react 1.7.0 · lucide-react · cva · clsx · tailwind-merge
-  date-fns · tw-animate-css · shadcn 4.19.0
+  date-fns · tw-animate-css · shadcn 4.19.0 · next-themes (added 2026-08-30)
 
 CRITICAL GAP ANALYSIS — installed but NOT wired up:
-  [~] Clerk       — WIRED 2026-08-30 (landing only). ClerkProvider (dark theme) in
-                    layout, src/proxy.ts runs clerkMiddleware, sign-up modal on the
+  [~] Clerk       — WIRED 2026-08-30 (landing only). ClerkProvider (theme-reactive:
+                    dark ⇄ light, driven by next-themes) composed in
+                    src/components/providers.tsx, src/proxy.ts runs clerkMiddleware, sign-up modal on the
                     Book a Demo / Start Assessment CTAs, all flows redirect to "/",
                     /business-assessment placeholder greets the user. TODO: sign-in
                     /sign-up routes, Organizations, resource-level authz, FastAPI JWT.
@@ -377,15 +378,26 @@ Goal: the professional front door, installable, fast, accessible.
 
 NOTE 2026-08-30: A landing page was built ahead of the roadmap to match
 samplefolder/AI Growth Engine.dc.html (dark plum + gold + magenta). Partial
-credit ticked below; the rest of Phase 2 (route groups, providers, full design
-system, Lighthouse gate, dark/light) still stands.
+credit ticked below; the rest of Phase 2 (route groups, full design
+system, Lighthouse gate) still stands.
+
+NOTE 2026-08-30: Added a one-per-session muted intro-video overlay on the
+landing page (src/components/landing/intro-video.tsx) — autoplay, sound
+toggle, Enter to dismiss, blurred backdrop copy hides the source watermark.
+
+NOTE 2026-08-30: Light/dark theme toggle shipped (next-themes, class
+strategy, dark default). :root = light "cream paper" palette, .dark = plum
+palette; brand + component tokens flip via CSS vars. ThemeToggle (sun/moon
++ tooltip) in the navbar. Hero stays a deliberate dark island in both modes.
 
 2.1 Design system
   [x] Brand design tokens in globals.css (Tailwind v4 @theme): plum/gold/magenta
       palette, glass utilities, shimmer/float motion. (spacing/elevation scale
       still TODO)
-  [ ] Dark mode via next-themes; verify contrast in BOTH modes
-      (site currently commits to the dark look only — matches the sample)
+  [~] Dark mode via next-themes — DONE 2026-08-30. Light + dark palettes in
+      globals.css (:root / .dark), theme-reactive Clerk, ThemeToggle in navbar.
+      TODO: full contrast audit of every section in light mode (decorative
+      white/x utilities and the mobile-menu shadow still need a pass).
   [x] Replace the create-next-app Geist defaults with real brand fonts (next/font):
       Bricolage Grotesque (headings) + Manrope (body)
   [ ] Extend the 18 existing shadcn primitives; add: form, sonner (toast), skeleton,
@@ -402,8 +414,10 @@ system, Lighthouse gate, dark/light) still stands.
       src/components/landing/. Generic Container primitive still TODO.
   [ ] error.tsx, not-found.tsx, loading.tsx, global-error.tsx per segment
   [ ] Route groups: (marketing) / (app) / (investor) with distinct layouts
-  [ ] Providers: ClerkProvider, QueryClientProvider, PostHogProvider, ThemeProvider
+  [~] Providers: ClerkProvider, QueryClientProvider, PostHogProvider, ThemeProvider
       — all in one composed <Providers> client boundary
+      2026-08-30: src/components/providers.tsx composes ThemeProvider +
+      theme-reactive ClerkProvider. QueryClientProvider + PostHogProvider TODO.
 
 2.3 Public marketing routes
   [x] /                     Landing (hero, platform, how-it-works, transformations,
