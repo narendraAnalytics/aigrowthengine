@@ -120,40 +120,51 @@ export function Navbar() {
         </button>
       </nav>
 
+      {/* Mobile menu: full-screen dimmed backdrop + solid panel */}
+      <div
+        onClick={() => setOpen(false)}
+        aria-hidden={!open}
+        className={cn(
+          "fixed inset-0 -z-10 bg-plum-950/70 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
+          open ? "opacity-100" : "pointer-events-none opacity-0",
+        )}
+      />
       <div
         className={cn(
-          "mx-auto mt-2 max-w-[1360px] origin-top overflow-hidden rounded-2xl border border-gold-400/30 bg-plum-900/95 shadow-[0_20px_60px_rgba(10,4,14,0.7)] backdrop-blur-xl transition-all duration-300 lg:hidden",
+          "mx-auto mt-2 max-w-[1360px] origin-top overflow-hidden rounded-2xl border border-gold-400/30 bg-plum-950 shadow-[0_24px_70px_rgba(8,3,12,0.85)] transition-all duration-300 ease-out lg:hidden",
           open
-            ? "max-h-[32rem] p-4 opacity-100"
-            : "pointer-events-none max-h-0 p-0 opacity-0",
+            ? "max-h-[34rem] translate-y-0 p-3 opacity-100"
+            : "pointer-events-none max-h-0 -translate-y-2 p-0 opacity-0",
         )}
       >
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col">
           {NAV_LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-3 text-[0.95rem] font-medium text-cream transition hover:bg-white/5 hover:text-white"
+              className="rounded-xl px-4 py-3.5 text-[0.95rem] font-semibold text-cream transition hover:bg-gold-400/10 hover:text-white"
             >
               {l.label}
             </a>
           ))}
-          <div className="my-2 h-px bg-gold-400/20" />
-          <Link
-            href="/sign-in"
-            onClick={() => setOpen(false)}
-            className="rounded-xl border border-gold-400/25 bg-white/5 px-4 py-3 text-center text-sm font-semibold text-cream"
-          >
-            Log In
-          </Link>
-          <Link
-            href="/business-assessment"
-            onClick={() => setOpen(false)}
-            className="btn-gold mt-2 rounded-xl px-4 py-3 text-center text-sm font-bold"
-          >
-            Book a Demo
-          </Link>
+          <div className="mx-2 my-3 h-px bg-gold-400/15" />
+          <div className="flex flex-col gap-2 px-1 pb-1">
+            <Link
+              href="/sign-in"
+              onClick={() => setOpen(false)}
+              className="rounded-xl border border-gold-400/30 bg-white/[0.03] px-4 py-3 text-center text-sm font-semibold text-cream transition hover:bg-white/[0.07]"
+            >
+              Log In
+            </Link>
+            <Link
+              href="/business-assessment"
+              onClick={() => setOpen(false)}
+              className="btn-gold rounded-xl px-4 py-3 text-center text-sm font-bold"
+            >
+              Book a Demo
+            </Link>
+          </div>
         </div>
       </div>
     </header>
