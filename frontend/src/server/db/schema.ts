@@ -23,6 +23,10 @@ const timestamps = {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+  // Soft-delete convention: null = active. Reads should filter `deleted_at IS NULL`.
+  // Nothing sets this yet — only a future delete path (Clerk webhook / admin
+  // action) would. `deleteUser()` is still a hard delete for now.
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
 };
 
 export const users = pgTable("users", {

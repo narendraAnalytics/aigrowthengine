@@ -353,7 +353,10 @@ Goal: a production-shaped skeleton that deploys on day one.
       org/membership lazy sync + companies/assessments/* still TODO;
       whole layer ports to FastAPI later)
   [ ] organization_id NOT NULL + index on every tenant-scoped table
-  [ ] created_at/updated_at/deleted_at (soft delete) conventions
+  [~] created_at/updated_at/deleted_at (soft delete) conventions
+      (all 3 mirror tables carry created_at/updated_at/deleted_at; deleted_at
+      nullable, reads filter IS NULL. No delete path sets it yet — deleteUser
+      is still a hard delete. Apply to companies/assessments/* when added.)
   [ ] Automated backups + documented restore drill
 
 1.7 Observability
