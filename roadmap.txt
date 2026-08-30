@@ -214,36 +214,65 @@ PHASE 0 — SPECIFICATION FREEZE                                    (PROD/SEC)
 Goal: nothing ambiguous remains before production code is written.
 ================================================================================
 
+  NOTE (2026-08-30): team chose to author Phase 0 as typed CODE, not docs/*.md.
+  Capability library = frontend/src/lib/capabilities/ (schema.ts + data.ts +
+  index.ts, validated by npm run check:capabilities). Assessment questions +
+  "no confident match" copy = frontend/src/lib/assessment/questions.ts.
+  Anchor verticals: manufacturing/distribution, healthcare, financial services.
+
 0.1 Product definition
-  [ ] Write docs/PRD.md — problem, ICP, personas, non-goals
+  [ ] Write docs/PRD.md — problem, ICP, personas, non-goals   (PRD prose still TODO)
   [ ] Lock user types: Prospect, Client, Investor, Admin, Sales, Engineer, Security, Mgmt
   [ ] Lock org model: external orgs (client companies) + internal org (our company)
-  [ ] Define the 8–10 assessment questions verbatim (final copy, not placeholders)
-  [ ] Write the "no confident match" copy + Request Expert Review flow
+  [~] Define the 8–10 assessment questions verbatim — DRAFT (10 Qs) in
+      frontend/src/lib/assessment/questions.ts; needs final marketing copy sign-off
+  [~] "no confident match" copy — DRAFT in questions.ts (NO_CONFIDENT_MATCH);
+      Request Expert Review flow (routing/notification) still TODO
 
 0.2 Capability taxonomy  (BLOCKS Phase 3 — do this early)
-  [ ] Define the Capability schema (name, description, problem_types[], industries[],
-      integrations[], technologies[], security_requirements[], delivery_status,
-      typical_implementation, related_case_studies[])
-  [ ] Author 10–20 REAL capabilities we can actually deliver. No filler entries.
-  [ ] Define problem_type controlled vocabulary (the classifier's label set)
-  [ ] Define industry controlled vocabulary (NAICS-lite, ~20 values)
+  [x] Define the Capability schema — frontend/src/lib/capabilities/schema.ts
+      (Zod: id, name, oneLiner, description, problemTypes[], industries[],
+      integrations[], technologies[], securityRequirements[], prerequisites[],
+      deliveryStatus, typicalImplementation, typicalOutcomes[], pricingModel[],
+      relatedCaseStudies[])
+  [~] Author 10–20 REAL capabilities — 12 authored in data.ts. Names/descriptions/
+      integrations/tech are real; deliveryStatus / typicalImplementation /
+      typicalOutcomes left null/empty on purpose — DELIVERY TEAM MUST FILL before
+      any capability is shown to a prospect.
+  [x] problem_type controlled vocabulary — 17 labels + no_confident_match sentinel
+  [x] industry controlled vocabulary — 20 values (schema.ts INDUSTRIES)
   [ ] Peer-review with whoever will actually deliver these projects
 
-0.3 Lead scoring specification
-  [ ] Freeze the 7 factors + weights (25/20/15/15/10/10/5 = 100)
-  [ ] Define per-factor rubric: what earns 0, partial, full — in writing
-  [ ] Define band thresholds (e.g. HIGH ≥75, MEDIUM 50–74, LOW <50)
-  [ ] EXPLICIT RULE: Gemini emits SIGNALS ONLY. The backend computes the number.
-      Any prompt that asks the model for a final score is a defect.
-  [ ] Define match thresholds: Strong ≥80% · Partial 50–79% · None <50%
+0.3 Lead scoring specification   (authored as code: frontend/src/lib/scoring/)
+  [x] Freeze the 7 factors + weights (25/20/15/15/10/10/5 = 100) — factors.ts
+  [x] Per-factor rubric: none(0) / partial(0.5×w) / full(1.0×w) in writing — factors.ts
+  [x] Band thresholds: HIGH ≥75, MEDIUM 50–74, LOW <50 — score.ts (BAND_THRESHOLDS)
+  [x] Gemini emits SIGNALS ONLY — signals.ts is the {level,rationale}-per-factor
+      contract; computeLeadScore() in score.ts is the deterministic pure fn,
+      versioned (SCORING_MODEL_VERSION 1.0.0), returns breakdown for "Why 91?"
+  [x] Match thresholds: Strong ≥0.80 · Partial 0.50–0.79 · None <0.50 — match.ts
+  Validate: npm run check:scoring. Solution Fit level is set from the deterministic
+  capability match (match.ts), not the model. TODO: weights are from FinalRoadMap
+  defaults — recalibrate against real closed-won/lost data after ~Sprint 7.
 
-0.4 Data & API contract
-  [ ] docs/ERD.md — full entity-relationship diagram
-  [ ] docs/api-contract.md — every v1 endpoint, request/response, error codes
-  [ ] Standard error envelope { code, message, details[], request_id }
-  [ ] Pagination/filtering/sorting convention (cursor-based)
-  [ ] Idempotency-Key convention for POSTs that create billable/AI work
+0.4 Data & API contract   (authored as code, not docs/*.md)
+  [~] ERD — assessment domain in frontend/src/server/db/schema.ts: assessments,
+      assessment_results (1:1), capability_matches, expert_review_requests
+      (+ enums assessment_status / score_band / match_class / expert_review_status).
+      Migration 0002_assessment_domain applied to Neon. Lead/CRM/score-override
+      tables are Phase 4. Full cross-domain ERD diagram still TODO.
+  [~] v1 endpoint contract — frontend/src/lib/api/contract/assessment.ts (Zod
+      schemas for POST /assessments, GET /assessments/:id[/result],
+      POST /assessments/:id/expert-review; submit schema derived from
+      ASSESSMENT_QUESTIONS). CRM/investor/admin endpoints still TODO.
+  [x] Standard error envelope { code, message, details[], request_id } —
+      frontend/src/lib/api/errors.ts (ApiErrorCode enum + apiError() helper)
+  [x] Cursor pagination convention — frontend/src/lib/api/pagination.ts
+      (CursorPageParams / CursorPage<T> / opaque base64url cursor). Per-endpoint
+      filter/sort params documented with each endpoint.
+  [x] Idempotency-Key convention — frontend/src/lib/api/idempotency.ts (header,
+      24h TTL, body-fingerprint rule, IDEMPOTENT_ENDPOINTS list). Key store = Phase 3.
+  Validate: npm run check:api-contract
 
 0.5 Security model
   [ ] docs/security-model.md — roles × permissions matrix (RBAC)

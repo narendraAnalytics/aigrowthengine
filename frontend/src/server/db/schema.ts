@@ -1,10 +1,16 @@
 import { relations } from "drizzle-orm";
 import {
+  boolean,
   index,
+  integer,
+  jsonb,
+  numeric,
+  pgEnum,
   pgTable,
   text,
   timestamp,
   uniqueIndex,
+  uuid,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -85,6 +91,176 @@ export const organizationMembershipsRelations = relations(
     }),
     user: one(users, {
       fields: [organizationMemberships.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+/* ---------------------------------------------------------------------------
+ * Assessment domain (Phase 0.4 ERD).
+ *
+ * Flow: a signed-in prospect submits `assessments.answers` -> the engine writes
+ * one `assessment_results` row (signals + deterministic score) -> zero or more
+ * `capability_matches`. Below the confident-match threshold the prospect can file
+ * an `expert_review_requests`. Lead/CRM tables are Phase 4, not here.
+ *
+ * `signals` / `problem_types` are jsonb validated in app code (see
+ * `@/lib/scoring` and `@/lib/capabilities`), not by DB constraints.
+ * ------------------------------------------------------------------------- */
+
+export const assessmentStatus = pgEnum("assessment_status", [
+  "submitted",
+  "analyzing",
+  "scored",
+  "needs_expert_review",
+  "failed",
+]);
+
+export const scoreBand = pgEnum("score_band", ["high", "medium", "low"]);
+
+export const matchClass = pgEnum("match_class", ["strong", "partial", "none"]);
+
+export const expertReviewStatus = pgEnum("expert_review_status", [
+  "open",
+  "contacted",
+  "closed",
+]);
+
+export const assessments = pgTable(
+  "assessments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // Null while a prospect has no active Clerk org.
+    organizationId: text("organization_id").references(() => organizations.id, {
+      onDelete: "cascade",
+    }),
+    status: assessmentStatus("status").notNull().default("submitted"),
+    // Record<questionId, string | string[]> — shape enforced in app code.
+    answers: jsonb("answers").notNull(),
+    ...timestamps,
+  },
+  (t) => [
+    index("assessments_user_idx").on(t.userId),
+    index("assessments_organization_idx").on(t.organizationId),
+  ],
+);
+
+export const assessmentResults = pgTable(
+  "assessment_results",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    assessmentId: uuid("assessment_id")
+      .notNull()
+      .unique()
+      .references(() => assessments.id, { onDelete: "cascade" }),
+    // string[] of problem_type vocabulary values.
+    problemTypes: jsonb("problem_types").notNull(),
+    industry: text("industry"),
+    // The validated LeadSignals object ({ [factorId]: { level, rationale } }).
+    signals: jsonb("signals").notNull(),
+    leadScore: integer("lead_score").notNull(),
+    scoreBand: scoreBand("score_band").notNull(),
+    scoringModelVersion: text("scoring_model_version").notNull(),
+    summary: text("summary"),
+    noConfidentMatch: boolean("no_confident_match").notNull().default(false),
+    ...timestamps,
+  },
+);
+
+export const capabilityMatches = pgTable(
+  "capability_matches",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    assessmentResultId: uuid("assessment_result_id")
+      .notNull()
+      .references(() => assessmentResults.id, { onDelete: "cascade" }),
+    // Validated against CAPABILITY_IDS in app code before insert (CLAUDE.md #2).
+    capabilityId: text("capability_id").notNull(),
+    // 0..1; drizzle returns numeric as string.
+    confidence: numeric("confidence", { precision: 4, scale: 3 }).notNull(),
+    matchClass: matchClass("match_class").notNull(),
+    rationale: text("rationale"),
+    rank: integer("rank").notNull(),
+    ...timestamps,
+  },
+  (t) => [
+    uniqueIndex("capability_matches_result_capability_uq").on(
+      t.assessmentResultId,
+      t.capabilityId,
+    ),
+    index("capability_matches_capability_idx").on(t.capabilityId),
+  ],
+);
+
+export const expertReviewRequests = pgTable(
+  "expert_review_requests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    assessmentId: uuid("assessment_id")
+      .notNull()
+      .references(() => assessments.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organizations.id, {
+      onDelete: "cascade",
+    }),
+    note: text("note"),
+    status: expertReviewStatus("status").notNull().default("open"),
+    ...timestamps,
+  },
+  (t) => [index("expert_review_requests_status_idx").on(t.status)],
+);
+
+export const assessmentsRelations = relations(assessments, ({ one, many }) => ({
+  user: one(users, {
+    fields: [assessments.userId],
+    references: [users.id],
+  }),
+  organization: one(organizations, {
+    fields: [assessments.organizationId],
+    references: [organizations.id],
+  }),
+  result: one(assessmentResults, {
+    fields: [assessments.id],
+    references: [assessmentResults.assessmentId],
+  }),
+  expertReviewRequests: many(expertReviewRequests),
+}));
+
+export const assessmentResultsRelations = relations(
+  assessmentResults,
+  ({ one, many }) => ({
+    assessment: one(assessments, {
+      fields: [assessmentResults.assessmentId],
+      references: [assessments.id],
+    }),
+    matches: many(capabilityMatches),
+  }),
+);
+
+export const capabilityMatchesRelations = relations(
+  capabilityMatches,
+  ({ one }) => ({
+    result: one(assessmentResults, {
+      fields: [capabilityMatches.assessmentResultId],
+      references: [assessmentResults.id],
+    }),
+  }),
+);
+
+export const expertReviewRequestsRelations = relations(
+  expertReviewRequests,
+  ({ one }) => ({
+    assessment: one(assessments, {
+      fields: [expertReviewRequests.assessmentId],
+      references: [assessments.id],
+    }),
+    user: one(users, {
+      fields: [expertReviewRequests.userId],
       references: [users.id],
     }),
   }),
