@@ -136,7 +136,11 @@ Installed stack (frontend/package.json):
   date-fns · tw-animate-css · shadcn 4.19.0
 
 CRITICAL GAP ANALYSIS — installed but NOT wired up:
-  [ ] Clerk       — dependency present, zero code. No <ClerkProvider>, no proxy.ts.
+  [~] Clerk       — WIRED 2026-08-30 (landing only). ClerkProvider (dark theme) in
+                    layout, src/proxy.ts runs clerkMiddleware, sign-up modal on the
+                    Book a Demo / Start Assessment CTAs, all flows redirect to "/",
+                    /business-assessment placeholder greets the user. TODO: sign-in
+                    /sign-up routes, Organizations, resource-level authz, FastAPI JWT.
   [x] Serwist     — WIRED 2026-08-30. manifest.ts, sw.ts (NetworkOnly for auth
                     routes), ~offline page, pwa-prompt (install + update toast),
                     withSerwistInit in next.config. Build = `next build --webpack`
