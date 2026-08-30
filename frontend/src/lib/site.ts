@@ -3,12 +3,21 @@
  * Image URLs come from imagesurl.txt (Cloudinary).
  */
 
+function resolveSiteUrl() {
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
+  // Set automatically by Vercel (server build only).
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  return "https://aigrowthengine.com";
+}
+
 export const SITE = {
   name: "AI Growth Engine",
   tagline: "Turn Business Challenges Into Growth Opportunities",
   description:
     "AI Growth Engine helps businesses discover high-impact opportunities, implement AI solutions, and achieve measurable results.",
-  url: process.env.NEXT_PUBLIC_APP_URL ?? "https://aigrowthengine.com",
+  url: resolveSiteUrl(),
 } as const;
 
 const CLOUDINARY_BASE =
