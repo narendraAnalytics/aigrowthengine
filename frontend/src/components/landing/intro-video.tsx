@@ -115,7 +115,7 @@ export function IntroVideo() {
       {/* Sharp video, edges feathered into the backdrop so the corner watermark dissolves */}
       <video
         ref={videoRef}
-        className="absolute inset-0 h-full w-full object-contain [mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)] [-webkit-mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)] sm:object-cover"
+        className="absolute inset-0 h-full w-full object-cover [mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)] [-webkit-mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)]"
         src={VIDEO_SRC}
         autoPlay
         muted
