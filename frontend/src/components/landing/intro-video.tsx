@@ -11,6 +11,7 @@ export function IntroVideo() {
   const [visible, setVisible] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [needsTap, setNeedsTap] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const bgVideoRef = useRef<HTMLVideoElement | null>(null);
   const enterRef = useRef<HTMLButtonElement | null>(null);
@@ -33,6 +34,9 @@ export function IntroVideo() {
     body.style.overflow = "hidden";
 
     enterRef.current?.focus();
+
+    // Some mobile browsers (iOS Low Power Mode) reject even muted autoplay.
+    void videoRef.current?.play().catch(() => setNeedsTap(true));
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") dismiss();
@@ -68,6 +72,12 @@ export function IntroVideo() {
     if (!next) void video.play().catch(() => {});
   }
 
+  function tryPlay() {
+    setNeedsTap(false);
+    void videoRef.current?.play().catch(() => setNeedsTap(true));
+    void bgVideoRef.current?.play().catch(() => {});
+  }
+
   function syncBg() {
     const front = videoRef.current;
     const bg = bgVideoRef.current;
@@ -93,7 +103,7 @@ export function IntroVideo() {
         ref={bgVideoRef}
         aria-hidden
         tabIndex={-1}
-        className="absolute inset-0 h-full w-full scale-125 object-cover blur-2xl brightness-[0.55] saturate-150"
+        className="absolute inset-0 h-full w-full scale-125 object-cover blur-xl brightness-[0.55] saturate-150 sm:blur-2xl"
         src={VIDEO_SRC}
         autoPlay
         muted
@@ -105,30 +115,44 @@ export function IntroVideo() {
       {/* Sharp video, edges feathered into the backdrop so the corner watermark dissolves */}
       <video
         ref={videoRef}
-        className="absolute inset-0 h-full w-full object-cover [mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)] [-webkit-mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)]"
+        className="absolute inset-0 h-full w-full object-contain [mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)] [-webkit-mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)] sm:object-cover"
         src={VIDEO_SRC}
         autoPlay
         muted
         loop
         playsInline
         preload="auto"
-        onPlay={() => void bgVideoRef.current?.play().catch(() => {})}
+        onPlay={() => {
+          setNeedsTap(false);
+          void bgVideoRef.current?.play().catch(() => {});
+        }}
         onTimeUpdate={syncBg}
       />
 
       {/* Full-width smoky band across the bottom — hides the source watermark
           and seats the Enter button */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 [backdrop-filter:blur(24px)] [-webkit-backdrop-filter:blur(24px)] [mask-image:linear-gradient(to_top,#000_35%,transparent)] [-webkit-mask-image:linear-gradient(to_top,#000_35%,transparent)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] [mask-image:linear-gradient(to_top,#000_35%,transparent)] [-webkit-mask-image:linear-gradient(to_top,#000_35%,transparent)] sm:h-1/3 sm:[backdrop-filter:blur(24px)] sm:[-webkit-backdrop-filter:blur(24px)]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
       {/* Scrim for control legibility over any frame */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
 
+      {needsTap && (
+        <button
+          type="button"
+          onClick={tryPlay}
+          aria-label="Play intro video"
+          className="btn-glass absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-5 transition hover:scale-105"
+        >
+          <Icon.play className="size-7" />
+        </button>
+      )}
+
       <button
         type="button"
         onClick={toggleSound}
         aria-label={muted ? "Unmute video" : "Mute video"}
-        className="btn-glass absolute right-4 top-4 rounded-full p-3 transition hover:scale-105 sm:right-6 sm:top-6"
+        className="btn-glass absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] rounded-full p-3 transition hover:scale-105 sm:right-6 sm:top-[calc(1.5rem+env(safe-area-inset-top))]"
       >
         {muted ? (
           <VolumeXIcon className="size-5" />
@@ -137,12 +161,12 @@ export function IntroVideo() {
         )}
       </button>
 
-      <div className="absolute inset-x-0 bottom-8 flex flex-col items-center gap-3 sm:bottom-10">
+      <div className="absolute inset-x-0 bottom-[calc(2rem+env(safe-area-inset-bottom))] flex flex-col items-center gap-3 sm:bottom-[calc(2.5rem+env(safe-area-inset-bottom))]">
         <button
           ref={enterRef}
           type="button"
           onClick={dismiss}
-          className="btn-gold inline-flex items-center gap-2 rounded-full px-8 py-3 text-sm font-bold tracking-wide"
+          className="btn-gold inline-flex min-h-11 items-center gap-2 rounded-full px-8 py-3 text-sm font-bold tracking-wide active:scale-95"
         >
           Enter
           <Icon.arrowRight className="size-4" />
