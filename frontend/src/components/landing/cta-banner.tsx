@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { IMAGES } from "@/lib/site";
-import { GoldLink } from "./primitives";
+import { AuthCtaButton } from "@/components/auth/auth-cta-button";
+import { Icon } from "./icons";
 import { Reveal } from "./reveal";
 
 export function CtaBanner() {
@@ -26,9 +27,13 @@ export function CtaBanner() {
             </p>
           </div>
         </div>
-        <GoldLink href="/business-assessment" className="whitespace-nowrap">
+        <AuthCtaButton
+          signedInHref="/business-assessment"
+          className="btn-gold inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-[0.95rem] font-bold whitespace-nowrap transition hover:-translate-y-0.5"
+        >
           Start Your Free Assessment
-        </GoldLink>
+          <Icon.arrowRight className="size-4" />
+        </AuthCtaButton>
       </Reveal>
     </section>
   );
