@@ -34,7 +34,8 @@ export const IMAGES = {
   /** On-page logo. PWA / favicon icons live in public/ + src/app/ (see manifest.ts). */
   logo: "/logoaipoweredbusiness.png",
   heroBanner: cld("v1788085805/herosection1_cdadit.png"),
-  heroBanner2: cld("v1788069110/herosection_dwrwdv.png"),
+  heroBanner2: cld("v1788086631/herosection2_w4vi5p.png"),
+  heroBanner3: cld("v1788069110/herosection_dwrwdv.png"),
   businessTransformation: cld("v1788069207/businesstransformation_jouf85.png"),
   processAutomation: cld("v1788069266/ProcessAutomation_zxgaze.png"),
   aiPoweredSupport: cld("v1788069325/AIPoweredSupport_ttvyqf.png"),
@@ -46,6 +47,7 @@ export const IMAGES = {
 export const HERO_SLIDES = [
   { src: IMAGES.heroBanner, position: "center 30%" },
   { src: IMAGES.heroBanner2, position: "center 35%" },
+  { src: IMAGES.heroBanner3, position: "center 35%" },
 ] as const;
 
 export const NAV_LINKS = [
