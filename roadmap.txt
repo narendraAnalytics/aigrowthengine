@@ -295,16 +295,26 @@ Goal: nothing ambiguous remains before production code is written.
       workflow still TODO.
   Validate: npm run check:security
 
-0.6 Analytics specification
-  [ ] docs/analytics-events.md — event names, properties, when fired, who owns them
-  [ ] Snake_case naming convention, versioned event schema
-  [ ] Map every funnel stage in FinalRoadMap §10 to an event
+0.6 Analytics specification   (authored as code: frontend/src/lib/analytics/)
+  [x] Event catalogue — events.ts: 18 events with owner, firesWhen, properties;
+      BASE_PROPERTIES on every event. PostHog wiring is Phase 2.
+  [x] Snake_case convention + versioned schema — EVENT_NAME_PATTERN,
+      ANALYTICS_SCHEMA_VERSION (sent as schema_version on every event)
+  [x] Funnel mapped — funnel.ts: 9 stages (FinalRoadMap §10), each marked by
+      exactly one event; STAGE_EVENT + funnelTransitions()
 
-0.7 MVP success criteria
-  [ ] Copy the numeric targets from FinalRoadMap §8 into a dashboard spec
-  [ ] Define how each is measured (which event / query)
+0.7 MVP success criteria   (authored as code: analytics/success-criteria.ts)
+  [x] Numeric targets from FinalRoadMap §8 — SUCCESS_CRITERIA (10 criteria,
+      funnel/quality/ai/security), target + comparator + unit
+  [x] Measurement per criterion — each names the events / audit types / query
+      that compute it; evaluateCriterion() helper. Dashboard build = Phase 5.
+  Validate: npm run check:analytics
 
-PHASE 0 EXIT: All 7 docs exist in docs/ and are reviewed.
+PHASE 0 EXIT: 0.2–0.7 authored as typed code (not docs/*.md) + validated by
+  npm run check:{capabilities,scoring,api-contract,security,analytics}.
+  Human sign-off still outstanding: 0.1 PRD prose · 0.1 final assessment-question
+  copy · 0.2 capability delivery fields + peer review · 0.5 threat model walk +
+  DPDP retention windows. None of these block Phase 3 feature code.
 
   NUANCE (per overview.txt review): Phase 0 blocks PRODUCTION FEATURE development,
   not foundation work. Phase 1 (repo, CI, env, Clerk, FastAPI skeleton, Neon,
