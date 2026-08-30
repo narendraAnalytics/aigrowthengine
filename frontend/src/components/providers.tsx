@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import type { ReactNode } from "react";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SyncUser } from "@/components/auth/sync-user";
 
 function ClerkWithTheme({ children }: { children: ReactNode }) {
   const { resolvedTheme } = useTheme();
@@ -28,6 +29,7 @@ function ClerkWithTheme({ children }: { children: ReactNode }) {
         },
       }}
     >
+      <SyncUser />
       {children}
     </ClerkProvider>
   );

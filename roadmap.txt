@@ -341,11 +341,17 @@ Goal: a production-shaped skeleton that deploys on day one.
   [ ] OpenAPI schema published; generate packages/types from it (openapi-typescript)
 
 1.6 Database (Neon)
-  [ ] Create Neon project; branches: production / staging / dev-<name>
+  [~] Create Neon project; branches: production / staging / dev-<name>
+      (project "aigrowthengine" floral-mode-04102821 created; branches TODO)
   [ ] Enable pgvector extension (needed from Phase 8, install now)
-  [ ] Connection pooling endpoint for serverless callers
-  [ ] Phase-1 tables: users, organizations, organization_members, companies,
+  [x] Connection pooling endpoint for serverless callers (DATABASE_URL pooler)
+  [~] Phase-1 tables: users, organizations, organization_members, companies,
       assessments, assessment_results
+      (users, organizations, organization_memberships created via Drizzle in
+      frontend/src/server/db. Only `users` is populated — client <SyncUser />
+      POSTs /api/sync-user once per session on login (no Clerk webhooks).
+      org/membership lazy sync + companies/assessments/* still TODO;
+      whole layer ports to FastAPI later)
   [ ] organization_id NOT NULL + index on every tenant-scoped table
   [ ] created_at/updated_at/deleted_at (soft delete) conventions
   [ ] Automated backups + documented restore drill
