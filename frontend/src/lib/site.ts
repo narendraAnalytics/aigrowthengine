@@ -41,6 +41,9 @@ export const IMAGES = {
   aiPoweredSupport: cld("v1788069325/AIPoweredSupport_ttvyqf.png"),
   demandForecasting: cld("v1788069382/DemandForecasting_jbpm6j.png"),
   person1: cld("v1788069411/personimage1_zrwmkt.png"),
+  person2: cld("v1788087288/personimage2_ksjy9n.png"),
+  person3: cld("v1788087569/personimage3_ds2bxv.png"),
+  person4: cld("v1788087718/personimage4_vv9c64.png"),
 } as const;
 
 /** Ordered background slides for the hero carousel (first = LCP image). */
