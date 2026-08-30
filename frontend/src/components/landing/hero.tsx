@@ -35,8 +35,14 @@ export function Hero() {
             <AuthCtaButton
               signedInHref="/business-assessment"
               className="btn-gold inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-[0.95rem] font-bold transition hover:-translate-y-0.5"
+              signedInChildren={
+                <>
+                  View Your AI Opportunities
+                  <Icon.arrowRight className="size-4" />
+                </>
+              }
             >
-              Start Your Free Assessment
+              Discover Your AI Opportunity
               <Icon.arrowRight className="size-4" />
             </AuthCtaButton>
             <GlassLink href="#how">

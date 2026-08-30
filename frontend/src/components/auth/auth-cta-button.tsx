@@ -12,10 +12,13 @@ import { Show, SignUpButton } from "@clerk/nextjs";
  */
 export function AuthCtaButton({
   children,
+  signedInChildren,
   className,
   signedInHref,
 }: {
   children: ReactNode;
+  /** Label shown once signed in; defaults to `children`. */
+  signedInChildren?: ReactNode;
   className: string;
   signedInHref: string;
 }) {
@@ -30,7 +33,7 @@ export function AuthCtaButton({
       </Show>
       <Show when="signed-in">
         <Link href={signedInHref} className={className}>
-          {children}
+          {signedInChildren ?? children}
         </Link>
       </Show>
     </>
