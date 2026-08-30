@@ -298,13 +298,18 @@ Goal: a production-shaped skeleton that deploys on day one.
   [ ] Add `--turbopack` explicitly to dev/build scripts (document the choice)
 
 1.3 Environment & config
-  [ ] Create src/env.ts using @t3-oss/env-nextjs (already installed — wire it)
+  [~] Create src/env.ts using @t3-oss/env-nextjs (already installed — wire it)
       server: DATABASE_URL, CLERK_SECRET_KEY, API_BASE_URL, SENTRY_AUTH_TOKEN
       client: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, NEXT_PUBLIC_POSTHOG_KEY,
               NEXT_PUBLIC_POSTHOG_HOST, NEXT_PUBLIC_APP_URL
-  [ ] .env.example committed; real .env.local git-ignored
+      PROGRESS 2026-08-30: CLERK keys + NEXT_PUBLIC_POSTHOG_KEY/_HOST +
+      NEXT_PUBLIC_APP_URL now set in local .env and listed in .env.example.
+      Consumed directly (Clerk auto-reads its keys; SITE.url reads APP_URL).
+      src/env.ts / t3-env validation layer still TODO.
+  [x] .env.example committed; real .env git-ignored (2026-08-30)
   [ ] Fail the build on missing/invalid env vars (this is the point of t3-env)
-  [ ] Secrets in Vercel/Cloud Run secret managers — never in the repo
+  [~] Secrets in Vercel/Cloud Run secret managers — never in the repo
+      (local .env git-ignored; add the same keys in Vercel Project Settings)
 
 1.4 next.config.ts (currently empty — fill it)
   [ ] cacheComponents: true  (explicit caching + PPR by default)
@@ -667,7 +672,9 @@ The long-term differentiator. Not the place security STARTS.
 ================================================================================
 CROSS-CUTTING TRACK 1 — SECURITY (every phase, never deferred)    (SEC)
 ================================================================================
-  [ ] Clerk on the frontend: ClerkProvider, sign-in/up routes, proxy.ts route matching
+  [~] Clerk on the frontend: ClerkProvider, sign-in/up routes, proxy.ts route matching
+      2026-08-30: ClerkProvider + src/proxy.ts done; auth via sign-up modal on
+      the CTAs. Dedicated /sign-in + /sign-up routes still TODO.
       (Next 16: proxy.ts + `export function proxy`, NOT middleware.ts)
   [ ] Clerk JWT verification in FastAPI: clerk-backend-api SDK or PyJWT RS256 against
       the cached JWKS. Verify iss, aud, exp, nbf, azp. Networkless where possible.
