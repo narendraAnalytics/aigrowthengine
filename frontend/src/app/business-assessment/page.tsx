@@ -1,0 +1,44 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
+
+export const metadata: Metadata = {
+  title: "Business Assessment",
+};
+
+export default async function BusinessAssessmentPage() {
+  const user = await currentUser();
+
+  // Auth always returns visitors to the landing page; this route is only
+  // meaningful once signed in.
+  if (!user) redirect("/");
+
+  const name =
+    user.username ??
+    user.firstName ??
+    user.primaryEmailAddress?.emailAddress?.split("@")[0] ??
+    "there";
+
+  return (
+    <main className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-6 py-24 text-center">
+      <p className="section-eyebrow mb-4">AI Opportunity Assessment</p>
+      <h1 className="font-heading text-[clamp(2rem,5vw,3rem)] leading-tight font-bold text-cream">
+        Welcome, {name}
+      </h1>
+      <p className="mt-5 text-cream-dim">
+        Your account is ready. The guided assessment — describe a business
+        problem, get an explainable opportunity score and a capability-backed
+        match — is coming next.
+      </p>
+      <div className="mt-9">
+        <Link
+          href="/"
+          className="btn-glass inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-[0.95rem] font-semibold"
+        >
+          Back to Home
+        </Link>
+      </div>
+    </main>
+  );
+}

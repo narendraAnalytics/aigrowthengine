@@ -18,7 +18,8 @@ const serwist = new Serwist({
   runtimeCaching: [
     /**
      * SECURITY: never let the service worker cache tenant / authenticated data.
-     * Anything under /api, /admin, /dashboard, /investor-room or that carries an
+     * Anything under /api, /admin, /dashboard, /investor-room, the Clerk auth
+     * routes, the authenticated assessment route, or that carries an
      * Authorization header must always hit the network.
      */
     {
@@ -27,6 +28,10 @@ const serwist = new Serwist({
         url.pathname.startsWith("/admin") ||
         url.pathname.startsWith("/dashboard") ||
         url.pathname.startsWith("/investor-room") ||
+        url.pathname.startsWith("/business-assessment") ||
+        url.pathname.startsWith("/__clerk") ||
+        url.pathname.startsWith("/sign-in") ||
+        url.pathname.startsWith("/sign-up") ||
         request.headers.has("Authorization"),
       handler: new NetworkOnly(),
     },

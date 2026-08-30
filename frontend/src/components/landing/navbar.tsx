@@ -3,8 +3,10 @@
 import { useEffect, useState, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Show, SignUpButton, UserButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { IMAGES, NAV_LINKS, SITE } from "@/lib/site";
+import { WelcomeName } from "@/components/auth/welcome-name";
 import { Icon } from "./icons";
 
 export function Navbar() {
@@ -95,12 +97,20 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link
-            href="/business-assessment"
-            className="btn-gold inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-bold"
-          >
-            Book a Demo <Icon.arrowRight className="size-3.5" />
-          </Link>
+          <Show when="signed-out">
+            <SignUpButton mode="modal">
+              <button
+                type="button"
+                className="btn-gold inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-bold"
+              >
+                Book a Demo <Icon.arrowRight className="size-3.5" />
+              </button>
+            </SignUpButton>
+          </Show>
+          <Show when="signed-in">
+            <WelcomeName className="text-sm font-semibold text-cream" />
+            <UserButton />
+          </Show>
         </div>
 
         <button
@@ -144,13 +154,23 @@ export function Navbar() {
           ))}
           <div className="mx-2 my-3 h-px bg-gold-400/15" />
           <div className="px-1 pb-1">
-            <Link
-              href="/business-assessment"
-              onClick={() => setOpen(false)}
-              className="btn-gold block rounded-xl px-4 py-3 text-center text-sm font-bold"
-            >
-              Book a Demo
-            </Link>
+            <Show when="signed-out">
+              <SignUpButton mode="modal">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="btn-gold block w-full rounded-xl px-4 py-3 text-center text-sm font-bold"
+                >
+                  Book a Demo
+                </button>
+              </SignUpButton>
+            </Show>
+            <Show when="signed-in">
+              <div className="flex items-center justify-between rounded-xl border border-gold-400/25 px-4 py-2.5">
+                <WelcomeName className="text-sm font-semibold text-cream" />
+                <UserButton />
+              </div>
+            </Show>
           </div>
         </div>
       </div>

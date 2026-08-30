@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Manrope } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 import "./globals.css";
 import { SITE } from "@/lib/site";
 
@@ -57,7 +59,27 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${fontSans.variable} ${fontHeading.variable} h-full`}
     >
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        <ClerkProvider
+          afterSignOutUrl="/"
+          signInForceRedirectUrl="/"
+          signUpForceRedirectUrl="/"
+          appearance={{
+            theme: dark,
+            variables: {
+              colorPrimary: "#e3a83f",
+              colorBackground: "#1f1220",
+              colorForeground: "#f2e4cd",
+              colorInput: "rgba(255,255,255,0.04)",
+              colorInputForeground: "#f2e4cd",
+              borderRadius: "0.75rem",
+              fontFamily: "var(--font-sans)",
+            },
+          }}
+        >
+          {children}
+        </ClerkProvider>
+      </body>
     </html>
   );
 }

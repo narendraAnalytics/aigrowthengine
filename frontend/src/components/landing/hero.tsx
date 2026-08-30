@@ -1,7 +1,8 @@
+import { AuthCtaButton } from "@/components/auth/auth-cta-button";
 import { TRUST_LOGOS } from "./content";
 import { HeroCarousel } from "./hero-carousel";
 import { Icon } from "./icons";
-import { GoldLink, GlassLink } from "./primitives";
+import { GlassLink } from "./primitives";
 import { Reveal } from "./reveal";
 import { StatsPanel } from "./stats-panel";
 
@@ -31,9 +32,13 @@ export function Hero() {
           </p>
 
           <div className="mt-9 flex flex-wrap gap-4">
-            <GoldLink href="/business-assessment">
+            <AuthCtaButton
+              signedInHref="/business-assessment"
+              className="btn-gold inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-[0.95rem] font-bold transition hover:-translate-y-0.5"
+            >
               Start Your Free Assessment
-            </GoldLink>
+              <Icon.arrowRight className="size-4" />
+            </AuthCtaButton>
             <GlassLink href="#how">
               How It Works <Icon.play className="size-3" />
             </GlassLink>
