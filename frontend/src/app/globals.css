@@ -1,0 +1,226 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------ *
+ * AI Growth Engine — brand theme
+ * Dark "plum + gold + magenta" system. The product commits to a
+ * single dark look (see samplefolder/AI Growth Engine.dc.html).
+ * ------------------------------------------------------------------ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-heading);
+
+  /* brand scale */
+  --color-plum-950: #150a19;
+  --color-plum-900: #170c1c;
+  --color-plum-800: #1f1220;
+  --color-plum-700: #251428;
+  --color-gold-300: #f3cd7c;
+  --color-gold-400: #e3a83f;
+  --color-gold-500: #dba85a;
+  --color-magenta-400: #c9558f;
+  --color-mint-400: #6fae94;
+
+  --color-cream: #f2e4cd;
+  --color-cream-dim: #d9c6ac;
+  --color-muted-warm: #c2ac97;
+  --color-faint: #a98f9c;
+
+  --color-hairline: color-mix(in oklab, #e3a83f 22%, transparent);
+
+  /* shadcn token bridge (kept so ui/* primitives still theme correctly) */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+
+  --animate-shimmer: shimmer 6s linear infinite;
+  --animate-float-glow: floatGlow 7s ease-in-out infinite;
+}
+
+:root {
+  --background: #1f1220;
+  --foreground: #f2e4cd;
+
+  --card: #241426;
+  --card-foreground: #f2e4cd;
+  --popover: #241426;
+  --popover-foreground: #f2e4cd;
+
+  --primary: #e3a83f;
+  --primary-foreground: #2a1608;
+  --secondary: #34203a;
+  --secondary-foreground: #f2e4cd;
+  --muted: #2c1a30;
+  --muted-foreground: #c2ac97;
+  --accent: #34203a;
+  --accent-foreground: #f2e4cd;
+  --destructive: oklch(0.62 0.2 25);
+
+  --border: color-mix(in oklab, #e3a83f 22%, transparent);
+  --input: color-mix(in oklab, #e3a83f 25%, transparent);
+  --ring: #e3a83f;
+
+  --radius: 0.75rem;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes floatGlow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, #e3a83f 35%, transparent);
+    color: #fff;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    @apply font-heading;
+    text-wrap: balance;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Frosted panel used across the marketing site */
+  .glass-panel {
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklab, #5a3a4e 40%, transparent),
+      color-mix(in oklab, #301c30 32%, transparent)
+    );
+    border: 1px solid color-mix(in oklab, #e3a83f 25%, transparent);
+    box-shadow:
+      0 20px 50px rgba(10, 4, 14, 0.4),
+      inset 0 1px 0 rgba(255, 235, 190, 0.06);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+  }
+
+  .glass-card {
+    background: linear-gradient(
+      150deg,
+      color-mix(in oklab, #46283f 32%, transparent),
+      color-mix(in oklab, #281828 22%, transparent)
+    );
+    border: 1px solid color-mix(in oklab, #e3a83f 18%, transparent);
+    box-shadow: 0 12px 32px rgba(10, 4, 14, 0.3);
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(90deg, #f3cd7c, #e3a83f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-shimmer {
+    background: linear-gradient(90deg, #f3cd7c, #e3a83f, #c9558f, #f3cd7c);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: var(--animate-shimmer);
+  }
+
+  .btn-gold {
+    background: linear-gradient(135deg, #f3cd7c, #e3a83f);
+    color: #2a1608;
+    box-shadow: 0 10px 30px rgba(227, 168, 63, 0.35);
+  }
+
+  .btn-gold:hover {
+    filter: brightness(1.05);
+  }
+
+  .btn-glass {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(240, 224, 198, 0.25);
+    color: #f0e0c6;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .btn-glass:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .section-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: #f3cd7c;
+    text-transform: uppercase;
+  }
+}
