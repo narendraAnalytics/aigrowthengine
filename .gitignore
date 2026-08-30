@@ -5,6 +5,10 @@ samplefolder/
 *.txt
 *.md
 
+# ...except these project docs (root only)
+!/roadmap.txt
+!/README.md
+
 # ---------------------------------------------------------------------------
 # Dependencies & build output  (frontend/.gitignore also covers the app)
 # ---------------------------------------------------------------------------

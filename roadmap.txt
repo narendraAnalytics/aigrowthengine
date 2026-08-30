@@ -1,0 +1,818 @@
+# AI GROWTH ENGINE — END-TO-END BUILD ROADMAP
+# "Turn Business Challenges Into Growth Opportunities."
+#
+# Companion to FinalRoadMap.txt (the product/strategy document).
+# This file is the ENGINEERING EXECUTION checklist. Tick boxes as you complete work.
+#
+# Legend:  [ ] = todo   [~] = in progress   [x] = done   [!] = blocked
+# Owner tags: (FE) frontend  (BE) backend  (AI) ai/ml  (SEC) security  (OPS) infra/devops  (PROD) product
+#
+# Last reviewed: 2026-08-30
+# ==============================================================================
+
+
+================================================================================
+SECTION 0 — MARKET REALITY CHECK (researched 2026-08-30)
+Is this worth building as a startup? Short answer: yes — but ONLY as described
+below. The platform is not the business; it is the acquisition engine for the
+services business. Build it that way or it becomes an expensive brochure.
+================================================================================
+
+THE TAILWIND IS REAL
+  * AI consulting market ~$11–14B in 2026, growing ~24–26%/yr through 2035.
+  * Purpose-built AI agent software spend forecast ~$206.5B in 2026 (+139% YoY).
+  * SMB AI adoption jumped 22% (2024) → 38% (2026); McKinsey puts SMBs using AI in
+    at least one function at 68%, up from 41%.
+  * SMBs automating back-office/support report 22–40% cost reduction; ~250% ROI
+    claimed within 18 months.
+  * India advantage: comparable delivery at a fraction of US/UK implementation cost.
+    Typical first meaningful B2B deployment lands $25K–$300K.
+
+THE HEADWINDS ARE ALSO REAL — plan around these, do not ignore them
+  * 74% of GenAI pilots never reach scaled production. "Pilot purgatory" is caused
+    by evaluation infrastructure, integration depth and governance — NOT model
+    quality. Our Phase 3.6 eval harness + Phase 10 TRiSM are the direct answer.
+  * ~80% of AI startups are projected to fail by end-2026. The three documented
+    killers: commoditization by foundation-model providers, burn before revenue,
+    and no data moat.
+  * "Thin wrappers around Gemini/GPT" are explicitly called out as extinct. An
+    assessment form that pipes text to an LLM IS a thin wrapper.
+  * Free AI-readiness assessments already exist from Microsoft, Google Cloud, Cisco,
+    Salesforce, SAS, AWS, SAIRA, Elevates.AI. Most exist purely as lead magnets.
+    We are entering a crowded lead-magnet category — the assessment alone is NOT
+    the differentiator.
+
+WHERE OUR DEFENSIBILITY ACTUALLY COMES FROM
+  Ranked by how hard they are to copy:
+
+  1. THE CAPABILITY LIBRARY AS A HONEST CONSTRAINT.
+     Every competitor's assessment recommends "AI transformation" in the abstract.
+     Ours can only recommend things we have actually built, with a real case study
+     attached. The <50% "we can't confidently map this" path is the single most
+     differentiating decision in the whole spec. Protect it. Never soften it into
+     a generic upsell.
+
+  2. THE GROWTH FLYWHEEL = THE DATA MOAT.
+     Projects → outcomes → case studies → richer capability library → better
+     matching → better qualified leads. Proprietary data is a moat only when it
+     changes product behaviour; here it directly changes what the matcher returns.
+     Instrument this from day one: capture every human correction to an AI match
+     (Phase 4 "manual score override with mandatory reason"). That correction log
+     IS the training asset. Do not treat it as an audit afterthought.
+
+  3. EXPLAINABILITY AS A SALES WEAPON.
+     Deterministic backend scoring + the "Why 91?" panel means the model never
+     holds business authority. In a market where 74% of pilots die on governance,
+     "our AI cannot hallucinate a recommendation, and here is the audit trail"
+     closes enterprise deals that a better demo does not.
+
+  4. TRUST/TRiSM AS THE PRODUCT, EVENTUALLY.
+     The Investor Room and AI Gateway are not side features — they are the live
+     proof of the security capability we sell. We eat our own dog food publicly.
+
+HOW TO MAKE IT SUCCEED — the operating rules
+  [ ] PICK ONE VERTICAL FIRST. "Every business" is the fatal generic-startup
+      mistake. Choose 1–2 industries where we have real delivery experience
+      (e.g. manufacturing back-office, or professional-services finance ops) and
+      author the first 10 capabilities ONLY for those. Horizontal comes later.
+  [ ] SELL THE OUTCOME, NOT THE ASSESSMENT. The assessment is free and fast; the
+      revenue is the pilot. Target: assessment → consultation ≥20%, consultation
+      → paid pilot ≥25% (FinalRoadMap §8).
+  [ ] PRICE IN THREE TIERS. Paid diagnostic/discovery sprint (small, fast, proves
+      value) → fixed-price pilot → retained "Automation as a Service" (AaaS)
+      monthly. AaaS is the fastest-growing model in this space in 2026 and turns
+      project revenue into recurring revenue. Separate access (subscription) from
+      consumption (usage/credits) so margins stay safe as Gemini spend scales.
+  [ ] GET 3 REAL CASE STUDIES BEFORE POLISHING THE PLATFORM. The flywheel is dead
+      without them and no amount of frontend work substitutes. Deliver the first
+      projects manually if necessary — the platform's job is to make project 4–40
+      repeatable, not project 1.
+  [ ] DEFINE THE CONTROL BUDGET. No GPU burn here (we call Gemini), but token
+      spend, Neon, Vercel and Cloud Run add up. Track cost-per-assessment from
+      Sprint 3; it must stay well under the value of a qualified lead.
+  [ ] DO NOT BUILD THE INVESTOR ROOM UNTIL YOU ARE ACTUALLY RAISING. It is Phase 7
+      for a reason. Traction first, data room second.
+  [ ] KILL CRITERIA. If after Sprint 7 (MVP validation with real users) the
+      assessment → consultation rate is under ~10% and no paid pilot has closed,
+      the problem is positioning or vertical choice, not the code. Re-pick the
+      vertical before writing Phase 6+.
+
+THE ONE-SENTENCE POSITIONING TO DEFEND
+  "The only AI assessment that will tell you when we cannot help you — because
+   every recommendation is backed by something we have already shipped."
+
+
+================================================================================
+SECTION A — CURRENT STATE AUDIT (verified against the repo, 2026-08-30)
+================================================================================
+
+What actually exists today:
+
+  d:\2025\aigrowthengine\
+  ├── FinalRoadMap.txt          <- product spec (source of truth for WHAT)
+  ├── roadmap.txt               <- this file (source of truth for HOW/WHEN)
+  └── frontend\                 <- has its own .git repo (NOT the project root)
+      ├── AGENTS.md / CLAUDE.md <- auto-generated by `next dev`
+      ├── components.json       <- shadcn, style "base-nova", baseColor neutral
+      ├── next.config.ts        <- EMPTY (no config at all)
+      ├── tsconfig.json         <- strict:true, target ES2017, @/* -> ./src/*
+      ├── postcss.config.mjs
+      ├── public\               <- only default next/vercel SVGs
+      └── src\
+          ├── app\              <- layout.tsx + page.tsx (UNTOUCHED create-next-app)
+          ├── components\ui\    <- 18 shadcn primitives already added
+          └── lib\utils.ts
+
+  shadcn primitives present (18): avatar, badge, button, card, checkbox, dialog,
+  dropdown-menu, input, label, progress, radio-group, select, separator, sheet,
+  table, tabs, textarea, tooltip
+
+Installed stack (frontend/package.json):
+  next 16.3.3 · react 19.2.8 · tailwindcss v4 · typescript 5
+  @clerk/nextjs 7.8.3 · @sentry/nextjs 10.72.0 · @serwist/next 9.5.12 · serwist 9.5.12
+  posthog-js 1.422.5 · @tanstack/react-query 5.102.8 · react-hook-form 7.87.0
+  zod 4.5.4 · @hookform/resolvers 5.9.1 · @t3-oss/env-nextjs 0.13.11
+  axios 1.20.0 · @base-ui/react 1.7.0 · lucide-react · cva · clsx · tailwind-merge
+  date-fns · tw-animate-css · shadcn 4.19.0
+
+CRITICAL GAP ANALYSIS — installed but NOT wired up:
+  [ ] Clerk       — dependency present, zero code. No <ClerkProvider>, no proxy.ts.
+  [x] Serwist     — WIRED 2026-08-30. manifest.ts, sw.ts (NetworkOnly for auth
+                    routes), ~offline page, pwa-prompt (install + update toast),
+                    withSerwistInit in next.config. Build = `next build --webpack`
+                    (Serwist has no Turbopack build yet). Verified: sw.js emitted,
+                    manifest + /~offline serve 200.
+  [ ] Sentry      — dependency present, zero code. No instrumentation files.
+  [ ] PostHog     — dependency present, zero code. No provider, no event taxonomy.
+  [ ] React Query — dependency present, zero code. No QueryClientProvider.
+  [ ] t3-env      — dependency present, zero code. No env.ts, no .env.example.
+  [ ] axios       — dependency present, zero code. No API client / interceptors.
+
+MISSING ENTIRELY:
+  [ ] Backend (no FastAPI app, no Python at all)
+  [ ] Database (no Neon project, no models, no Alembic)
+  [ ] Any AI integration (no Gemini SDK)
+  [ ] Linting/formatting (no ESLint, no Prettier — `next lint` was removed in v16)
+  [ ] Testing (no Vitest, no Playwright, no pytest)
+  [ ] CI/CD (no .github/)
+  [ ] Monorepo root (frontend/ owns the only .git — repo layout must be fixed)
+  [ ] .env.example, .nvmrc, .editorconfig
+  [x] Real metadata (layout.tsx — done 2026-08-30)
+
+VERSION-SPECIFIC LANDMINES (Next.js 16 — differs from most training data / tutorials):
+  * `middleware.ts` is DEPRECATED → renamed to `proxy.ts` (export `proxy`, not
+    `middleware`). Codemod: npx @next/codemod@canary middleware-to-proxy .
+  * Turbopack is the DEFAULT bundler and is GA. next-pwa cannot work (needs webpack).
+    Serwist is the correct choice; it supports Turbopack.
+  * Async Request APIs: cookies(), headers(), params, searchParams MUST be awaited.
+  * Caching is explicit: enable `cacheComponents: true` and opt in with `use cache`.
+    PPR is now the default behaviour under cacheComponents (no experimental.ppr).
+  * `runtime = 'edge'` route export is deprecated under Cache Components (Node only).
+  * Always read node_modules/next/dist/docs/ before writing framework code.
+  * VERSION STATUS (verified 2026-08-30): Next.js 16 is Active LTS. 16.3 shipped
+    2026-08-03; 16.3.3 (installed) is the 2026-08-25 security release — you are
+    current, keep it patched. Turbopack is the default and only supported bundler
+    path for PWA here (next-pwa needs webpack and is out).
+
+
+================================================================================
+SECTION B — TARGET REPOSITORY LAYOUT
+================================================================================
+
+  aigrowthengine/                  <- git root lives HERE (move it up from frontend/)
+  ├── apps/
+  │   ├── web/                     <- Next.js 16 PWA (current frontend/)
+  │   └── api/                     <- FastAPI service
+  ├── packages/
+  │   ├── types/                   <- shared TS types generated from OpenAPI
+  │   └── config/                  <- shared eslint/ts/tailwind config
+  ├── infra/                       <- IaC, Dockerfiles, deploy manifests
+  ├── docs/                        <- ADRs, ERD, API contract, runbooks
+  ├── .github/workflows/           <- CI/CD
+  ├── FinalRoadMap.txt
+  └── roadmap.txt
+
+  apps/api/ internal layout (layered — endpoints ≠ business logic ≠ data access):
+    app/
+      main.py            · api/v1/routers/    · schemas/   (pydantic)
+      core/ (config,     · services/          · models/    (sqlalchemy)
+        security, logging)  (no HTTP/DB import)  repositories/
+      db/ (session, base)· ai/ (gemini, prompts, validators, scoring)
+      workers/           · tests/
+    alembic/
+
+
+================================================================================
+PHASE 0 — SPECIFICATION FREEZE                                    (PROD/SEC)
+Goal: nothing ambiguous remains before production code is written.
+================================================================================
+
+0.1 Product definition
+  [ ] Write docs/PRD.md — problem, ICP, personas, non-goals
+  [ ] Lock user types: Prospect, Client, Investor, Admin, Sales, Engineer, Security, Mgmt
+  [ ] Lock org model: external orgs (client companies) + internal org (our company)
+  [ ] Define the 8–10 assessment questions verbatim (final copy, not placeholders)
+  [ ] Write the "no confident match" copy + Request Expert Review flow
+
+0.2 Capability taxonomy  (BLOCKS Phase 3 — do this early)
+  [ ] Define the Capability schema (name, description, problem_types[], industries[],
+      integrations[], technologies[], security_requirements[], delivery_status,
+      typical_implementation, related_case_studies[])
+  [ ] Author 10–20 REAL capabilities we can actually deliver. No filler entries.
+  [ ] Define problem_type controlled vocabulary (the classifier's label set)
+  [ ] Define industry controlled vocabulary (NAICS-lite, ~20 values)
+  [ ] Peer-review with whoever will actually deliver these projects
+
+0.3 Lead scoring specification
+  [ ] Freeze the 7 factors + weights (25/20/15/15/10/10/5 = 100)
+  [ ] Define per-factor rubric: what earns 0, partial, full — in writing
+  [ ] Define band thresholds (e.g. HIGH ≥75, MEDIUM 50–74, LOW <50)
+  [ ] EXPLICIT RULE: Gemini emits SIGNALS ONLY. The backend computes the number.
+      Any prompt that asks the model for a final score is a defect.
+  [ ] Define match thresholds: Strong ≥80% · Partial 50–79% · None <50%
+
+0.4 Data & API contract
+  [ ] docs/ERD.md — full entity-relationship diagram
+  [ ] docs/api-contract.md — every v1 endpoint, request/response, error codes
+  [ ] Standard error envelope { code, message, details[], request_id }
+  [ ] Pagination/filtering/sorting convention (cursor-based)
+  [ ] Idempotency-Key convention for POSTs that create billable/AI work
+
+0.5 Security model
+  [ ] docs/security-model.md — roles × permissions matrix (RBAC)
+  [ ] Tenant isolation rule: EVERY tenant-scoped table carries organization_id;
+      every query filters on it at the repository layer, not ad hoc
+  [ ] Investor access levels: Public / Registered / Approved / Restricted
+  [ ] Audit event catalogue (what gets logged, retention period)
+  [ ] Threat model (STRIDE) for: assessment intake, file access, investor room, AI gateway
+  [ ] PII classification + data retention/deletion policy (GDPR/DPDP-ready)
+
+0.6 Analytics specification
+  [ ] docs/analytics-events.md — event names, properties, when fired, who owns them
+  [ ] Snake_case naming convention, versioned event schema
+  [ ] Map every funnel stage in FinalRoadMap §10 to an event
+
+0.7 MVP success criteria
+  [ ] Copy the numeric targets from FinalRoadMap §8 into a dashboard spec
+  [ ] Define how each is measured (which event / query)
+
+PHASE 0 EXIT: All 7 docs exist in docs/ and are reviewed.
+
+  NUANCE (per overview.txt review): Phase 0 blocks PRODUCTION FEATURE development,
+  not foundation work. Phase 1 (repo, CI, env, Clerk, FastAPI skeleton, Neon,
+  design-system scaffold, Serwist wiring) may run IN PARALLEL with Phase 0 doc
+  authoring. The hard gate is: no assessment/scoring/CRM feature code is written
+  until 0.2 (capability taxonomy), 0.3 (scoring spec) and 0.4 (API contract) are
+  frozen. Everything else can proceed so the team is never idle.
+
+
+================================================================================
+PHASE 1 — ENGINEERING FOUNDATION                                  (OPS/FE/BE)
+Goal: a production-shaped skeleton that deploys on day one.
+================================================================================
+
+1.1 Repository hygiene
+  [ ] Move git root: init at aigrowthengine/, migrate frontend/ history, or accept
+      a fresh root repo. DECIDE AND DO IT NOW — this gets harder every week.
+  [ ] Restructure to apps/web + apps/api + packages/ (Section B)
+  [ ] Add .gitignore (node_modules, .next, .venv, __pycache__, .env*, .serwist)
+  [ ] Add .editorconfig, .nvmrc (pin Node 22 LTS), .python-version (3.12)
+  [ ] Add LICENSE + README.md (real one, not the create-next-app default)
+  [ ] Branch protection on main; require PR + green CI
+  [ ] Conventional Commits + commitlint; CODEOWNERS
+
+1.2 Frontend tooling (currently absent)
+  [ ] ESLint 9 flat config (`next lint` was removed in v16 — use eslint directly)
+      eslint-config-next, @typescript-eslint, jsx-a11y, import ordering
+  [ ] Prettier + prettier-plugin-tailwindcss
+  [ ] Husky + lint-staged pre-commit hook
+  [ ] package.json scripts: lint, format, typecheck, test, test:e2e, analyze
+  [ ] Tighten tsconfig: target ES2022, noUncheckedIndexedAccess,
+      noImplicitOverride, exactOptionalPropertyTypes
+  [ ] Add `--turbopack` explicitly to dev/build scripts (document the choice)
+
+1.3 Environment & config
+  [ ] Create src/env.ts using @t3-oss/env-nextjs (already installed — wire it)
+      server: DATABASE_URL, CLERK_SECRET_KEY, API_BASE_URL, SENTRY_AUTH_TOKEN
+      client: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, NEXT_PUBLIC_POSTHOG_KEY,
+              NEXT_PUBLIC_POSTHOG_HOST, NEXT_PUBLIC_APP_URL
+  [ ] .env.example committed; real .env.local git-ignored
+  [ ] Fail the build on missing/invalid env vars (this is the point of t3-env)
+  [ ] Secrets in Vercel/Cloud Run secret managers — never in the repo
+
+1.4 next.config.ts (currently empty — fill it)
+  [ ] cacheComponents: true  (explicit caching + PPR by default)
+  [ ] Security headers: Content-Security-Policy (nonce-based, strict-dynamic),
+      X-Content-Type-Options: nosniff, Referrer-Policy: strict-origin-when-cross-origin,
+      Permissions-Policy, X-Frame-Options: DENY, Strict-Transport-Security
+  [ ] poweredByHeader: false
+  [ ] images.remotePatterns for R2 CDN domain
+  [ ] Wrap with withSerwist + withSentryConfig (order matters — Serwist innermost)
+  [ ] typedRoutes: true
+  [ ] Bundle analyzer behind an ANALYZE env flag
+
+1.5 Backend scaffold (apps/api)
+  [ ] Python 3.12 + uv (or Poetry) for dependency management
+  [ ] FastAPI + uvicorn/gunicorn, Pydantic v2 settings from env
+  [ ] SQLAlchemy 2.0 ASYNC: create_async_engine + async_sessionmaker,
+      pool_pre_ping=True, pool_size/max_overflow tuned for Neon pooler
+  [ ] Alembic initialised with the ASYNC template; first migration = baseline
+  [ ] Layered structure enforced: routers → services → repositories
+      (services import no HTTP; repositories are the only DB touchpoint)
+  [ ] Every endpoint declares response_model; schemas use
+      model_config = ConfigDict(from_attributes=True)
+  [ ] Structured JSON logging with request_id correlation (structlog)
+  [ ] /healthz (liveness) and /readyz (DB reachable) endpoints
+  [ ] Global exception handler emitting the standard error envelope
+  [ ] CORS locked to known origins only
+  [ ] Rate limiting (slowapi/Redis) on public endpoints
+  [ ] OpenAPI schema published; generate packages/types from it (openapi-typescript)
+
+1.6 Database (Neon)
+  [ ] Create Neon project; branches: production / staging / dev-<name>
+  [ ] Enable pgvector extension (needed from Phase 8, install now)
+  [ ] Connection pooling endpoint for serverless callers
+  [ ] Phase-1 tables: users, organizations, organization_members, companies,
+      assessments, assessment_results
+  [ ] organization_id NOT NULL + index on every tenant-scoped table
+  [ ] created_at/updated_at/deleted_at (soft delete) conventions
+  [ ] Automated backups + documented restore drill
+
+1.7 Observability
+  [ ] Sentry: instrumentation.ts + instrumentation-client.ts + global-error.tsx
+      (Next 16 uses instrumentation files, NOT sentry.*.config.ts)
+  [ ] Source map upload in CI; release tagging by git SHA
+  [ ] Sentry Python SDK on FastAPI with tracing
+  [ ] PII scrubbing rules in Sentry before any real user hits it
+  [ ] Uptime monitoring on /healthz for both services
+
+1.8 CI/CD
+  [ ] .github/workflows/ci.yml — lint · typecheck · unit · build (web + api matrix)
+  [ ] Backend CI: ruff · mypy · pytest · alembic upgrade head against ephemeral DB
+  [ ] Dependency scanning (Dependabot) + npm audit / pip-audit gate
+  [ ] Secret scanning (gitleaks)
+  [ ] Preview deploys per PR (Vercel) + Neon branch per PR
+  [ ] Staging auto-deploy on main; production behind manual approval
+  [ ] Migrations run as a separate, ordered deploy step — never inside app startup
+
+PHASE 1 EXIT: `git push` → CI green → staging URL live with a real health check.
+
+
+================================================================================
+PHASE 2 — DESIGN SYSTEM · PUBLIC SITE · PWA                       (FE)
+Goal: the professional front door, installable, fast, accessible.
+================================================================================
+
+NOTE 2026-08-30: A landing page was built ahead of the roadmap to match
+samplefolder/AI Growth Engine.dc.html (dark plum + gold + magenta). Partial
+credit ticked below; the rest of Phase 2 (route groups, providers, full design
+system, Lighthouse gate, dark/light) still stands.
+
+2.1 Design system
+  [x] Brand design tokens in globals.css (Tailwind v4 @theme): plum/gold/magenta
+      palette, glass utilities, shimmer/float motion. (spacing/elevation scale
+      still TODO)
+  [ ] Dark mode via next-themes; verify contrast in BOTH modes
+      (site currently commits to the dark look only — matches the sample)
+  [x] Replace the create-next-app Geist defaults with real brand fonts (next/font):
+      Bricolage Grotesque (headings) + Manrope (body)
+  [ ] Extend the 18 existing shadcn primitives; add: form, sonner (toast), skeleton,
+      accordion, command, popover, calendar, alert, breadcrumb, pagination, chart
+  [ ] Compose app-level components: PageHeader, EmptyState, StatCard, DataTable,
+      StepperForm, ScoreBadge, MatchMeter
+  [ ] Storybook (or a /kitchen-sink dev route) documenting every component
+  [ ] Accessibility baseline: focus rings, skip link, aria labels, keyboard paths
+
+2.2 App shell
+  [x] Fix layout.tsx metadata (was "Create Next App")
+  [x] Root metadata + metadataBase + openGraph + twitter defaults + viewport
+  [x] Navbar (responsive, mobile menu), Footer — landing versions in
+      src/components/landing/. Generic Container primitive still TODO.
+  [ ] error.tsx, not-found.tsx, loading.tsx, global-error.tsx per segment
+  [ ] Route groups: (marketing) / (app) / (investor) with distinct layouts
+  [ ] Providers: ClerkProvider, QueryClientProvider, PostHogProvider, ThemeProvider
+      — all in one composed <Providers> client boundary
+
+2.3 Public marketing routes
+  [x] /                     Landing (hero, platform, how-it-works, transformations,
+                            success stories, CTA, footer — matches sample design,
+                            responsive, Cloudinary images via next/image)
+  [ ] /solutions            Overview
+  [ ] /ai-automation
+  [ ] /ai-agents
+  [ ] /ai-security
+  [ ] /trism
+  [ ] /case-studies         + /case-studies/[slug]
+      Fixed template per study: Business Problem → What We Built → Technology →
+      Business Outcome (with a number) → Security Considerations. Real evidence
+      only — no "AI-powered intelligent transformation" filler. These pages are
+      the highest-converting sales asset; 3 real ones beat 30 pages of copy.
+  [ ] /about
+  [ ] /investors            (public tier of the Investor Room)
+  [ ] /contact
+  [ ] /legal/privacy, /legal/terms, /legal/security
+  [ ] Landing sections per FinalRoadMap §"Landing structure": Hero → Business Problem
+      → How It Works → Capabilities → Example Transformations → Security/TRiSM
+      → Case Studies → CTA
+  [ ] Primary CTA "Discover Your AI Opportunity" · Secondary "Talk to an Expert"
+
+2.4 Performance & SEO
+  [ ] Use `use cache` + cacheLife on marketing pages (they are static-ish)
+      (landing currently prerenders fully static — good enough for now)
+  [x] next/image on the landing page (fill + sizes; Cloudinary remotePattern
+      allowlisted). Extend to remaining pages as they are built.
+  [ ] app/sitemap.ts, app/robots.ts
+  [ ] JSON-LD structured data (Organization, Product, FAQ)
+  [ ] Dynamic OG images via ImageResponse
+  [ ] Lighthouse budget in CI: LCP <2.5s, CLS <0.1, INP <200ms, a11y ≥95
+  [ ] Verify no unnecessary "use client" — keep the client bundle lean
+
+2.5 PWA (Serwist — WIRED 2026-08-30)
+  [x] app/manifest.ts — name, short_name, icons (192/512 + maskable via Cloudinary
+      transforms), theme_color, background_color, display: standalone, start_url,
+      shortcuts
+  [x] Icons: generated from public/logoaipoweredbusiness.png (sharp) — src/app/
+      icon.png (favicon/tab) + apple-icon.png, public/icon-192/512 + maskable-512.
+      Default create-next-app favicon.ico removed. Manifest points at the local set.
+      TODO (polish): a purpose-drawn glyph rather than the padded full logo.
+  [x] src/app/sw.ts — typed Serwist SW (defaultCache + explicit NetworkOnly rule)
+  [x] withSerwistInit in next.config.ts (swSrc src/app/sw.ts, disable in dev)
+  [x] Runtime caching: defaultCache for static/marketing; explicit NetworkOnly for
+      /api, /admin, /dashboard, /investor-room and any Authorization-bearing request
+  [x] /~offline fallback page + document navigation fallback
+  [x] Install prompt UX (beforeinstallprompt) — src/components/pwa-prompt.tsx
+  [x] Update-available toast → reload (skipWaiting+clientsClaim in sw.ts)
+  [ ] iOS "add to home screen" instruction card (beforeinstallprompt is unsupported
+      on iOS Safari — needs the manual hint)
+  [x] SECURITY: NetworkOnly rule keeps auth tokens / org-scoped responses out of
+      the SW cache
+  [ ] Manually test installability on Android Chrome + iOS Safari + desktop
+      (build verified: sw.js emitted, /sw.js + manifest + /~offline serve 200)
+  [ ] Push notification scaffolding (VAPID keys, subscription table) — enable later
+
+PHASE 2 EXIT: Lighthouse ≥95 across the board, installable on mobile, offline
+fallback works, zero default create-next-app strings remain.
+  [x] zero default create-next-app strings on `/`
+  [x] offline fallback works
+  [ ] Lighthouse ≥95 pass recorded
+  [ ] installability confirmed on a real device
+
+
+================================================================================
+PHASE 3 — CAPABILITY LIBRARY + AI ASSESSMENT ENGINE               (BE/AI/FE)
+Goal: the product's core. THE most important phase.
+================================================================================
+
+3.1 Capability Library (backend)
+  [ ] capabilities table per the Phase-0 schema + Alembic migration
+  [ ] Seed script loading the 10–20 authored capabilities from versioned YAML/JSON
+  [ ] Admin CRUD API (RBAC-gated) + audit on every mutation
+  [ ] Public read API for the /solutions pages
+  [ ] HARD CONSTRAINT: the AI may only recommend capability IDs that exist here.
+      Enforce in code (validate returned IDs against the DB), not in the prompt.
+
+3.2 Assessment intake
+  [ ] /business-assessment multi-step form (react-hook-form + zod, both installed)
+  [ ] Fields: industry, business problem, frequency, current systems, desired outcome,
+      company size, urgency, budget signal, contact info
+  [ ] Per-step zod schemas; resumable draft saved to localStorage
+  [ ] Progress indicator; back/forward without data loss
+  [ ] Honeypot + Turnstile/hCaptcha + server-side rate limit (this endpoint is public)
+  [ ] POST /api/v1/assessments with Idempotency-Key
+  [ ] Fire PostHog events at every step (start, step_completed, abandon, submit)
+
+3.3 AI pipeline (backend)
+  Pipeline: Form → Validate → Classify → Capability Search → Gemini → Validate
+            → Assess → Score → Persist → Result Page
+  [ ] Input sanitisation + prompt-injection defence on all free-text fields
+  [ ] Problem classification into the controlled vocabulary
+  [ ] Capability shortlisting (keyword/tag filter in Phase 3; vector in Phase 8)
+  [ ] google-genai Python SDK; Gemini call with response_schema (Pydantic model)
+      + response_mime_type="application/json"
+  [ ] Model returns SIGNALS ONLY — never a score, never a capability it invented
+  [ ] Re-validate output with Pydantic even though the API claims schema compliance
+  [ ] Handle refusals, truncation, empty arrays, enum drift explicitly
+  [ ] Retry with exponential backoff; one repair-prompt attempt; then fail closed
+  [ ] Timeout + circuit breaker; graceful degradation to "Request Expert Review"
+  [ ] Log every call to ai_runs: prompt hash, model, tokens, latency, cost, outcome
+  [ ] Never send raw PII to the model — strip/pseudonymise contact fields
+  [ ] Run long assessments as a background job; poll or SSE for the result
+
+3.4 Match & score
+  [ ] Deterministic match-percentage function (pure, unit-tested, versioned)
+  [ ] Threshold routing: ≥80 recommend · 50–79 "requires consultation" · <50 no match
+  [ ] The <50 path returns the honest message + Request Expert Review CTA.
+      DO NOT invent a capability. This is a trust feature, not a failure.
+  [ ] Scoring engine: pure function (signals) → 7 factor scores → total
+  [ ] Persist the full factor breakdown, not just the total
+  [ ] scoring_version column so historical scores stay interpretable
+
+3.5 Result experience
+  [ ] /business-assessment/[id]/result — opportunity band, matched capability,
+      workflow diagram, "why this matches", similar case studies
+  [ ] "Why this score?" expandable panel showing all 7 factors
+  [ ] Shareable result link (signed, expiring token)
+  [ ] PDF export of the assessment
+  [ ] CTA: "Discuss This Opportunity" → creates the lead
+
+3.6 AI quality harness
+  [ ] Golden dataset: 30–50 real business problems with expected classifications
+  [ ] Automated eval run in CI: structured-output success ≥99%, match accuracy ≥90%
+  [ ] Hallucination test: assert zero out-of-library capability IDs, ever
+  [ ] Adversarial + prompt-injection test suite
+  [ ] Regression gate — a prompt change that drops eval scores fails the build
+  [ ] Prompts stored as versioned files, code-reviewed like source
+
+PHASE 3 EXIT: a real business problem in, a grounded capability-backed
+explainable assessment out, with eval numbers proving it.
+
+
+================================================================================
+PHASE 4 — CRM + LEAD MANAGEMENT                                   (BE/FE)
+Goal: assessments become commercial opportunities sales can act on.
+================================================================================
+  [ ] Tables: leads, contacts, lead_scores, lead_activities, lead_notes
+  [ ] Pipeline states: New → Reviewed → Qualified → Consultation → Proposal →
+      Pilot → Won → Implementation  (+ Not Qualified / Lost / On Hold)
+  [ ] State machine with legal-transition enforcement + full transition audit
+  [ ] Auto-create a lead when an assessment is submitted
+  [ ] /admin/leads — filterable, sortable, paginated table
+  [ ] /admin/leads/[id] — detail: company, problem, capability, match %, score,
+      status, next action, timeline
+  [ ] "Why 91?" score-explanation panel (sales trust depends on this)
+  [ ] Manual score override with mandatory reason + audit entry
+  [ ] Assignment to sales owner; @mention notes
+  [ ] /admin/dashboard — funnel counters (New/Qualified/Consultations/Proposals/
+      Pilots/Won) with date-range filter
+  [ ] CSV export (RBAC-gated, audited — this is a data-exfiltration path)
+  [ ] Email notification to sales on new high-score lead (Resend)
+  [ ] RBAC: only Admin/Sales roles reach /admin/*, enforced at the API layer too
+
+
+================================================================================
+PHASE 5 — CONSULTATION & COMMERCIAL JOURNEY                       (BE/FE)
+================================================================================
+  [ ] consultations table: lead_id, consultant, date, time, meeting_type, notes,
+      status, next_action
+  [ ] Booking UI (Cal.com embed or in-house slot picker)
+  [ ] Calendar integration + .ics invites; timezone-correct throughout
+  [ ] Reminder emails (T-24h, T-1h) + reschedule/cancel flows
+  [ ] Post-consultation structured notes form
+  [ ] proposals table + status workflow (Draft → Internal Review → Sent →
+      Accepted/Rejected)
+  [ ] Proposal draft generation (AI-assisted, Phase 9) — HUMAN APPROVAL MANDATORY.
+      No proposal leaves the system without an explicit human sign-off record.
+  [ ] Pricing logic as configuration, not hardcoded, not model-generated
+  [ ] E-signature integration (later)
+  [ ] Transactional email templates + delivery/bounce tracking
+
+
+================================================================================
+PHASE 6 — CLIENT PORTAL                                           (BE/FE/SEC)
+================================================================================
+  [ ] Clerk Organizations wired for client companies; invite flow
+  [ ] Org-switcher UI; active org drives every query
+  [ ] /dashboard — my opportunities, active projects, upcoming consultations
+  [ ] Tables: projects, project_members, project_milestones, documents
+  [ ] Project lifecycle: Discovery → Assessment → Consultation → Proposal → Pilot →
+      Implementation → Production → Scale
+  [ ] Document centre: proposals, SOWs, reports, deliverables, invoices, security docs
+  [ ] Cloudflare R2 private buckets; upload via presigned PUT
+  [ ] Download ONLY via short-lived presigned GET issued after an authorization check
+  [ ] Virus scanning + MIME/extension validation + size limits on upload
+  [ ] EVERY query filters organization_id at the repository layer
+  [ ] IDOR test suite: Client A must never read Client B's anything
+  [ ] Audit log for every document view/download
+  [ ] In-app notification centre
+
+
+================================================================================
+PHASE 7 — INVESTOR ROOM                                           (SEC/BE/FE)
+Goal: investor-grade access control that doubles as our security showcase.
+================================================================================
+  [ ] Tables: investors, investor_access, investor_documents, investor_events
+  [ ] Access levels: Public → Registered → Approved → Restricted/Due-Diligence
+  [ ] Access grant record: investor_id, access_level, granted_at, expires_at,
+      granted_by, status (ACTIVE/EXPIRED/REVOKED)
+  [ ] Expiry enforced server-side on EVERY request (never trust a cached claim)
+  [ ] Revocation takes effect immediately — invalidate sessions and presigned URLs
+  [ ] Admin approval workflow with a documented reviewer
+  [ ] /investor-room with content gated per level
+  [ ] Watermarked PDF viewing; download permission separate from view permission
+  [ ] Audit events: LOGIN, DOCUMENT_VIEW, DOCUMENT_DOWNLOAD, ACCESS_GRANTED,
+      ACCESS_CHANGED, ACCESS_REVOKED, ACCESS_EXPIRED
+  [ ] Investor engagement analytics for the founders
+  [ ] NDA acceptance gate before Restricted tier
+  [ ] Penetration test of this surface specifically before any real investor is invited
+
+
+================================================================================
+PHASE 8 — OPPORTUNITY INTELLIGENCE (pgvector / RAG)               (AI/BE)
+================================================================================
+  [ ] Enable pgvector on Neon; HNSW indexes
+  [ ] Tables: embeddings, case_studies, knowledge_chunks
+  [ ] Embedding pipeline for capabilities + case studies (chunk, embed, upsert)
+  [ ] Re-embedding job on content change; embedding_model_version tracked
+  [ ] Hybrid retrieval: vector similarity + keyword/tag filters
+  [ ] Reranking pass before the model sees candidates
+  [ ] Grounded generation: cite the retrieved capability/case-study IDs in the output
+  [ ] "We have implemented something similar" surface on result pages
+  [ ] Retrieval quality eval: recall@k on the golden dataset
+  [ ] Swap the Phase-3 keyword shortlist for this — behind a feature flag, measured
+
+
+================================================================================
+PHASE 9 — AI AGENTS                                               (AI/BE/SEC)
+Only after the MVP funnel is proven with real users.
+================================================================================
+  [ ] Tables: agents, agent_runs, agent_tools, agent_approvals
+  [ ] Agent framework decision + ADR (LangGraph vs. custom orchestration)
+  [ ] Tool registry with explicit per-agent allowlists
+  [ ] HUMAN-IN-THE-LOOP on every outward-facing or state-changing action
+  [ ] Per-run budget + step limits; hard kill switch per agent
+  [ ] Full run trace persisted (inputs, tool calls, outputs, approvals)
+  [ ] Agent 1 — Sales: new lead → analyse → prioritise → draft follow-up → approve → send
+  [ ] Agent 2 — Research: company → industry analysis → challenges → opportunities
+  [ ] Agent 3 — Proposal: opportunity + capability + notes → draft → human approval
+  [ ] Agent 4 — Client Support: question → identity → permission → retrieval → answer
+      (retrieval MUST be scoped to the caller's organization — enforce in the tool,
+      not the prompt)
+  [ ] Agent eval suite + red-team before any agent is enabled in production
+
+
+================================================================================
+PHASE 10 — AI SECURITY + TRiSM                                    (SEC)
+The long-term differentiator. Not the place security STARTS.
+================================================================================
+  [ ] AI Gateway: Identity → Policy → Permission → Data Protection → Tool Auth →
+      Execution → Audit
+  [ ] Centralised policy engine (OPA/Cedar or in-house rules)
+  [ ] Prompt-injection detection + output filtering at the gateway
+  [ ] PII redaction on the way in, unredaction on the way out where authorised
+  [ ] Per-tenant model usage quotas + cost attribution
+  [ ] Anomaly detection on agent behaviour
+  [ ] Tables: policies, security_events, ai_incidents
+  [ ] AI governance docs: model cards, risk register, incident runbook
+  [ ] Compliance track: SOC 2 readiness, ISO 42001 (AI management) gap analysis
+  [ ] Public trust page describing these controls (sales asset)
+
+
+================================================================================
+CROSS-CUTTING TRACK 1 — SECURITY (every phase, never deferred)    (SEC)
+================================================================================
+  [ ] Clerk on the frontend: ClerkProvider, sign-in/up routes, proxy.ts route matching
+      (Next 16: proxy.ts + `export function proxy`, NOT middleware.ts)
+  [ ] Clerk JWT verification in FastAPI: clerk-backend-api SDK or PyJWT RS256 against
+      the cached JWKS. Verify iss, aud, exp, nbf, azp. Networkless where possible.
+  [ ] AUTHORIZE AT THE RESOURCE, not only in proxy.ts. Clerk's own guidance —
+      proxy-level checks are a convenience, not the security boundary.
+  [ ] RBAC dependency in FastAPI: require_role() / require_org_member()
+  [ ] Tenant isolation enforced in the repository layer + integration tests proving it
+  [ ] All user input validated with zod (FE) and Pydantic (BE) — trust neither side
+  [ ] SQL: parameterised only (SQLAlchemy handles this — no raw f-string SQL, ever)
+  [ ] CSRF protection on cookie-based mutations
+  [ ] Nonce-based CSP with strict-dynamic; no unsafe-inline in production
+  [ ] Rate limiting + bot protection on all public endpoints
+  [ ] Secrets rotation policy + documented owner
+  [ ] audit_events table: actor, action, resource, org, ip, ua, timestamp, metadata.
+      Append-only. Every sensitive action writes one.
+  [ ] Security headers verified in production (securityheaders.com A+)
+  [ ] Dependency + container scanning in CI
+  [ ] Third-party pentest before public launch
+  [ ] Incident response runbook + on-call rotation
+
+
+================================================================================
+CROSS-CUTTING TRACK 2 — TESTING                                   (ALL)
+================================================================================
+Frontend
+  [ ] Vitest + React Testing Library; ≥70% coverage on lib/ and components/
+  [ ] Zod schema tests for every form
+  [ ] Playwright E2E: assessment happy path, auth, org switch, investor gating
+  [ ] axe-core accessibility assertions in E2E
+  [ ] Visual regression on key pages
+  [ ] Mobile viewport + PWA install E2E
+Backend
+  [ ] pytest + pytest-asyncio; ≥80% coverage on services/
+  [ ] httpx AsyncClient API tests against a real ephemeral Postgres (testcontainers)
+  [ ] Repository tests asserting organization_id filtering
+  [ ] Authorization matrix tests: every role × every endpoint
+  [ ] Alembic up/down round-trip test
+AI
+  [ ] Golden-dataset eval (see 3.6) run on every prompt/model change
+  [ ] Structured-output success rate assertion ≥99%
+  [ ] Zero-hallucination assertion on capability IDs
+  [ ] Prompt-injection corpus
+Security
+  [ ] IDOR, RBAC bypass, tenant isolation, file access, API abuse, session fixation,
+      investor access escalation — each as an automated test
+Load
+  [ ] k6/Locust on the assessment endpoint; define and verify the SLO
+
+
+================================================================================
+CROSS-CUTTING TRACK 3 — ANALYTICS & KPIs                          (PROD)
+================================================================================
+  [ ] PostHog provider + pageview capture (manual, App Router — autocapture misses
+      client-side navigations if misconfigured)
+  [ ] identify() on sign-in; group() on organization
+  [ ] Funnel events: visitor → assessment_started → assessment_completed →
+      capability_matched → qualified → consultation → proposal → pilot → won
+  [ ] Product KPI dashboard (FinalRoadMap §"Core Product KPIs")
+  [ ] AI KPI dashboard: response success, structured-output success, match accuracy,
+      human correction rate, unsupported-recommendation rate, hallucination rate, latency
+  [ ] Security KPI dashboard: unauthorized access, isolation violations, investor
+      access violations, audit coverage, policy violations
+  [ ] Feature flags via PostHog for risky rollouts
+  [ ] Session replay ON with strict PII masking; document the privacy notice
+  [ ] Cookie consent gating analytics in the EU
+  [ ] Weekly KPI review ritual; recalibrate the §8 targets after real data
+
+
+================================================================================
+CROSS-CUTTING TRACK 4 — DEPLOYMENT                                (OPS)
+================================================================================
+Development   [ ] Local Next.js + local FastAPI + Neon dev branch + docker-compose
+Staging       [ ] Vercel preview + Cloud Run/Render staging + Neon staging branch
+Production    [ ] Vercel + Cloud Run/Render + Neon prod + R2 + Sentry + PostHog
+  [ ] Custom domain + TLS + HSTS preload
+  [ ] Dockerfile for the API (multi-stage, non-root user, distroless-ish base)
+  [ ] Zero-downtime deploys; readiness gates
+  [ ] Migration strategy: expand → deploy → contract (never a breaking migration
+      in the same release as the code that needs it)
+  [ ] Documented rollback procedure, rehearsed at least once
+  [ ] Cost monitoring + budget alerts (Gemini spend is the one to watch)
+  [ ] Status page + documented SLOs
+  [ ] Nightly DB backup verification
+
+
+================================================================================
+MVP SCOPE — SHIP THIS FIRST
+================================================================================
+IN:
+  [ ] Landing page + core marketing routes  (Phase 2)
+  [ ] PWA installable                        (Phase 2.5)
+  [ ] Assessment form                        (Phase 3.2)
+  [ ] Capability Library (10–20 real)        (Phase 3.1)
+  [ ] Gemini assessment, grounded            (Phase 3.3)
+  [ ] Explainable lead score                 (Phase 3.4)
+  [ ] Result page with "Why this score?"     (Phase 3.5)
+  [ ] Lead CRM + sales dashboard             (Phase 4)
+  [ ] Consultation booking                   (Phase 5, booking only)
+  [ ] PostHog funnel analytics               (Track 3)
+  [ ] Audit logging                          (Track 1)
+
+DELIBERATELY OUT of the MVP:
+  20 AI agents · complex RAG · advanced TRiSM · payments · full investor data room ·
+  massive CRM · WhatsApp automation · workflow orchestration · multi-model infra
+
+DEFINITION OF DONE for release 1 — not "the website looks good", but:
+  [ ] A real business submits a real problem and gets a capability-backed,
+      explainable assessment
+  [ ] Sales sees the lead, understands the score, knows the capability, contacts them
+  [ ] Client A cannot see Client B's data (proven by test)
+  [ ] Investor access ≠ public access (proven by test)
+  [ ] The AI holds no business authority — humans approve everything outbound
+  [ ] Every sensitive action is auditable
+
+
+================================================================================
+SPRINT SEQUENCE
+================================================================================
+  [ ] Sprint 0  Spec freeze          → Phase 0 (all docs in docs/) — runs in
+                                        parallel with Sprint 1 foundation work
+  [ ] Sprint 1  Full tech skeleton   → Phase 1 COMPLETE: repo restructure · CI/CD ·
+                                        env management · Next.js foundation · Clerk ·
+                                        FastAPI skeleton · Neon · health checks ·
+                                        Sentry wired. A deployable end-to-end
+                                        skeleton (web ↔ api ↔ db) before any visual work.
+  [ ] Sprint 2  UI + PWA             → Phase 2 (design system, landing, public
+                                        routes, Serwist PWA) — visual layer on top
+                                        of the proven skeleton
+  [ ] Sprint 3  Assessment           → Phase 3.1–3.3 (library, form, Gemini)
+  [ ] Sprint 4  Score + Result       → Phase 3.4–3.6 (scoring, result page, evals)
+  [ ] Sprint 5  CRM                  → Phase 4
+  [ ] Sprint 6  Conversion           → Phase 5 + Track 3 dashboards
+  [ ] Sprint 7  MVP validation       → real users, AI quality, sales feedback, KPIs
+  ── only then ──
+  [ ] Sprint 8+ Client Portal (6) → Investor Room (7) → Intelligence (8)
+                → Agents (9) → TRiSM (10)
+
+
+================================================================================
+IMMEDIATE NEXT 10 ACTIONS (do these in order, this week)
+================================================================================
+  [ ] 1.  Decide and execute the git-root move (aigrowthengine/, not frontend/)
+  [ ] 2.  Restructure to apps/web + apps/api + docs + .github
+  [ ] 3.  Add ESLint 9 flat config + Prettier + husky + lint-staged
+  [ ] 4.  Write src/env.ts (t3-env) + .env.example; make missing env fail the build
+  [~] 5.  Fill next.config.ts: security headers + poweredByHeader:false + images
+          remotePatterns + Serwist DONE. Still: nonce CSP, cacheComponents, Sentry.
+  [x] 6.  layout.tsx metadata fixed. Still: real favicon/maskable icon set in public/.
+  [ ] 7.  Wire ClerkProvider + proxy.ts (NOT middleware.ts) + sign-in/up routes
+  [ ] 8.  Wire Sentry via instrumentation.ts / instrumentation-client.ts / global-error.tsx
+  [ ] 9.  Scaffold apps/api: FastAPI + async SQLAlchemy + Alembic + /healthz
+  [ ] 10. Create the Neon project (3 branches, pgvector on) and ship CI to staging
+
+Reminder for every framework task: read node_modules/next/dist/docs/ first.
+This is Next.js 16 — proxy.ts, awaited request APIs, explicit `use cache`, Turbopack.
