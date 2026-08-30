@@ -116,8 +116,10 @@ export function IntroVideo() {
         onTimeUpdate={syncBg}
       />
 
-      {/* Extra local blur over the bottom-right watermark */}
-      <div className="pointer-events-none absolute bottom-0 right-0 h-44 w-64 [backdrop-filter:blur(16px)] [-webkit-backdrop-filter:blur(16px)] [mask-image:radial-gradient(circle_at_bottom_right,#000_25%,transparent_72%)] [-webkit-mask-image:radial-gradient(circle_at_bottom_right,#000_25%,transparent_72%)]" />
+      {/* Full-width smoky band across the bottom — hides the source watermark
+          and seats the Enter button */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 [backdrop-filter:blur(24px)] [-webkit-backdrop-filter:blur(24px)] [mask-image:linear-gradient(to_top,#000_35%,transparent)] [-webkit-mask-image:linear-gradient(to_top,#000_35%,transparent)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
       {/* Scrim for control legibility over any frame */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
