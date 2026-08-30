@@ -96,12 +96,6 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <Link
-            href="/sign-in"
-            className="rounded-xl border border-gold-400/25 bg-white/5 px-4 py-2.5 text-sm font-semibold text-cream transition hover:bg-white/10"
-          >
-            Log In
-          </Link>
-          <Link
             href="/business-assessment"
             className="btn-gold inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-bold"
           >
@@ -149,18 +143,11 @@ export function Navbar() {
             </a>
           ))}
           <div className="mx-2 my-3 h-px bg-gold-400/15" />
-          <div className="flex flex-col gap-2 px-1 pb-1">
-            <Link
-              href="/sign-in"
-              onClick={() => setOpen(false)}
-              className="rounded-xl border border-gold-400/30 bg-white/[0.03] px-4 py-3 text-center text-sm font-semibold text-cream transition hover:bg-white/[0.07]"
-            >
-              Log In
-            </Link>
+          <div className="px-1 pb-1">
             <Link
               href="/business-assessment"
               onClick={() => setOpen(false)}
-              className="btn-gold rounded-xl px-4 py-3 text-center text-sm font-bold"
+              className="btn-gold block rounded-xl px-4 py-3 text-center text-sm font-bold"
             >
               Book a Demo
             </Link>
