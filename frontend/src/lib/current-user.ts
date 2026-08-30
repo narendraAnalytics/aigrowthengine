@@ -31,7 +31,7 @@ export async function syncCurrentUser() {
       imageUrl: user.imageUrl ?? null,
     });
   } catch (err) {
-    // Never block the page on a sync hiccup — the webhook will still land.
+    // Never block the page on a sync hiccup — it retries on the next session.
     console.error("[syncCurrentUser] upsert failed:", err);
   }
 
