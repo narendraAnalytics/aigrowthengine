@@ -52,7 +52,7 @@ export function Navbar() {
           "mx-auto flex max-w-[1360px] items-center justify-between gap-4 rounded-2xl px-4 py-3 transition-all duration-300 sm:px-5",
           scrolled
             ? "glass-panel border-gold-400/30 py-2.5 shadow-[0_10px_40px_rgba(10,4,14,0.55)]"
-            : "border border-white/10 bg-white/[0.04] backdrop-blur-md",
+            : "border border-white/10 bg-plum-900/70 backdrop-blur-md",
         )}
       >
         <Link
@@ -122,8 +122,10 @@ export function Navbar() {
 
       <div
         className={cn(
-          "glass-panel mx-auto mt-2 max-w-[1360px] origin-top overflow-hidden rounded-2xl transition-all duration-300 lg:hidden",
-          open ? "max-h-[32rem] p-4 opacity-100" : "max-h-0 p-0 opacity-0",
+          "mx-auto mt-2 max-w-[1360px] origin-top overflow-hidden rounded-2xl border border-gold-400/30 bg-plum-900/95 shadow-[0_20px_60px_rgba(10,4,14,0.7)] backdrop-blur-xl transition-all duration-300 lg:hidden",
+          open
+            ? "max-h-[32rem] p-4 opacity-100"
+            : "pointer-events-none max-h-0 p-0 opacity-0",
         )}
       >
         <div className="flex flex-col gap-1">
@@ -132,7 +134,7 @@ export function Navbar() {
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-3 text-[0.95rem] font-medium text-cream-dim transition hover:bg-white/5 hover:text-cream"
+              className="rounded-lg px-3 py-3 text-[0.95rem] font-medium text-cream transition hover:bg-white/5 hover:text-white"
             >
               {l.label}
             </a>
