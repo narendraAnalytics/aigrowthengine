@@ -265,3 +265,36 @@ export const expertReviewRequestsRelations = relations(
     }),
   }),
 );
+
+/* ---------------------------------------------------------------------------
+ * Audit log (Phase 0.5, CLAUDE.md #8) — append-only.
+ *
+ * No updated_at / deleted_at: rows are never modified or soft-deleted. Only a
+ * retention job hard-deletes rows past their window (see data-classification.ts /
+ * audit.ts retentionDays). No foreign keys — an audit row must outlive the actor
+ * or resource it describes. `tenant` is an organization id, `personal:<userId>`,
+ * or null for system-wide events. Allowed `type` values live in @/lib/security.
+ * ------------------------------------------------------------------------- */
+export const auditEvents = pgTable(
+  "audit_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    type: text("type").notNull(),
+    category: text("category").notNull(),
+    actorId: text("actor_id"),
+    actorRole: text("actor_role"),
+    tenant: text("tenant"),
+    resourceType: text("resource_type").notNull(),
+    resourceId: text("resource_id"),
+    requestId: text("request_id"),
+    metadata: jsonb("metadata").notNull().default({}),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("audit_events_type_idx").on(t.type),
+    index("audit_events_tenant_idx").on(t.tenant),
+    index("audit_events_created_at_idx").on(t.createdAt),
+  ],
+);

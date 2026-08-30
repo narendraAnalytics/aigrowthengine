@@ -274,14 +274,26 @@ Goal: nothing ambiguous remains before production code is written.
       24h TTL, body-fingerprint rule, IDEMPOTENT_ENDPOINTS list). Key store = Phase 3.
   Validate: npm run check:api-contract
 
-0.5 Security model
-  [ ] docs/security-model.md — roles × permissions matrix (RBAC)
-  [ ] Tenant isolation rule: EVERY tenant-scoped table carries organization_id;
-      every query filters on it at the repository layer, not ad hoc
-  [ ] Investor access levels: Public / Registered / Approved / Restricted
-  [ ] Audit event catalogue (what gets logged, retention period)
-  [ ] Threat model (STRIDE) for: assessment intake, file access, investor room, AI gateway
-  [ ] PII classification + data retention/deletion policy (GDPR/DPDP-ready)
+0.5 Security model   (authored as code: frontend/src/lib/security/)
+  [x] Roles × permissions matrix — rbac.ts (8 roles, 20 permissions,
+      ROLE_PERMISSIONS, can()/assertCan()). Authorize at the resource.
+  [x] Tenant isolation rule — tenant.ts: TenantScope (org | personal),
+      matchesScope()/describeTenantFilter(); repo layer takes a scope, no
+      unscoped path. assessments.organization_id nullable BY DESIGN for
+      pre-org prospects (personal scope). Repo enforcement + integration
+      tests land with Phase 3.
+  [x] Investor access levels — investor-access.ts: public<registered<approved
+      <restricted, meetsInvestorAccess(). (Investor Room build = Phase 7.)
+  [x] Audit event catalogue — audit.ts: 18 event types w/ category + retention +
+      pii flag; auditEventSchema; append-only audit_events table (migration 0003,
+      no FKs, retention job later).
+  [~] Threat model (STRIDE) — threat-model.ts: 14 threats across the 4 components,
+      each with a mitigation. All status:"needs_review" — SECURITY OWNER must walk it.
+  [~] PII classification + retention — data-classification.ts: 4 classes,
+      RETENTION_DAYS, FIELD_CLASSIFICATION for current schema. Windows are
+      engineering defaults — TODO(legal/DPDP) confirm before go-live; erasure
+      workflow still TODO.
+  Validate: npm run check:security
 
 0.6 Analytics specification
   [ ] docs/analytics-events.md — event names, properties, when fired, who owns them
