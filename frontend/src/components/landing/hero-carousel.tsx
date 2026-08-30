@@ -51,7 +51,7 @@ export function HeroCarousel() {
       ))}
 
       {/* readability gradient */}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(31,18,32,0.88)_0%,rgba(37,20,40,0.55)_35%,rgba(28,14,26,0.7)_75%,#1f1220_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(31,18,32,0.88)_0%,rgba(37,20,40,0.55)_35%,rgba(28,14,26,0.7)_75%,var(--background)_100%)]" />
 
       {HERO_SLIDES.length > 1 && (
         <div className="pointer-events-auto absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2.5 sm:left-14 sm:translate-x-0">

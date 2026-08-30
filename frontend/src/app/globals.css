@@ -6,8 +6,10 @@
 
 /* ------------------------------------------------------------------ *
  * AI Growth Engine — brand theme
- * Dark "plum + gold + magenta" system. The product commits to a
- * single dark look (see samplefolder/AI Growth Engine.dc.html).
+ * "Plum + gold + magenta" system with a light ("cream paper") and a
+ * dark ("plum") mode. Brand accents (gold / magenta / mint) stay
+ * constant; the surface + ink scale flips per theme. Theme is driven
+ * by next-themes via a `.dark` / `.light` class on <html>.
  * ------------------------------------------------------------------ */
 
 @theme inline {
@@ -18,23 +20,26 @@
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-heading);
 
-  /* brand scale */
-  --color-plum-950: #150a19;
-  --color-plum-900: #170c1c;
-  --color-plum-800: #1f1220;
-  --color-plum-700: #251428;
+  /* brand accents — identical in both themes */
   --color-gold-300: #f3cd7c;
   --color-gold-400: #e3a83f;
   --color-gold-500: #dba85a;
   --color-magenta-400: #c9558f;
   --color-mint-400: #6fae94;
 
-  --color-cream: #f2e4cd;
-  --color-cream-dim: #d9c6ac;
-  --color-muted-warm: #c2ac97;
-  --color-faint: #a98f9c;
+  /* themeable surface scale — values resolve from :root / .dark below */
+  --color-plum-950: var(--plum-950);
+  --color-plum-900: var(--plum-900);
+  --color-plum-800: var(--plum-800);
+  --color-plum-700: var(--plum-700);
 
-  --color-hairline: color-mix(in oklab, #e3a83f 22%, transparent);
+  /* themeable ink scale */
+  --color-cream: var(--ink);
+  --color-cream-dim: var(--ink-dim);
+  --color-muted-warm: var(--ink-muted);
+  --color-faint: var(--ink-faint);
+
+  --color-hairline: var(--hairline);
 
   /* shadcn token bridge (kept so ui/* primitives still theme correctly) */
   --color-card: var(--card);
@@ -65,15 +70,94 @@
   --animate-float-glow: floatGlow 7s ease-in-out infinite;
 }
 
+/* ----------------------------- LIGHT (default base) ----------------------------- */
 :root {
+  --radius: 0.75rem;
+
+  /* surface scale — warm cream paper */
+  --plum-950: #ffffff;
+  --plum-900: #f6efe1;
+  --plum-800: #fbf7ef;
+  --plum-700: #f1e7d6;
+
+  /* ink scale — plum text on cream */
+  --ink: #2a1b2e;
+  --ink-dim: #574758;
+  --ink-muted: #6c5b6b;
+  --ink-faint: #786676;
+
+  --hairline: color-mix(in oklab, #7a3f66 16%, transparent);
+
+  --background: #fbf7ef;
+  --foreground: #2a1b2e;
+  --card: #ffffff;
+  --card-foreground: #2a1b2e;
+  --popover: #ffffff;
+  --popover-foreground: #2a1b2e;
+  --primary: #e3a83f;
+  --primary-foreground: #2a1608;
+  --secondary: #f1e7d6;
+  --secondary-foreground: #2a1b2e;
+  --muted: #f1e7d6;
+  --muted-foreground: #6c5b6b;
+  --accent: #f1e7d6;
+  --accent-foreground: #2a1b2e;
+  --destructive: oklch(0.58 0.22 25);
+  --border: color-mix(in oklab, #7a3f66 16%, transparent);
+  --input: color-mix(in oklab, #7a3f66 22%, transparent);
+  --ring: #e3a83f;
+
+  /* component treatments */
+  --glass-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.92),
+    rgba(255, 255, 255, 0.74)
+  );
+  --glass-border: color-mix(in oklab, #7a3f66 14%, transparent);
+  --glass-shadow: 0 20px 50px rgba(80, 50, 70, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --glass-card-bg: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.86),
+    rgba(255, 255, 255, 0.66)
+  );
+  --glass-card-border: color-mix(in oklab, #7a3f66 12%, transparent);
+  --glass-card-shadow: 0 12px 32px rgba(80, 50, 70, 0.12);
+
+  --btn-glass-bg: rgba(24, 12, 28, 0.04);
+  --btn-glass-border: rgba(42, 27, 46, 0.16);
+  --btn-glass-fg: #2a1b2e;
+  --btn-glass-bg-hover: rgba(24, 12, 28, 0.08);
+
+  --eyebrow-fg: #a96a1c;
+  --grad-1: #a5641b;
+  --grad-2: #bf7d2c;
+  --grad-3: #a53f6c;
+
+  --selection-bg: color-mix(in oklab, #e3a83f 38%, transparent);
+  --selection-fg: #2a1608;
+}
+
+/* ----------------------------- DARK ----------------------------- */
+.dark {
+  --plum-950: #150a19;
+  --plum-900: #170c1c;
+  --plum-800: #1f1220;
+  --plum-700: #251428;
+
+  --ink: #f2e4cd;
+  --ink-dim: #d9c6ac;
+  --ink-muted: #c2ac97;
+  --ink-faint: #a98f9c;
+
+  --hairline: color-mix(in oklab, #e3a83f 22%, transparent);
+
   --background: #1f1220;
   --foreground: #f2e4cd;
-
   --card: #241426;
   --card-foreground: #f2e4cd;
   --popover: #241426;
   --popover-foreground: #f2e4cd;
-
   --primary: #e3a83f;
   --primary-foreground: #2a1608;
   --secondary: #34203a;
@@ -83,12 +167,38 @@
   --accent: #34203a;
   --accent-foreground: #f2e4cd;
   --destructive: oklch(0.62 0.2 25);
-
   --border: color-mix(in oklab, #e3a83f 22%, transparent);
   --input: color-mix(in oklab, #e3a83f 25%, transparent);
   --ring: #e3a83f;
 
-  --radius: 0.75rem;
+  --glass-bg: linear-gradient(
+    135deg,
+    color-mix(in oklab, #5a3a4e 40%, transparent),
+    color-mix(in oklab, #301c30 32%, transparent)
+  );
+  --glass-border: color-mix(in oklab, #e3a83f 25%, transparent);
+  --glass-shadow: 0 20px 50px rgba(10, 4, 14, 0.4),
+    inset 0 1px 0 rgba(255, 235, 190, 0.06);
+  --glass-card-bg: linear-gradient(
+    150deg,
+    color-mix(in oklab, #46283f 32%, transparent),
+    color-mix(in oklab, #281828 22%, transparent)
+  );
+  --glass-card-border: color-mix(in oklab, #e3a83f 18%, transparent);
+  --glass-card-shadow: 0 12px 32px rgba(10, 4, 14, 0.3);
+
+  --btn-glass-bg: rgba(255, 255, 255, 0.06);
+  --btn-glass-border: rgba(240, 224, 198, 0.25);
+  --btn-glass-fg: #f0e0c6;
+  --btn-glass-bg-hover: rgba(255, 255, 255, 0.1);
+
+  --eyebrow-fg: #f3cd7c;
+  --grad-1: #f3cd7c;
+  --grad-2: #e3a83f;
+  --grad-3: #c9558f;
+
+  --selection-bg: color-mix(in oklab, #e3a83f 35%, transparent);
+  --selection-fg: #fff;
 }
 
 @keyframes shimmer {
@@ -127,8 +237,8 @@
   }
 
   ::selection {
-    background: color-mix(in oklab, #e3a83f 35%, transparent);
-    color: #fff;
+    background: var(--selection-bg);
+    color: var(--selection-fg);
   }
 
   h1,
@@ -155,38 +265,34 @@
 @layer components {
   /* Frosted panel used across the marketing site */
   .glass-panel {
-    background: linear-gradient(
-      135deg,
-      color-mix(in oklab, #5a3a4e 40%, transparent),
-      color-mix(in oklab, #301c30 32%, transparent)
-    );
-    border: 1px solid color-mix(in oklab, #e3a83f 25%, transparent);
-    box-shadow:
-      0 20px 50px rgba(10, 4, 14, 0.4),
-      inset 0 1px 0 rgba(255, 235, 190, 0.06);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
     backdrop-filter: blur(22px);
     -webkit-backdrop-filter: blur(22px);
   }
 
   .glass-card {
-    background: linear-gradient(
-      150deg,
-      color-mix(in oklab, #46283f 32%, transparent),
-      color-mix(in oklab, #281828 22%, transparent)
-    );
-    border: 1px solid color-mix(in oklab, #e3a83f 18%, transparent);
-    box-shadow: 0 12px 32px rgba(10, 4, 14, 0.3);
+    background: var(--glass-card-bg);
+    border: 1px solid var(--glass-card-border);
+    box-shadow: var(--glass-card-shadow);
   }
 
   .text-gradient-gold {
-    background: linear-gradient(90deg, #f3cd7c, #e3a83f);
+    background: linear-gradient(90deg, var(--grad-1), var(--grad-2));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
   .text-gradient-shimmer {
-    background: linear-gradient(90deg, #f3cd7c, #e3a83f, #c9558f, #f3cd7c);
+    background: linear-gradient(
+      90deg,
+      var(--grad-1),
+      var(--grad-2),
+      var(--grad-3),
+      var(--grad-1)
+    );
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -205,22 +311,22 @@
   }
 
   .btn-glass {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(240, 224, 198, 0.25);
-    color: #f0e0c6;
+    background: var(--btn-glass-bg);
+    border: 1px solid var(--btn-glass-border);
+    color: var(--btn-glass-fg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
 
   .btn-glass:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--btn-glass-bg-hover);
   }
 
   .section-eyebrow {
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.16em;
-    color: #f3cd7c;
+    color: var(--eyebrow-fg);
     text-transform: uppercase;
   }
 }
@@ -261,9 +367,10 @@
 
 /* ------------------------------------------------------------------ *
  * Clerk modal — the GitHub / Apple provider marks ship as solid black
- * SVGs and vanish on our dark modal. Force them to render light.
+ * SVGs and vanish on our dark modal. Force them to render light only
+ * when the dark theme is active.
  * ------------------------------------------------------------------ */
-.cl-socialButtonsProviderIcon__github,
-.cl-socialButtonsProviderIcon__apple {
+.dark .cl-socialButtonsProviderIcon__github,
+.dark .cl-socialButtonsProviderIcon__apple {
   filter: brightness(0) invert(1);
 }

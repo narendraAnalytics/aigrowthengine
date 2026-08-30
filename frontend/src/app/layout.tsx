@@ -1,9 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Manrope } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 import "./globals.css";
 import { SITE } from "@/lib/site";
+import { Providers } from "@/components/providers";
 
 const fontSans = Manrope({
   variable: "--font-sans",
@@ -46,8 +45,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1f1220",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#1f1220" },
+    { media: "(prefers-color-scheme: light)", color: "#fbf7ef" },
+  ],
+  colorScheme: "light dark",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -57,28 +59,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${fontSans.variable} ${fontHeading.variable} h-full`}
     >
       <body className="min-h-full">
-        <ClerkProvider
-          afterSignOutUrl="/"
-          signInForceRedirectUrl="/"
-          signUpForceRedirectUrl="/"
-          appearance={{
-            theme: dark,
-            variables: {
-              colorPrimary: "#e3a83f",
-              colorBackground: "#1f1220",
-              colorForeground: "#f2e4cd",
-              colorInput: "rgba(255,255,255,0.04)",
-              colorInputForeground: "#f2e4cd",
-              borderRadius: "0.75rem",
-              fontFamily: "var(--font-sans)",
-            },
-          }}
-        >
-          {children}
-        </ClerkProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

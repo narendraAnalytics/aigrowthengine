@@ -96,7 +96,8 @@ export function GlassLink({
   return (
     <Link
       className={cn(
-        "btn-glass inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-[0.95rem] font-semibold transition hover:-translate-y-0.5",
+        // Sits on the always-dark hero, so keep it light-on-dark in both themes
+        "inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-6 py-3.5 text-[0.95rem] font-semibold text-white backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/15",
         className,
       )}
       {...props}

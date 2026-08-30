@@ -20,12 +20,12 @@ export function Hero() {
             </span>
           </span>
 
-          <h1 className="mt-6 max-w-4xl text-[clamp(2.4rem,6.2vw,4.6rem)] leading-[1.05] font-bold tracking-tight text-cream">
+          <h1 className="mt-6 max-w-4xl text-[clamp(2.4rem,6.2vw,4.6rem)] leading-[1.05] font-bold tracking-tight text-white">
             Turn Business Challenges Into{" "}
             <span className="text-gradient-shimmer">Growth Opportunities</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-[clamp(1rem,1.6vw,1.2rem)] leading-relaxed text-cream-dim">
+          <p className="mt-6 max-w-xl text-[clamp(1rem,1.6vw,1.2rem)] leading-relaxed text-white/80">
             AI Growth Engine helps businesses discover high-impact opportunities,
             implement AI solutions, and achieve measurable results that drive real
             growth.
@@ -52,7 +52,7 @@ export function Hero() {
         </Reveal>
 
         <Reveal delay={80} className="mt-14">
-          <p className="text-[0.72rem] font-semibold tracking-[0.12em] text-faint">
+          <p className="text-[0.72rem] font-semibold tracking-[0.12em] text-white/55">
             TRUSTED BY INNOVATIVE COMPANIES
           </p>
           <ul className="mt-4 flex flex-wrap items-center gap-x-8 gap-y-3">

@@ -142,7 +142,7 @@ export function IntroVideo() {
           type="button"
           onClick={tryPlay}
           aria-label="Play intro video"
-          className="btn-glass absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-5 transition hover:scale-105"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/25 bg-white/10 p-5 text-white backdrop-blur-md transition hover:scale-105 hover:bg-white/15"
         >
           <Icon.play className="size-7" />
         </button>
@@ -152,7 +152,7 @@ export function IntroVideo() {
         type="button"
         onClick={toggleSound}
         aria-label={muted ? "Unmute video" : "Mute video"}
-        className="btn-glass absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] rounded-full p-3 transition hover:scale-105 sm:right-6 sm:top-[calc(1.5rem+env(safe-area-inset-top))]"
+        className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] rounded-full border border-white/25 bg-white/10 p-3 text-white backdrop-blur-md transition hover:scale-105 hover:bg-white/15 sm:right-6 sm:top-[calc(1.5rem+env(safe-area-inset-top))]"
       >
         {muted ? (
           <VolumeXIcon className="size-5" />

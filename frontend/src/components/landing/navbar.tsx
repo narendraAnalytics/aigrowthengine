@@ -7,6 +7,7 @@ import { Show, SignUpButton, UserButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { IMAGES, NAV_LINKS, SITE } from "@/lib/site";
 import { WelcomeName } from "@/components/auth/welcome-name";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Icon } from "./icons";
 
 export function Navbar() {
@@ -54,7 +55,7 @@ export function Navbar() {
           "mx-auto flex max-w-[1360px] items-center justify-between gap-4 rounded-2xl px-4 py-3 transition-all duration-300 sm:px-5",
           scrolled
             ? "glass-panel border-gold-400/30 py-2.5 shadow-[0_10px_40px_rgba(10,4,14,0.55)]"
-            : "border border-white/10 bg-plum-900/70 backdrop-blur-md",
+            : "border border-hairline bg-plum-900/70 backdrop-blur-md",
         )}
       >
         <Link
@@ -97,6 +98,7 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <ThemeToggle />
           <Show when="signed-out">
             <SignUpButton mode="modal">
               <button
@@ -113,15 +115,22 @@ export function Navbar() {
           </Show>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          className="flex size-10 items-center justify-center rounded-xl border border-gold-400/25 bg-white/5 text-cream lg:hidden"
-        >
-          {open ? <Icon.close className="size-5" /> : <Icon.menu className="size-5" />}
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            className="flex size-10 items-center justify-center rounded-xl border border-gold-400/25 bg-white/5 text-cream"
+          >
+            {open ? (
+              <Icon.close className="size-5" />
+            ) : (
+              <Icon.menu className="size-5" />
+            )}
+          </button>
+        </div>
       </nav>
 
       {/* Mobile menu: full-screen dimmed backdrop + solid panel */}
@@ -147,7 +156,7 @@ export function Navbar() {
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="rounded-xl px-4 py-3.5 text-[0.95rem] font-semibold text-cream transition hover:bg-gold-400/10 hover:text-white"
+              className="rounded-xl px-4 py-3.5 text-[0.95rem] font-semibold text-cream transition hover:bg-gold-400/10 hover:text-foreground"
             >
               {l.label}
             </a>

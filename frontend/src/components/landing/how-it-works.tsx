@@ -50,11 +50,11 @@ export function HowItWorks() {
                   key={s.num}
                   as="li"
                   delay={i * 90}
-                  className="group relative overflow-hidden rounded-2xl border border-gold-400/15 bg-white/[0.04] p-6 text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-400/35 hover:bg-white/[0.07]"
+                  className="group relative overflow-hidden rounded-2xl border border-gold-400/15 bg-foreground/[0.04] p-6 text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-400/35 hover:bg-foreground/[0.07]"
                 >
                   <span
                     aria-hidden
-                    className="font-heading pointer-events-none absolute -top-3 right-2 text-[3.5rem] font-bold text-white/[0.05] transition-colors group-hover:text-white/[0.08]"
+                    className="font-heading pointer-events-none absolute -top-3 right-2 text-[3.5rem] font-bold text-foreground/[0.06] transition-colors group-hover:text-foreground/[0.1]"
                   >
                     {s.num}
                   </span>
