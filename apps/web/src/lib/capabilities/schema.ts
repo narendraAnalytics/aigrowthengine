@@ -14,7 +14,7 @@ import { z } from "zod";
  * a prospect. Do not invent numbers.
  */
 
-/** The classifier's label set. Gemini tags a business problem with these. */
+/** The classifier's label set. The LLM tags a business problem with these. */
 export const PROBLEM_TYPES = [
   "manual_document_processing",
   "invoice_po_matching",

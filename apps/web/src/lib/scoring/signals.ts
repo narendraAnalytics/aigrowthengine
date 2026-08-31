@@ -3,15 +3,16 @@ import { z } from "zod";
 import { FACTOR_IDS, SIGNAL_LEVELS } from "./factors";
 
 /**
- * The SIGNAL contract — what Gemini is allowed to return for scoring.
+ * The SIGNAL contract — what the LLM is allowed to return for scoring.
  *
  * The model assesses each factor as a level + a short rationale (its evidence).
  * It never returns points or a total. The backend validates this shape, may
  * override `solution_fit` from the deterministic capability match, then calls
  * computeLeadScore() (./score.ts).
  *
- * Use this schema as the `response_schema` / structured-output contract when
- * calling Gemini, and to validate the response before scoring.
+ * Use this schema as the structured-output contract when calling the LLM
+ * (Groq `response_format: json_schema`, strict), and to validate the response
+ * before scoring. Provider: docs/adr/0001-ai-provider-groq.md.
  */
 
 export const factorSignalSchema = z.object({

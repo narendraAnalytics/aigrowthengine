@@ -51,7 +51,7 @@ export const THREATS: readonly Threat[] = [
   {
     component: "assessment_intake",
     stride: "denial_of_service",
-    threat: "Automated mass submissions burn Gemini token budget.",
+    threat: "Automated mass submissions burn the LLM token budget.",
     mitigation:
       "Auth required to submit; per-user + per-org rate limits; Idempotency-Key; cost-per-assessment monitored (roadmap 0.5 control budget).",
     status: "needs_review",
