@@ -2,6 +2,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import bundleAnalyzer from "@next/bundle-analyzer";
+import { withSentryConfig } from "@sentry/nextjs";
 import withSerwistInit from "@serwist/next";
 import createJiti from "jiti";
 
@@ -30,7 +31,7 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://res.cloudinary.com https://img.clerk.com",
   "font-src 'self'",
-  "connect-src 'self' https://*.clerk.accounts.dev https://clerk-telemetry.com https://*.posthog.com https://*.i.posthog.com",
+  "connect-src 'self' https://*.clerk.accounts.dev https://clerk-telemetry.com https://*.posthog.com https://*.i.posthog.com https://*.sentry.io",
   "worker-src 'self' blob:",
   "frame-src 'self' https://challenges.cloudflare.com",
   "object-src 'none'",
@@ -121,6 +122,21 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
-// Wrap order (innermost first): Serwist, then bundle analyzer. withSentryConfig
-// goes outermost when Sentry is wired in Phase 1.7.
-export default withBundleAnalyzer(withSerwist(nextConfig));
+// Wrap order (innermost first): Serwist, bundle analyzer, Sentry outermost.
+// Source maps upload only when SENTRY_AUTH_TOKEN is present (CI); local/preview
+// builds without it just skip the upload step.
+const { SENTRY_ORG, SENTRY_PROJECT, SENTRY_AUTH_TOKEN } = process.env;
+
+export default withSentryConfig(withBundleAnalyzer(withSerwist(nextConfig)), {
+  ...(SENTRY_ORG ? { org: SENTRY_ORG } : {}),
+  ...(SENTRY_PROJECT ? { project: SENTRY_PROJECT } : {}),
+  ...(SENTRY_AUTH_TOKEN ? { authToken: SENTRY_AUTH_TOKEN } : {}),
+  silent: !process.env.CI,
+  telemetry: false,
+  widenClientFileUpload: true,
+  sourcemaps: { disable: !SENTRY_AUTH_TOKEN },
+  webpack: {
+    treeshake: { removeDebugLogging: true },
+    reactComponentAnnotation: { enabled: true },
+  },
+});

@@ -16,8 +16,10 @@ export const env = createEnv({
     CLERK_SECRET_KEY: z.string().min(1),
     /** FastAPI service base URL (Phase 1.5). */
     API_BASE_URL: z.string().url().optional(),
-    /** Sentry source-map upload — CI only (Phase 1.7). */
+    /** Sentry source-map upload + release tagging — CI only. */
     SENTRY_AUTH_TOKEN: z.string().min(1).optional(),
+    SENTRY_ORG: z.string().min(1).optional(),
+    SENTRY_PROJECT: z.string().min(1).optional(),
     /** Cloudflare R2 public bucket host for next/image (Phase 6). */
     R2_PUBLIC_HOST: z.string().min(1).optional(),
   },
@@ -32,6 +34,8 @@ export const env = createEnv({
       .string()
       .url()
       .default("https://us.i.posthog.com"),
+    /** Sentry DSN (public — safe to expose). SDK no-ops when unset. */
+    NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
   },
   /** Next.js inlines NEXT_PUBLIC_* at build time — list each one explicitly. */
   experimental__runtimeEnv: {
@@ -40,6 +44,7 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
   },
   /**
    * Skip validation for tooling that has no env (lint, the check:* spec
