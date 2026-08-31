@@ -52,9 +52,9 @@ progress, and [`FinalRoadMap.txt`](./FinalRoadMap.txt) for product strategy.
 ```text
 aigrowthengine/
 ├── apps/
-│   ├── web/        Next.js 16 PWA   (currently ./frontend)
-│   └── api/        FastAPI service  (to be scaffolded)
-├── packages/       shared types + config
+│   ├── web/        Next.js 16 PWA
+│   └── api/        FastAPI service  (to be scaffolded — Phase 1.5)
+├── packages/       shared types + config  (empty — populated when code is shared)
 ├── infra/          Dockerfiles, IaC, deploy manifests
 ├── docs/           PRD, ERD, API contract, security model, analytics, ADRs
 ├── .github/        CI/CD
@@ -65,13 +65,10 @@ aigrowthengine/
 
 ## Getting started
 
-> Restructuring into `apps/` is the first roadmap task. Until then, the app lives
-> in `./frontend`.
-
 ```bash
-cd frontend
+cd apps/web
 npm install
-cp .env.example .env.local   # all vars optional for now
+cp .env.example .env          # all vars optional for now
 npm run dev                    # http://localhost:3000
 ```
 
@@ -80,8 +77,8 @@ npm run dev                    # http://localhost:3000
 The web app is deployed on **Vercel** at
 [aigrowthengine.vercel.app](https://aigrowthengine.vercel.app/).
 
-- **Root Directory:** `frontend` (repo root has no `package.json`)
-- **Framework / build:** pinned in `frontend/vercel.json`
+- **Root Directory:** `apps/web`
+- **Framework / build:** pinned in `apps/web/vercel.json`
   (`npm run build` → `next build --webpack`, required for Serwist)
 - Every push to `main` auto-deploys; pull requests get preview URLs.
 
