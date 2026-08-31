@@ -103,6 +103,15 @@ The web app is deployed on **Vercel** at
   The schema and which vars are required is `apps/web/src/env.ts`; a missing
   required var fails the build.
 
+### Database (Neon)
+
+Project `aigrowthengine` (`floral-mode-04102821`), Postgres 18, `us-east-2`.
+Branches: **`production`** (default) and **`staging`**. `pgvector` is installed
+on both. Both apps currently point at `production`.
+
+Backups: free-plan PITR covers the last 6h only — take a `pg_dump` before every
+production migration. Restore procedure: [`docs/runbooks/db-restore.md`](docs/runbooks/db-restore.md).
+
 ## Core principles
 
 1. **Gemini emits signals only** — the backend computes every score deterministically.

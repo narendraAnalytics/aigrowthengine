@@ -9,6 +9,10 @@ samplefolder/
 !/roadmap.txt
 !/README.md
 
+# ...and the tracked docs tree (ADRs, runbooks, ERD — roadmap Section B)
+!/docs/
+!/docs/**/*.md
+
 # ---------------------------------------------------------------------------
 # Dependencies & build output  (frontend/.gitignore also covers the app)
 # ---------------------------------------------------------------------------

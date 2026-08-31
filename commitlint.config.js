@@ -8,7 +8,7 @@ module.exports = {
     "scope-enum": [
       1,
       "always",
-      ["web", "api", "packages", "infra", "ci", "deps", "repo", "docs", "security", "ai"],
+      ["web", "api", "packages", "infra", "ci", "deps", "repo", "docs", "db", "security", "ai"],
     ],
     "body-max-line-length": [0, "always"],
   },

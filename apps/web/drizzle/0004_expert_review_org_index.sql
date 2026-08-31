@@ -1,0 +1,1 @@
+CREATE INDEX "expert_review_requests_organization_idx" ON "expert_review_requests" USING btree ("organization_id");

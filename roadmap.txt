@@ -450,10 +450,12 @@ Goal: a production-shaped skeleton that deploys on day one.
   DB: uses the SAME Neon database as the web app for now (skeleton; /readyz only
   runs SELECT 1). Dedicated dev/staging branches = Phase 1.6 / Track 4.
 
-1.6 Database (Neon)
-  [~] Create Neon project; branches: production / staging / dev-<name>
-      (project "aigrowthengine" floral-mode-04102821 created; branches TODO)
-  [ ] Enable pgvector extension (needed from Phase 8, install now)
+1.6 Database (Neon)   (2026-08-31 — Phase 1.6)
+  [x] Neon project floral-mode-04102821 ("aigrowthengine", org
+      org-crimson-surf-10534095, pg18, us-east-2). Branches: production (default)
+      + staging (br-crimson-fire-a596dgl0, off production). Per-PR/dev branches
+      = on demand later (Track 4).
+  [x] pgvector 0.8.6 installed on production + staging (CREATE EXTENSION vector).
   [x] Connection pooling endpoint for serverless callers (DATABASE_URL pooler)
   [~] Phase-1 tables: users, organizations, organization_members, companies,
       assessments, assessment_results
@@ -462,12 +464,20 @@ Goal: a production-shaped skeleton that deploys on day one.
       POSTs /api/sync-user once per session on login (no Clerk webhooks).
       org/membership lazy sync + companies/assessments/* still TODO;
       whole layer ports to FastAPI later)
-  [ ] organization_id NOT NULL + index on every tenant-scoped table
-  [~] created_at/updated_at/deleted_at (soft delete) conventions
-      (all 3 mirror tables carry created_at/updated_at/deleted_at; deleted_at
-      nullable, reads filter IS NULL. No delete path sets it yet — deleteUser
-      is still a hard delete. Apply to companies/assessments/* when added.)
-  [ ] Automated backups + documented restore drill
+  [x] Index on every tenant-scoped column. Added
+      expert_review_requests_organization_idx (Drizzle migration
+      0004_expert_review_org_index, applied to production + staging).
+      NOTE: organization_id stays NULLABLE on assessments / expert_review_requests
+      BY DESIGN — pre-org prospects use the "personal" TenantScope (0.5 security
+      model). organization_memberships.organization_id is NOT NULL.
+  [x] created_at/updated_at/deleted_at conventions — consistent across all 8
+      tables (created/updated NOT NULL, deleted_at nullable, reads filter IS
+      NULL). No delete path sets deleted_at yet (deleteUser is a hard delete) —
+      revisit with the erasure workflow (0.5 data-classification TODO).
+  [~] Automated backups + documented restore drill — runbook at
+      docs/runbooks/db-restore.md. Free plan caps PITR at 6h (already max) and
+      has no scheduled snapshots; real backup = pg_dump before each prod
+      migration (CI enforces in 1.8). First restore drill still to run.
 
 1.7 Observability
   [ ] Sentry: instrumentation.ts + instrumentation-client.ts + global-error.tsx
@@ -968,7 +978,8 @@ IMMEDIATE NEXT 10 ACTIONS (do these in order, this week)
   [ ] 7.  Wire ClerkProvider + proxy.ts (NOT middleware.ts) + sign-in/up routes
   [ ] 8.  Wire Sentry via instrumentation.ts / instrumentation-client.ts / global-error.tsx
   [x] 9.  Scaffold apps/api: FastAPI + async SQLAlchemy + Alembic + /healthz (2026-08-31 — Phase 1.5)
-  [ ] 10. Create the Neon project (3 branches, pgvector on) and ship CI to staging
+  [~] 10. Neon project + production/staging branches + pgvector DONE (2026-08-31
+          — Phase 1.6). CI to staging still TODO (Phase 1.8).
 
 Reminder for every framework task: read node_modules/next/dist/docs/ first.
 This is Next.js 16 — proxy.ts, awaited request APIs, explicit `use cache`, Turbopack.
