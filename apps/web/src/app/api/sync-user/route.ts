@@ -7,10 +7,10 @@ import { syncCurrentUser } from "@/lib/current-user";
  *
  * Identity comes from the Clerk session (auth()/currentUser()), never the request
  * body, so there is nothing to spoof and no input to validate.
+ *
+ * No route segment config: under `cacheComponents` the Node.js runtime is the
+ * default and route handlers are dynamic unless they opt into `use cache`.
  */
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
 export async function POST() {
   const user = await syncCurrentUser();
   return Response.json({ synced: Boolean(user) }, { status: user ? 200 : 401 });

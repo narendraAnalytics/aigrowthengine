@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: "Business Assessment",
 };
 
+// Auth-gated placeholder — reads the Clerk session (request-time). `instant =
+// false` lets it block under `cacheComponents` without a Suspense split; the
+// real assessment flow (Phase 3.2) will be built shell-first.
+export const instant = false;
+
 export default async function BusinessAssessmentPage() {
   const user = await currentUser();
 

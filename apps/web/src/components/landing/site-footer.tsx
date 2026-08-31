@@ -4,6 +4,10 @@ import Link from "next/link";
 import { FOOTER_COLUMNS, IMAGES, SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
+// Evaluated once at build time — baked into the static shell. `new Date()`
+// during render is rejected under `cacheComponents` (unstable value).
+const COPYRIGHT_YEAR = new Date().getFullYear();
+
 import { Icon } from "./icons";
 
 const SOCIALS = [
@@ -122,7 +126,7 @@ export function SiteFooter() {
 
       <div className="border-gold-400/12 mx-auto flex max-w-[1360px] flex-col items-center gap-3 border-t py-6 text-center sm:flex-row sm:justify-between sm:text-left">
         <span className="text-faint text-[0.78rem]">
-          &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
+          &copy; {COPYRIGHT_YEAR} {SITE.name}. All rights reserved.
         </span>
         <div className="flex gap-6">
           <Link href="#" className="text-faint hover:text-cream text-[0.78rem]">
