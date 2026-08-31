@@ -26,10 +26,10 @@ import type { AssessmentEmailData, AssessmentEmailMatch } from "@/emails/types";
 /**
  * Assembles, records, and sends the two assessment emails (Phase 3).
  *
- * - `team_alert` — sent automatically on every scored assessment.
- * - `client_result` — drafted as `pending_approval`; sent only via
- *   `approveAndSendClientEmail`, which records who approved and sends exactly
- *   the stored body (CLAUDE.md #7).
+ * - `team_alert` — sent automatically to `ASSESSMENT_TEAM_EMAIL`.
+ * - `client_result` — sent automatically to the email the client entered on the
+ *   form (`sendClientResult`). `approveAndSendClientEmail` remains as a
+ *   staff-triggered resend for the `failed` case.
  */
 
 function bodyHash(to: string, subject: string, html: string): string {
@@ -189,35 +189,66 @@ export async function sendTeamAlert(assessmentId: string): Promise<void> {
   }
 }
 
-export async function draftClientResultEmail(
-  assessmentId: string,
-): Promise<void> {
+/**
+ * Sends the result email to the address the client entered on the form,
+ * automatically, right after the assessment is scored. Best-effort: a send
+ * failure is recorded (`status: "failed"`) but never fails the assessment.
+ * A staff member can retry a failed one from the admin approval page.
+ */
+export async function sendClientResult(assessmentId: string): Promise<void> {
   const data = await loadEmailData(assessmentId);
   if (!data) return;
 
+  const to = data.contactEmail;
   const subject = data.noConfidentMatch
     ? "We've received your assessment"
     : `Your AI opportunity assessment — ${data.band.toUpperCase()} opportunity`;
   const html = await render(ClientResultEmail(data));
 
-  await upsertEmailRow({
-    assessmentId,
-    kind: "client_result",
-    status: "pending_approval",
-    toEmail: data.contactEmail,
-    subject,
-    bodyHtml: html,
-  });
-  await recordAuditEvent({
-    type: "assessment_email.client_drafted",
-    actorId: null,
-    actorRole: null,
-    tenant: `personal:${data.contactEmail}`,
-    resourceType: "assessment",
-    resourceId: assessmentId,
-    requestId: null,
-    metadata: { to: data.contactEmail },
-  });
+  try {
+    const { id } = await sendEmail({ to, subject, html });
+    await upsertEmailRow({
+      assessmentId,
+      kind: "client_result",
+      status: "sent",
+      toEmail: to,
+      subject,
+      bodyHtml: html,
+      providerMessageId: id,
+      sentAt: new Date(),
+    });
+    await recordAuditEvent({
+      type: "assessment_email.client_sent",
+      actorId: null,
+      actorRole: null,
+      tenant: `personal:${to}`,
+      resourceType: "assessment",
+      resourceId: assessmentId,
+      requestId: null,
+      metadata: { to, providerMessageId: id, auto: true },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    await upsertEmailRow({
+      assessmentId,
+      kind: "client_result",
+      status: "failed",
+      toEmail: to,
+      subject,
+      bodyHtml: html,
+      error: message,
+    });
+    await recordAuditEvent({
+      type: "assessment_email.client_failed",
+      actorId: null,
+      actorRole: null,
+      tenant: `personal:${to}`,
+      resourceType: "assessment",
+      resourceId: assessmentId,
+      requestId: null,
+      metadata: { to, error: message },
+    });
+  }
 }
 
 export class ClientEmailApprovalError extends Error {}

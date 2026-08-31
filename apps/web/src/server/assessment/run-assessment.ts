@@ -28,10 +28,7 @@ import {
   generateSolutionNarrative,
   serializeNarrative,
 } from "../ai/solution-narrative";
-import {
-  draftClientResultEmail,
-  sendTeamAlert,
-} from "../email/assessment-emails";
+import { sendClientResult, sendTeamAlert } from "../email/assessment-emails";
 
 import type { SubmitAssessmentRequest } from "@/lib/api/contract/assessment";
 
@@ -312,11 +309,11 @@ export async function runAssessment(
       },
     });
 
-    // Fire the emails — team alert (auto) + client draft (approval-gated).
-    // Never let an email failure fail the assessment (CLAUDE.md side-effect).
+    // Fire both emails — team alert + the client's result (to the address they
+    // entered on the form). Never let an email failure fail the assessment.
     await Promise.allSettled([
       sendTeamAlert(assessmentId),
-      draftClientResultEmail(assessmentId),
+      sendClientResult(assessmentId),
     ]);
 
     return {
