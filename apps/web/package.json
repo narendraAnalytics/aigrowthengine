@@ -6,11 +6,18 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "dev:pwa": "next dev --experimental-https --webpack",
     "build": "next build --webpack",
     "start": "next start",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
+    "test": "echo \"(no unit-test runner yet — Vitest lands in Cross-Cutting Track 2)\"",
+    "test:e2e": "echo \"(no e2e runner yet — Playwright lands in Cross-Cutting Track 2)\"",
+    "analyze": "echo \"(bundle analyzer is wired into next.config.ts in Phase 1.4)\"",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
@@ -19,6 +26,15 @@
     "check:api-contract": "tsx scripts/check-api-contract.ts",
     "check:security": "tsx scripts/check-security.ts",
     "check:analytics": "tsx scripts/check-analytics.ts"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,mjs,cjs,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -53,6 +69,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.10",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.3",
+    "eslint-config-prettier": "^10.1.8",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.9.6",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "serwist": "^9.5.12",
     "tailwindcss": "^4",
     "typescript": "^5"
