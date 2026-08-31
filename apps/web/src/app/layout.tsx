@@ -1,8 +1,11 @@
-import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Manrope } from "next/font/google";
+
 import "./globals.css";
-import { SITE } from "@/lib/site";
+
 import { Providers } from "@/components/providers";
+import { SITE } from "@/lib/site";
+
+import type { Metadata, Viewport } from "next";
 
 const fontSans = Manrope({
   variable: "--font-sans",

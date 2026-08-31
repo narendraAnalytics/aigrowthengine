@@ -7,7 +7,7 @@ import { IconBadge } from "./primitives";
 function parse(value: string) {
   const match = value.match(/^([\d.]+)(.*)$/);
   if (!match) return { num: 0, suffix: value, decimals: 0 };
-  const raw = match[1];
+  const raw = match[1] ?? "0";
   return {
     num: Number.parseFloat(raw),
     suffix: match[2] ?? "",
@@ -29,9 +29,11 @@ export function StatsPanel() {
                 suffix={suffix}
                 decimals={decimals}
                 duration={1400 + i * 200}
-                className="font-heading block text-[clamp(1.5rem,3vw,2rem)] leading-none font-bold text-cream tabular-nums"
+                className="font-heading text-cream block text-[clamp(1.5rem,3vw,2rem)] leading-none font-bold tabular-nums"
               />
-              <div className="mt-1 text-[0.8rem] text-muted-warm">{s.label}</div>
+              <div className="text-muted-warm mt-1 text-[0.8rem]">
+                {s.label}
+              </div>
             </div>
           </div>
         );
