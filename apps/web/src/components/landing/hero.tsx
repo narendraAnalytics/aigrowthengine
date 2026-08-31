@@ -34,7 +34,7 @@ export function Hero() {
 
           <div className="mt-9 flex flex-wrap gap-4">
             <AuthCtaButton
-              signedInHref="/business-assessment"
+              signedInHref="/ai-opportunities"
               className="btn-gold inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-[0.95rem] font-bold transition hover:-translate-y-0.5"
               signedInChildren={
                 <>
