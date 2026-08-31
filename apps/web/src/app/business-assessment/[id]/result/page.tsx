@@ -111,7 +111,7 @@ export default async function AssessmentResultPage({
       </section>
 
       {result.narrative ? (
-        <Card title="How this could be solved">
+        <Card title="How our AI team would approach this">
           <p className="text-foreground/90 leading-relaxed">
             {result.narrative.summary}
           </p>
