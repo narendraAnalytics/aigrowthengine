@@ -7,7 +7,7 @@
 # Legend:  [ ] = todo   [~] = in progress   [x] = done   [!] = blocked
 # Owner tags: (FE) frontend  (BE) backend  (AI) ai/ml  (SEC) security  (OPS) infra/devops  (PROD) product
 #
-# Last reviewed: 2026-08-30
+# Last reviewed: 2026-08-31  (foundation 1.1–1.7 done; next = Phase 3 Slice A)
 # ==============================================================================
 
 
@@ -629,6 +629,12 @@ PHASE 3 — CAPABILITY LIBRARY + AI ASSESSMENT ENGINE               (BE/AI/FE)
 Goal: the product's core. THE most important phase.
 ================================================================================
 
+>>> START HERE: "NEXT SESSION — PHASE 3 SLICE A" block above is the execution
+>>> plan. It delivers the funnel end-to-end in apps/web (Next.js), reusing the
+>>> frozen TS contracts + the Drizzle tables. The 3.1–3.6 checklists below are
+>>> the FULL phase (backend CRUD, FastAPI, eval harness, PDF, etc.) — hardening
+>>> that follows once Slice A proves a real problem produces a sane assessment.
+
 3.1 Capability Library (backend)
   [ ] capabilities table per the Phase-0 schema + Alembic migration
   [ ] Seed script loading the 10–20 authored capabilities from versioned YAML/JSON
@@ -977,22 +983,148 @@ SPRINT SEQUENCE
 
 
 ================================================================================
-IMMEDIATE NEXT 10 ACTIONS (do these in order, this week)
+FOUNDATION STATUS (end of session 2026-08-31)
 ================================================================================
-  [x] 1.  Decide and execute the git-root move (aigrowthengine/, not frontend/)
-  [x] 2.  Restructure to apps/web + apps/api + .github (2026-08-31 — Phase 1.1)
-  [x] 3.  Add ESLint 9 flat config + Prettier + husky + lint-staged (2026-08-31 — Phase 1.2)
-  [x] 4.  Write src/env.ts (t3-env) + .env.example; make missing env fail the build (2026-08-31 — Phase 1.3)
-  [x] 5.  Fill next.config.ts: headers + poweredByHeader:false + images + Serwist +
-          cacheComponents + typedRoutes + analyzer (2026-08-31 — Phase 1.4).
-          Still: flip CSP to enforce (needs preview test), nonce CSP (Track 1),
-          withSentryConfig wrap (Phase 1.7).
-  [x] 6.  layout.tsx metadata fixed. Still: real favicon/maskable icon set in public/.
-  [ ] 7.  Wire ClerkProvider + proxy.ts (NOT middleware.ts) + sign-in/up routes
-  [x] 8.  Wire Sentry via instrumentation.ts / instrumentation-client.ts / global-error.tsx (2026-08-31 — Phase 1.7)
-  [x] 9.  Scaffold apps/api: FastAPI + async SQLAlchemy + Alembic + /healthz (2026-08-31 — Phase 1.5)
-  [~] 10. Neon project + production/staging branches + pgvector DONE (2026-08-31
-          — Phase 1.6). CI to staging still TODO (Phase 1.8).
+DONE: 1.1 repo restructure · 1.2 lint/format · 1.3 t3-env · 1.4 next.config
+  (headers/CSP-report-only/cacheComponents/typedRoutes/analyzer) · 1.5 FastAPI
+  skeleton (health only) · 1.6 Neon (production+staging branches, pgvector) ·
+  1.7 Sentry (web + api, DSN-driven) · ADR 0001 LLM provider = Groq.
+DEFERRED (come back after the Phase 3 slice proves the funnel):
+  1.8 CI/CD (GitHub Actions) · 1.2 remaining tsconfig-strict polish ·
+  Phase 2 (design system, /solutions /case-studies /about /contact /legal,
+  Lighthouse gate) · CSP flip to enforce · nonce CSP (Track 1) · source-map
+  upload in CI · dedicated dev branch · Clerk sign-in/up routes + Organizations.
+RATIONALE: the roadmap's own guiding principle — "do not spend months on
+  infrastructure before validating the funnel". Get one real problem → real
+  assessment working, then harden.
+
+
+================================================================================
+NEXT SESSION — PHASE 3 SLICE A ("problem in → assessment out")
+Goal: a signed-in user submits a plain-language business problem and gets back a
+capability-backed, explainable opportunity assessment. ONE branch, demoable.
+================================================================================
+
+WHERE IT RUNS (slice decision — revisit at full Phase 3 / when apps/api needs it)
+  The whole pipeline runs in apps/web as a Next.js route handler (server-side).
+  Reuses what already exists and is tested:
+    - scoring: src/lib/scoring/{score.ts,signals.ts,match.ts,factors.ts}
+    - capabilities: src/lib/capabilities/{index.ts,data.ts,schema.ts}
+    - questions: src/lib/assessment/questions.ts
+    - API contract Zod: src/lib/api/contract/assessment.ts
+    - DB: Drizzle src/server/db/schema.ts — assessments, assessment_results,
+      capability_matches, expert_review_requests (already migrated to Neon)
+  The FastAPI port + the "Alembic vs Drizzle owns the schema" ADR stay deferred
+  to full Phase 3 — do NOT block the slice on them.
+
+STEP 1 — Groq client wrapper   src/server/ai/groq.ts   (+ unit test)
+  - `groq-sdk` npm ( new Groq({ apiKey: env.GROQ_API_KEY }) ). SDK auto-retries
+    2x w/ backoff, 60s timeout — both configurable.
+  - env.ts (WEB): promote GROQ_API_KEY from apps/api to apps/web server block
+    (REQUIRED once this ships), + GROQ_MODEL default "openai/gpt-oss-120b".
+  - chat.completions.create params (from Groq docs — verified 2026-08-31):
+      model: "openai/gpt-oss-120b"
+      reasoning_effort: "medium"          (low=simple classify, high=nuance)
+      reasoning_format: "hidden"          (REQUIRED with JSON mode or reasoning
+                                           contaminates content)
+      temperature: 0.4                     (consistency)
+      max_completion_tokens: 2048
+      response_format: { type: "json_schema", json_schema: {
+        name: "assessment_signals", strict: true, schema: <generated> } }
+  - Strict-mode schema rules: EVERY property in `required`,
+    additionalProperties:false everywhere, optional field => type ["T","null"].
+    Streaming + tool use unsupported with structured outputs.
+  - KNOWN RISK (Groq community report): 120b sometimes ignores the schema.
+    MITIGATION: keep parseLeadSignals()/Zod as the real guarantee; on Zod
+    failure do ONE repair-prompt retry ("your last reply did not match the
+    schema, return only valid JSON"), then fail closed => status "failed".
+  - Generate the JSON schema from a Zod schema (zod-to-json-schema) or hand-write
+    it to match src/lib/scoring/signals.ts + a problem_types array + a summary.
+
+STEP 2 — the deterministic matcher   src/lib/matching/match-capabilities.ts   (+ test)
+  Pure, versioned (MATCHER_VERSION "1.0.0"), NO model call.
+  Input: problem_types[] (from Groq, filtered via filterKnownCapabilityIds-style
+         validation against PROBLEM_TYPES), industry (from the form).
+  For each capability in CAPABILITIES:
+    ptScore  = |problem_types ∩ cap.problemTypes| / |problem_types ∪ cap.problemTypes|
+    indScore = industry ∈ cap.industries ? 1 : 0
+    confidence = clamp01( 0.65*ptScore + 0.35*indScore )
+  Return capabilities sorted by confidence desc, each with
+  classifyMatch(confidence) (match.ts) + a rank. Top 3.
+  bestConfidence < 0.50  => no_confident_match path.
+  Phase 8 replaces this with pgvector hybrid retrieval behind a flag.
+
+STEP 3 — the pipeline   src/server/assessment/run-assessment.ts   (+ test w/ mocked Groq)
+  submit answers (validated by submitAssessmentRequestSchema)
+   -> 1 Groq call: { problem_types[], signals{7 factors}, summary }
+   -> validate problem_types against PROBLEM_TYPES (drop unknowns; empty => try
+      "no_confident_match" sentinel)
+   -> matchCapabilities(problem_types, industry) -> ranked matches
+   -> signals.solution_fit.level = matchClassToSignalLevel(classifyMatch(best))
+      (rationale = "capability match: <name> at <confidence>")
+   -> parseLeadSignals(signals)  (Zod; on fail -> repair retry -> fail closed)
+   -> computeLeadScore(signals)  -> { score, band, breakdown[7], modelVersion }
+   -> persist (Drizzle, transaction):
+        assessments        (answers jsonb, status, organization_id NULL = personal)
+        assessment_results (problem_types, industry, lead_score, score_band,
+                            scoring_model_version, breakdown jsonb, summary,
+                            no_confident_match)
+        capability_matches (one row per ranked match)
+   -> return assessment id
+  status flow: submitted -> analyzing -> scored | needs_expert_review | failed
+  Never send raw contact PII to Groq (the questions don't collect any yet — keep
+  it that way for the slice).
+
+STEP 4 — the form   src/app/business-assessment/page.tsx   (replace the placeholder)
+  - Single scrolling page, grouped sections: "The problem" / "Context" /
+    "Timeline & scale". (Multi-step wizard + progress + resumable draft = 3.2
+    hardening.)
+  - react-hook-form + @hookform/resolvers/zod, schema = submitAssessmentRequestSchema.
+  - Render fields from ASSESSMENT_QUESTIONS (long_text/short_text/single_select/
+    multi_select). shadcn: form, textarea, input, radio-group, select, checkbox.
+  - Submit -> POST /api/assessments (route handler wrapping run-assessment.ts,
+    Clerk-auth required) -> on success router.push(`/business-assessment/${id}/result`).
+  - Loading state while the Groq call runs (a few seconds). No SSE for the slice.
+
+STEP 5 — the result page   src/app/business-assessment/[id]/result/page.tsx
+  - Server component: load assessment_results + capability_matches for the id,
+    ownership-checked (the row's user_id == current Clerk user).
+  - Opportunity band (HIGH/MEDIUM/LOW) + score + the Groq `summary`.
+  - Matched capability card(s): name, oneLiner, confidence, match_class.
+    Only show delivery fields if deliveryStatus != null (it's null right now —
+    so show "in discovery" language, do NOT invent outcomes — CLAUDE.md #2).
+  - "Why this score?" — expandable, all 7 factors: label, weight, level, points,
+    rationale. This is the trust feature — build it properly.
+  - no_confident_match == true  => render assessment/questions.ts NO_CONFIDENT_MATCH
+    panel + a "Request expert review" button (POST /api/assessments/:id/expert-review,
+    writes expert_review_requests, status -> needs_expert_review). No routing/
+    notification yet — just the row + a thank-you state.
+
+STEP 6 — verify end to end
+  - `npm run dev`, sign in, submit a real problem
+    ("Our finance team spends ~120 hrs/week manually matching supplier invoices
+     to POs in Tally; errors cause payment delays; want it automated in 3 months;
+     budgeted this quarter"), confirm: HIGH-ish band, matched to
+    intelligent-document-extraction / invoice-po-matching, 7-factor breakdown
+    reads sensibly, "Why 91?" adds up.
+  - Submit a deliberately vague / off-domain problem -> no_confident_match path.
+  - npm run check:* all green · typecheck · lint · a few unit tests
+    (matcher, pipeline with mocked Groq, score already covered).
+  - Write ADR 0002 (docs/adr/) recording the "pipeline in Next.js for the slice"
+    decision + when to port to FastAPI.
+
+OUT OF SLICE A (tracked, do after the funnel is proven):
+  FastAPI port · prompt-injection guard (llama-prompt-guard-2-86m) · resumable
+  localStorage drafts · honeypot + Turnstile · Idempotency-Key store · background
+  job / SSE for long calls · capability admin CRUD + seed-from-YAML · public
+  capability read API + /solutions pages · eval harness / golden dataset (3.6) ·
+  PDF export + shareable signed links · lead auto-creation (Phase 4) · PostHog
+  step events · vector matching (Phase 8) · full multi-step wizard.
+
+REFERENCE (Groq, verified 2026-08-31 — https://console.groq.com/docs):
+  - structured-outputs: strict mode only on openai/gpt-oss-{20b,120b} + kimi-k2
+  - reasoning: reasoning_format MUST be "hidden" or "parsed" with JSON mode
+  - groq-sdk (npm) is the TS client; OpenAI-compatible request body
 
 Reminder for every framework task: read node_modules/next/dist/docs/ first.
 This is Next.js 16 — proxy.ts, awaited request APIs, explicit `use cache`, Turbopack.
