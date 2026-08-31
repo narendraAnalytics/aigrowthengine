@@ -479,13 +479,24 @@ Goal: a production-shaped skeleton that deploys on day one.
       has no scheduled snapshots; real backup = pg_dump before each prod
       migration (CI enforces in 1.8). First restore drill still to run.
 
-1.7 Observability
-  [ ] Sentry: instrumentation.ts + instrumentation-client.ts + global-error.tsx
-      (Next 16 uses instrumentation files, NOT sentry.*.config.ts)
-  [ ] Source map upload in CI; release tagging by git SHA
-  [ ] Sentry Python SDK on FastAPI with tracing
-  [ ] PII scrubbing rules in Sentry before any real user hits it
-  [ ] Uptime monitoring on /healthz for both services
+1.7 Observability  (2026-08-31 — Phase 1.7)
+  [x] Sentry (web): src/instrumentation.ts (Node/Edge + onRequestError),
+      src/instrumentation-client.ts (browser + onRouterTransitionStart),
+      src/app/global-error.tsx. Shared opts in src/sentry.shared.ts.
+      next.config.ts wrapped with withSentryConfig (outermost). DSN-driven —
+      inert until NEXT_PUBLIC_SENTRY_DSN is set.
+  [~] Source map upload + release tagging by git SHA — withSentryConfig uploads
+      ONLY when SENTRY_AUTH_TOKEN is present (⇒ CI only). Wiring the CI secrets +
+      SENTRY_RELEASE=$GITHUB_SHA is Phase 1.8.
+  [x] Sentry Python SDK on FastAPI — sentry-sdk[fastapi], app/core/
+      observability.py init_sentry() (Starlette/FastAPI/asyncio integrations,
+      traces_sample_rate). Called from main.py. No-op without SENTRY_DSN.
+  [x] PII scrubbing — send_default_pii=False + a before_send/beforeSend on both
+      that drops cookies, auth headers, user email/ip/username.
+  [~] Uptime monitoring on /healthz — both apps now expose /healthz
+      (apps/web/src/app/healthz/route.ts added for parity). Actual monitor is
+      dashboard config — see docs/runbooks/observability.md (API monitor waits
+      for its deploy URL, Track 4).
 
 1.8 CI/CD
   [ ] .github/workflows/ci.yml — lint · typecheck · unit · build (web + api matrix)
@@ -976,7 +987,7 @@ IMMEDIATE NEXT 10 ACTIONS (do these in order, this week)
           withSentryConfig wrap (Phase 1.7).
   [x] 6.  layout.tsx metadata fixed. Still: real favicon/maskable icon set in public/.
   [ ] 7.  Wire ClerkProvider + proxy.ts (NOT middleware.ts) + sign-in/up routes
-  [ ] 8.  Wire Sentry via instrumentation.ts / instrumentation-client.ts / global-error.tsx
+  [x] 8.  Wire Sentry via instrumentation.ts / instrumentation-client.ts / global-error.tsx (2026-08-31 — Phase 1.7)
   [x] 9.  Scaffold apps/api: FastAPI + async SQLAlchemy + Alembic + /healthz (2026-08-31 — Phase 1.5)
   [~] 10. Neon project + production/staging branches + pgvector DONE (2026-08-31
           — Phase 1.6). CI to staging still TODO (Phase 1.8).

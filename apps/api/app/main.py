@@ -33,9 +33,11 @@ from app.core.errors import (
     ApiErrorPayload,
 )
 from app.core.logging import configure_logging, get_logger, set_request_id
+from app.core.observability import init_sentry
 
 settings = get_settings()
 configure_logging(settings.log_level)
+init_sentry()
 log = get_logger()
 
 limiter = Limiter(key_func=get_remote_address, default_limits=[settings.rate_limit_default])
