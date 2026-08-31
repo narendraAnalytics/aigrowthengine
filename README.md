@@ -65,12 +65,29 @@ aigrowthengine/
 
 ## Getting started
 
+**Web** (Next.js):
+
 ```bash
 cd apps/web
 npm install
 cp .env.example .env          # all vars optional for now
 npm run dev                    # http://localhost:3000
 ```
+
+**API** (FastAPI — needs [uv](https://docs.astral.sh/uv/); it manages Python 3.12):
+
+```bash
+cd apps/api
+cp .env.example .env          # set DATABASE_URL (Neon)
+uv sync
+uv run uvicorn app.main:app --reload   # http://localhost:8000  (/docs, /healthz, /readyz)
+uv run pytest                          # tests
+uv run ruff check . && uv run mypy .   # lint + types
+uv run alembic upgrade head            # no-op until Phase 3 adds migrations
+```
+
+Regenerate the shared TS types after changing the API:
+`npm run types:generate` (repo root) → `packages/types/src/api.d.ts`.
 
 ## Deployment
 
