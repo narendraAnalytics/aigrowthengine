@@ -7,7 +7,7 @@
 # Legend:  [ ] = todo   [~] = in progress   [x] = done   [!] = blocked
 # Owner tags: (FE) frontend  (BE) backend  (AI) ai/ml  (SEC) security  (OPS) infra/devops  (PROD) product
 #
-# Last reviewed: 2026-08-31  (foundation 1.1–1.7 done; next = Phase 3 Slice A)
+# Last reviewed: 2026-08-31  (foundation 1.1–1.7 done; Phase 3 Slice A + A+ + UX pass shipped on feat/ai-opportunities-path-picker)
 # ==============================================================================
 
 
@@ -1034,6 +1034,47 @@ STATUS: shipped on branch feat/phase-3-slice-a. STEP 1-6 done.
   - New env (apps/web): RESEND_API_KEY, RESEND_FROM, ASSESSMENT_TEAM_EMAIL,
     STAFF_EMAILS, GROQ_NARRATIVE_MODEL. Verified: Groq #2 + Resend send live.
   - Deferred (unchanged): see "OUT OF SLICE A" below.
+
+  SLICE A UX PASS — 2026-08-31 (branch feat/ai-opportunities-path-picker):
+  - NEW ROUTE /ai-opportunities — bright, animated "Where should we start?"
+    path picker (3 cards: Business Growth / AI Ideas -> /business-assessment,
+    Investor Room -> /investor-room placeholder). The hero's signed-in CTA
+    "View Your AI Opportunities" now points here (was /business-assessment).
+    Self-contained light palette + scoped <style> (theme-proof).
+    Files: src/app/ai-opportunities/{page,ai-opportunities-options}.tsx.
+  - BRIGHT ASSESSMENT SURFACE. globals.css gains a reusable `.light` scope
+    (re-applies the light palette on a subtree) so a page can opt out of the
+    dark-by-default theme. /business-assessment is now two-column (narrative
+    left / glass form panel right) on a lavender->cream brand gradient;
+    /business-assessment/[id]/result restyled as a score report (SVG score
+    ring, band badge, glass cards, confidence bars); /admin/assessments/[id]/
+    email restyled (status pill, mail-client-framed preview, back-to-home).
+  - FORM IS NOW A 4-STEP WIZARD (supersedes STEP 4's "single scrolling page"
+    and the "full multi-step wizard" OUT-OF-SLICE-A item): progress bar +
+    clickable step chips, one section per step, per-step RHF `trigger`
+    validation before advancing, Back/Continue, Enter advances. Questions,
+    shared zod schema, submit logic all unchanged.
+  - ANALYSING OVERLAY (src/app/business-assessment/analyzing-overlay.tsx) —
+    full-screen staged-progress overlay while the POST runs (spinner, eased
+    bar, checklist stepping through reading -> safety -> match -> score ->
+    breakdown). Cosmetic, rendered off isSubmitting.
+  - CLIENT RESULT EMAIL NOW AUTO-SENDS. draftClientResultEmail (pending_approval)
+    -> sendClientResult: emails the result straight to the address the client
+    entered on the form, right after scoring, same as the team alert.
+    Best-effort (failure -> status "failed", never fails the assessment).
+    approveAndSendClientEmail + /admin/.../email kept as the retry path.
+    DEVIATES from CLAUDE.md #7 by product decision (see CLAUDE.md note).
+  - Result-page narrative heading: "How this could be solved" ->
+    "How our AI team would approach this".
+  - Back-to-home from /ai-opportunities lands on the hero (#top anchor on the
+    landing page, link -> "/#top") instead of restoring scroll to the footer.
+  - Neon DB (floral-mode-04102821, default branch) wiped 2026-08-31 for fresh
+    testing: assessments / assessment_results / capability_matches /
+    assessment_emails / expert_review_requests / audit_events truncated;
+    `users` kept.
+  - OPS: Vercel env vars must be enabled for ALL environments (Production +
+    Preview + Development), not Production-only — else preview/branch builds
+    fail env validation in next.config.ts. Same Neon DB for all envs for now.
 ================================================================================
 
 WHERE IT RUNS (slice decision — revisit at full Phase 3 / when apps/api needs it)
@@ -1150,7 +1191,8 @@ OUT OF SLICE A (tracked, do after the funnel is proven):
   job / SSE for long calls · capability admin CRUD + seed-from-YAML · public
   capability read API + /solutions pages · eval harness / golden dataset (3.6) ·
   PDF export + shareable signed links · lead auto-creation (Phase 4) · PostHog
-  step events · vector matching (Phase 8) · full multi-step wizard.
+  step events · vector matching (Phase 8).
+  (DONE in the UX pass: full multi-step wizard.)
 
 REFERENCE (Groq, verified 2026-08-31 — https://console.groq.com/docs):
   - structured-outputs: strict mode only on openai/gpt-oss-{20b,120b} + kimi-k2
