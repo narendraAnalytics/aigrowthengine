@@ -415,22 +415,40 @@ Goal: a production-shaped skeleton that deploys on day one.
       analyze` (cross-env). Also: outputFileTracingRoot pins the monorepo root
       (silences the two-lockfile warning present since 1.1).
 
-1.5 Backend scaffold (apps/api)
-  [ ] Python 3.12 + uv (or Poetry) for dependency management
-  [ ] FastAPI + uvicorn/gunicorn, Pydantic v2 settings from env
-  [ ] SQLAlchemy 2.0 ASYNC: create_async_engine + async_sessionmaker,
-      pool_pre_ping=True, pool_size/max_overflow tuned for Neon pooler
-  [ ] Alembic initialised with the ASYNC template; first migration = baseline
-  [ ] Layered structure enforced: routers → services → repositories
-      (services import no HTTP; repositories are the only DB touchpoint)
-  [ ] Every endpoint declares response_model; schemas use
-      model_config = ConfigDict(from_attributes=True)
-  [ ] Structured JSON logging with request_id correlation (structlog)
-  [ ] /healthz (liveness) and /readyz (DB reachable) endpoints
-  [ ] Global exception handler emitting the standard error envelope
-  [ ] CORS locked to known origins only
-  [ ] Rate limiting (slowapi/Redis) on public endpoints
-  [ ] OpenAPI schema published; generate packages/types from it (openapi-typescript)
+1.5 Backend scaffold (apps/api)  (2026-08-31 — Phase 1.5, SKELETON only)
+  [x] Python 3.12 + uv — pyproject.toml + uv.lock committed; uv manages Python.
+  [x] FastAPI app factory (app/main.py), Pydantic-Settings (app/core/config.py)
+      from env; DATABASE_URL normalized to asyncpg + libpq sslmode/channel_binding
+      stripped (asyncpg rejects them; TLS via connect_args ssl=True).
+  [x] SQLAlchemy 2.0 async — create_async_engine + async_sessionmaker,
+      pool_pre_ping, pool_size/max_overflow (app/db/session.py). get_session dep.
+  [x] Alembic async template wired to Settings + Base.metadata. NO migrations yet
+      — `alembic upgrade head` is a verified no-op. First migration + the
+      "Alembic vs Drizzle owns the shared schema" ADR = Phase 3.
+  [x] Layered dirs per Section B: api/v1/routers, services, repositories, schemas,
+      ai (empty __init__ until Phase 3). core/security.py is a documented STUB
+      (Clerk JWT = Phase 3/4).
+  [~] response_model / from_attributes — convention set; only health endpoints
+      exist so far (real schemas land with the assessment endpoints, Phase 3).
+  [x] structlog JSON logging + per-request request_id (contextvar +
+      RequestContextMiddleware, X-Request-ID in/out).
+  [x] /healthz (liveness) + /readyz (SELECT 1 on Neon → 200 / 503). Verified
+      against the shared Neon DB.
+  [x] Exception handlers emit the exact envelope from apps/web/src/lib/api/
+      errors.ts (ApiError, RequestValidationError, StarletteHTTPException,
+      RateLimitExceeded, catch-all). Same code→status map.
+  [x] CORS locked to cors_origins + a *.vercel.app regex.
+  [x] Rate limiting — slowapi in-memory default (Redis-backed = later).
+  [x] OpenAPI: FastAPI /openapi.json; app/export_openapi.py dumps it;
+      `npm run types:generate` → packages/types/src/api.d.ts (openapi-typescript).
+      @aigrowthengine/types package created.
+  [x] Dockerfile (multi-stage uv → python:3.12-slim, non-root). NOT built locally
+      (Docker Desktop was down) — CI / Track 4 verifies. Host choice (Cloud Run
+      vs Render) = Track 4.
+  [x] ruff + mypy (strict) config in pyproject; pytest + pytest-asyncio + httpx;
+      4 tests green (health, request-id propagation, 404 envelope, readyz).
+  DB: uses the SAME Neon database as the web app for now (skeleton; /readyz only
+  runs SELECT 1). Dedicated dev/staging branches = Phase 1.6 / Track 4.
 
 1.6 Database (Neon)
   [~] Create Neon project; branches: production / staging / dev-<name>
@@ -949,7 +967,7 @@ IMMEDIATE NEXT 10 ACTIONS (do these in order, this week)
   [x] 6.  layout.tsx metadata fixed. Still: real favicon/maskable icon set in public/.
   [ ] 7.  Wire ClerkProvider + proxy.ts (NOT middleware.ts) + sign-in/up routes
   [ ] 8.  Wire Sentry via instrumentation.ts / instrumentation-client.ts / global-error.tsx
-  [ ] 9.  Scaffold apps/api: FastAPI + async SQLAlchemy + Alembic + /healthz
+  [x] 9.  Scaffold apps/api: FastAPI + async SQLAlchemy + Alembic + /healthz (2026-08-31 — Phase 1.5)
   [ ] 10. Create the Neon project (3 branches, pgvector on) and ship CI to staging
 
 Reminder for every framework task: read node_modules/next/dist/docs/ first.
