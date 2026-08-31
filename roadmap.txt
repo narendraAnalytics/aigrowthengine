@@ -330,14 +330,29 @@ Goal: a production-shaped skeleton that deploys on day one.
 ================================================================================
 
 1.1 Repository hygiene
-  [ ] Move git root: init at aigrowthengine/, migrate frontend/ history, or accept
-      a fresh root repo. DECIDE AND DO IT NOW — this gets harder every week.
-  [ ] Restructure to apps/web + apps/api + packages/ (Section B)
-  [ ] Add .gitignore (node_modules, .next, .venv, __pycache__, .env*, .serwist)
-  [ ] Add .editorconfig, .nvmrc (pin Node 22 LTS), .python-version (3.12)
-  [ ] Add LICENSE + README.md (real one, not the create-next-app default)
-  [ ] Branch protection on main; require PR + green CI
-  [ ] Conventional Commits + commitlint; CODEOWNERS
+  [x] Move git root: init at aigrowthengine/, migrate frontend/ history, or accept
+      a fresh root repo. (Done 2026-08-30 — git root at aigrowthengine/.)
+  [x] Restructure to apps/web + apps/api + packages/ (Section B)
+      2026-08-31: git mv frontend -> apps/web (history preserved, 115 files).
+      apps/api/ + packages/ are .gitkeep placeholders (real content: api = Phase 1.5,
+      packages = when code is actually shared). NO npm workspaces yet — apps/web
+      stays self-contained with its own lockfile so Vercel build is unchanged.
+      package name frontend -> @aigrowthengine/web.
+      ACTION REQUIRED (human): Vercel > Project Settings > Root Directory
+      frontend -> apps/web before the next deploy.
+  [x] Add .gitignore (node_modules, .next, .venv, __pycache__, .env*, .serwist)
+      2026-08-31: root .gitignore extended with Python/FastAPI + .turbo sections.
+  [x] Add .editorconfig, .nvmrc (pin Node 22 LTS), .python-version (3.12)
+  [x] Add LICENSE + README.md (real one, not the create-next-app default)
+      2026-08-31: LICENSE = proprietary / all rights reserved. Root README layout
+      + getting-started + deploy sections updated for apps/web.
+  [~] Branch protection on main; require PR + green CI
+      PR requirement is the norm already; formal GitHub branch-protection rule +
+      CI status check still TODO (CI gate lands in 1.8).
+  [x] Conventional Commits + commitlint; CODEOWNERS
+      2026-08-31: root package.json (dev tooling only) + commitlint.config.js
+      (@commitlint/config-conventional) + husky commit-msg hook +
+      .github/CODEOWNERS (* @narendraAnalytics).
 
 1.2 Frontend tooling (currently absent)
   [ ] ESLint 9 flat config (`next lint` was removed in v16 — use eslint directly)
@@ -897,8 +912,8 @@ SPRINT SEQUENCE
 ================================================================================
 IMMEDIATE NEXT 10 ACTIONS (do these in order, this week)
 ================================================================================
-  [ ] 1.  Decide and execute the git-root move (aigrowthengine/, not frontend/)
-  [ ] 2.  Restructure to apps/web + apps/api + docs + .github
+  [x] 1.  Decide and execute the git-root move (aigrowthengine/, not frontend/)
+  [x] 2.  Restructure to apps/web + apps/api + .github (2026-08-31 — Phase 1.1)
   [ ] 3.  Add ESLint 9 flat config + Prettier + husky + lint-staged
   [ ] 4.  Write src/env.ts (t3-env) + .env.example; make missing env fail the build
   [~] 5.  Fill next.config.ts: security headers + poweredByHeader:false + images
