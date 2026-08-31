@@ -67,6 +67,42 @@ export const AUDIT_EVENTS: readonly AuditEventDef[] = [
   ),
 
   def(
+    "assessment_email.team_alert_sent",
+    "assessment",
+    "Lead-alert email sent to the internal team",
+    true,
+  ),
+  def(
+    "assessment_email.team_alert_failed",
+    "assessment",
+    "Lead-alert email to the internal team failed to send",
+  ),
+  def(
+    "assessment_email.client_drafted",
+    "assessment",
+    "Client result email drafted, awaiting staff approval",
+    true,
+  ),
+  def(
+    "assessment_email.client_approved",
+    "assessment",
+    "Staff approved the client result email for sending (recorded approval)",
+    true,
+  ),
+  def(
+    "assessment_email.client_sent",
+    "assessment",
+    "Approved client result email sent to the prospect",
+    true,
+  ),
+  def(
+    "assessment_email.client_failed",
+    "assessment",
+    "Client result email failed to send",
+    true,
+  ),
+
+  def(
     "capability.created",
     "capability",
     "A capability was added to the library",

@@ -24,6 +24,14 @@ import {
   ASSESSMENT_SYSTEM_PROMPT,
   buildAssessmentUserPrompt,
 } from "../ai/prompt";
+import {
+  generateSolutionNarrative,
+  serializeNarrative,
+} from "../ai/solution-narrative";
+import {
+  draftClientResultEmail,
+  sendTeamAlert,
+} from "../email/assessment-emails";
 
 import type { SubmitAssessmentRequest } from "@/lib/api/contract/assessment";
 
@@ -55,6 +63,7 @@ export class AssessmentFailedError extends Error {
 export type RunAssessmentInput = {
   userId: string;
   answers: SubmitAssessmentRequest["answers"];
+  contact: SubmitAssessmentRequest["contact"];
 };
 
 export type RunAssessmentResult = {
@@ -200,8 +209,10 @@ export function deriveAssessmentOutcome(
 export async function runAssessment(
   input: RunAssessmentInput,
 ): Promise<RunAssessmentResult> {
-  const { userId, answers } = input;
+  const { userId, answers, contact } = input;
   const industry = (answers as Record<string, string>).industry ?? null;
+  const problemDescription =
+    (answers as Record<string, string>).problem_description ?? "";
 
   const [created] = await db
     .insert(schema.assessments)
@@ -210,6 +221,9 @@ export async function runAssessment(
       organizationId: null,
       status: "analyzing",
       answers,
+      contactEmail: contact.workEmail,
+      contactCompany: contact.companyName,
+      contactNote: contact.note ?? null,
     })
     .returning({ id: schema.assessments.id });
 
@@ -235,6 +249,14 @@ export async function runAssessment(
       response,
       industry,
     );
+
+    // 2nd Groq call — "how we'd solve this", grounded in the matched
+    // capabilities. Best-effort: falls back to templated text on any failure.
+    const narrative = await generateSolutionNarrative(
+      { problemDescription, industry, matches: match.matches },
+      { userId, assessmentId },
+    );
+
     const resultId = randomUUID();
 
     const statements = [
@@ -249,6 +271,8 @@ export async function runAssessment(
         scoringModelVersion: score.modelVersion,
         summary: response.summary,
         noConfidentMatch: match.noConfidentMatch,
+        solutionNarrative: serializeNarrative(narrative),
+        solutionNarrativeSource: narrative.source,
       }),
       ...(match.matches.length > 0
         ? [
@@ -287,6 +311,13 @@ export async function runAssessment(
         problemTypes,
       },
     });
+
+    // Fire the emails — team alert (auto) + client draft (approval-gated).
+    // Never let an email failure fail the assessment (CLAUDE.md side-effect).
+    await Promise.allSettled([
+      sendTeamAlert(assessmentId),
+      draftClientResultEmail(assessmentId),
+    ]);
 
     return {
       assessmentId,

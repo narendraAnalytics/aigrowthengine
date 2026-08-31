@@ -78,10 +78,30 @@ for (const q of ASSESSMENT_QUESTIONS) {
   else if (q.type === "multi_select")
     validAnswers[q.id] = [q.options![0]!.value];
 }
-if (
-  !submitAssessmentRequestSchema.safeParse({ answers: validAnswers }).success
-) {
+const validContact = {
+  companyName: "Acme Manufacturing",
+  workEmail: "ops@acme.example",
+};
+const validSubmission = { answers: validAnswers, contact: validContact };
+
+if (!submitAssessmentRequestSchema.safeParse(validSubmission).success) {
   fail("submitAssessmentRequestSchema rejected a well-formed submission");
+}
+
+// contact is required
+if (
+  submitAssessmentRequestSchema.safeParse({ answers: validAnswers }).success
+) {
+  fail("submit schema accepted a submission with no contact");
+}
+// contact email must be an email
+if (
+  submitAssessmentRequestSchema.safeParse({
+    ...validSubmission,
+    contact: { ...validContact, workEmail: "not-an-email" },
+  }).success
+) {
+  fail("submit schema accepted a non-email work email");
 }
 
 // missing a required answer must fail
@@ -89,7 +109,10 @@ const requiredQ = ASSESSMENT_QUESTIONS.find((q) => q.required)!;
 const missingRequired = { ...validAnswers };
 delete missingRequired[requiredQ.id];
 if (
-  submitAssessmentRequestSchema.safeParse({ answers: missingRequired }).success
+  submitAssessmentRequestSchema.safeParse({
+    ...validSubmission,
+    answers: missingRequired,
+  }).success
 ) {
   fail(
     `submit schema accepted a submission missing required "${requiredQ.id}"`,
@@ -99,6 +122,7 @@ if (
 // unknown answer key must fail (strict)
 if (
   submitAssessmentRequestSchema.safeParse({
+    ...validSubmission,
     answers: { ...validAnswers, made_up_field: "x" },
   }).success
 ) {
@@ -109,6 +133,7 @@ if (
 const selectQ = ASSESSMENT_QUESTIONS.find((q) => q.type === "single_select")!;
 if (
   submitAssessmentRequestSchema.safeParse({
+    ...validSubmission,
     answers: { ...validAnswers, [selectQ.id]: "not-an-option" },
   }).success
 ) {

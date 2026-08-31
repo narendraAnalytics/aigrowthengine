@@ -1,6 +1,8 @@
 import { currentUser } from "@clerk/nextjs/server";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { BackToHome } from "@/components/back-to-home";
 import { NO_CONFIDENT_MATCH } from "@/lib/assessment/questions";
 import { getAssessmentResult } from "@/server/assessment/get-result";
 
@@ -84,6 +86,24 @@ export default async function AssessmentResultPage({
         <p className="text-foreground/90 mt-5 leading-relaxed">
           {result.summary}
         </p>
+      ) : null}
+
+      {result.narrative ? (
+        <section className="mt-10">
+          <h2 className="font-heading text-foreground text-lg font-semibold">
+            How this could be solved
+          </h2>
+          <p className="text-foreground/90 mt-3 leading-relaxed">
+            {result.narrative.summary}
+          </p>
+          {result.narrative.steps.length > 0 ? (
+            <ol className="text-muted-foreground mt-3 list-decimal space-y-1.5 pl-5 text-sm">
+              {result.narrative.steps.map((step, i) => (
+                <li key={i}>{step}</li>
+              ))}
+            </ol>
+          ) : null}
+        </section>
       ) : null}
 
       {result.noConfidentMatch ? (
@@ -190,10 +210,30 @@ export default async function AssessmentResultPage({
           </tfoot>
         </table>
       </details>
+
+      <div className="mt-12 flex flex-wrap gap-3">
+        <Link
+          href="/"
+          className="btn-glass inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold"
+        >
+          Back to home
+        </Link>
+        <Link
+          href="/business-assessment"
+          className="border-border text-foreground hover:bg-muted inline-flex items-center gap-2 rounded-xl border px-5 py-3 text-sm font-semibold transition-colors"
+        >
+          Start another assessment
+        </Link>
+      </div>
     </Shell>
   );
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return <main className="mx-auto max-w-2xl px-6 py-20">{children}</main>;
+  return (
+    <main className="mx-auto max-w-2xl px-6 py-20">
+      <BackToHome className="mb-8" />
+      {children}
+    </main>
+  );
 }

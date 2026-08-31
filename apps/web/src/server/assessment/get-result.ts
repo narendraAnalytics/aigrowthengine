@@ -12,6 +12,8 @@ import {
 } from "@/lib/scoring";
 import { db, schema } from "@/server/db";
 
+import { parseNarrative } from "../ai/solution-narrative";
+
 /**
  * Read an assessment for the result page (Slice A — STEP 5). Ownership-checked:
  * only the personal owner (`user_id` match, no org) can load it. Returns null
@@ -46,6 +48,7 @@ export type AssessmentResultView = {
     problemTypes: string[];
     industry: string | null;
     noConfidentMatch: boolean;
+    narrative: { summary: string; steps: string[] } | null;
     breakdown: FactorBreakdown[];
     matches: ResultCapabilityMatch[];
   } | null;
@@ -101,6 +104,7 @@ export async function getAssessmentResult(
       problemTypes: row.result.problemTypes as string[],
       industry: row.result.industry,
       noConfidentMatch: row.result.noConfidentMatch,
+      narrative: parseNarrative(row.result.solutionNarrative),
       breakdown,
       matches,
     };

@@ -42,8 +42,23 @@ for (const q of ASSESSMENT_QUESTIONS) {
   answersShape[q.id] = q.required ? base : base.optional();
 }
 
+/**
+ * Contact details. Collected on the form, stored on `assessments`, used only for
+ * the notification + result emails. NEVER included in the LLM prompt — the
+ * pipeline builds the prompt from `answers` alone.
+ */
+export const contactSchema = z
+  .object({
+    companyName: z.string().trim().min(1).max(200),
+    workEmail: z.string().trim().email().max(320),
+    note: z.string().trim().max(2000).optional(),
+  })
+  .strict();
+export type AssessmentContact = z.infer<typeof contactSchema>;
+
 export const submitAssessmentRequestSchema = z.object({
   answers: z.object(answersShape).strict(),
+  contact: contactSchema,
 });
 export type SubmitAssessmentRequest = z.infer<
   typeof submitAssessmentRequestSchema

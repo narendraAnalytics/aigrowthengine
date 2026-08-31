@@ -126,6 +126,20 @@ export const expertReviewStatus = pgEnum("expert_review_status", [
   "closed",
 ]);
 
+export const assessmentEmailKind = pgEnum("assessment_email_kind", [
+  "team_alert", // internal lead notification, sent automatically
+  "client_result", // to the prospect — gated by a recorded human approval
+]);
+
+export const assessmentEmailStatus = pgEnum("assessment_email_status", [
+  "pending_approval", // client_result: drafted, awaiting a staff approve+send
+  "approved", // staff approved; send in progress
+  "sent",
+  "failed",
+]);
+
+export const narrativeSource = pgEnum("narrative_source", ["ai", "templated"]);
+
 export const assessments = pgTable(
   "assessments",
   {
@@ -140,6 +154,11 @@ export const assessments = pgTable(
     status: assessmentStatus("status").notNull().default("submitted"),
     // Record<questionId, string | string[]> — shape enforced in app code.
     answers: jsonb("answers").notNull(),
+    // Contact details — collected on the form, NEVER sent to the LLM.
+    // Nullable: rows created before Phase 3 email capture have none.
+    contactEmail: text("contact_email"),
+    contactCompany: text("contact_company"),
+    contactNote: text("contact_note"),
     ...timestamps,
   },
   (t) => [
@@ -164,8 +183,51 @@ export const assessmentResults = pgTable("assessment_results", {
   scoringModelVersion: text("scoring_model_version").notNull(),
   summary: text("summary"),
   noConfidentMatch: boolean("no_confident_match").notNull().default(false),
+  // "How this could be solved" narrative, grounded in the matched capabilities.
+  // `source` records whether it came from the 2nd Groq call or the deterministic
+  // templated fallback (used on rate-limit / failure).
+  solutionNarrative: text("solution_narrative"),
+  solutionNarrativeSource: narrativeSource("solution_narrative_source"),
   ...timestamps,
 });
+
+/* Outbound assessment emails (Phase 3). `team_alert` sends automatically.
+ * `client_result` is created as `pending_approval` and only sent after a staff
+ * member approves — the approval + the exact sent body are recorded here
+ * (CLAUDE.md #7: every outbound artifact needs a recorded human approval). */
+export const assessmentEmails = pgTable(
+  "assessment_emails",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    assessmentId: uuid("assessment_id")
+      .notNull()
+      .references(() => assessments.id, { onDelete: "cascade" }),
+    kind: assessmentEmailKind("kind").notNull(),
+    status: assessmentEmailStatus("status").notNull(),
+    toEmail: text("to_email").notNull(),
+    subject: text("subject").notNull(),
+    bodyHtml: text("body_html").notNull(),
+    // sha256 of `${toEmail}\n${subject}\n${bodyHtml}` — the version identity.
+    bodyHash: text("body_hash").notNull(),
+    // Set when a staff member approves a client_result email.
+    approvedBy: text("approved_by"),
+    approvedAt: timestamp("approved_at", { withTimezone: true }),
+    // The bodyHash that was approved; a send is refused if bodyHash drifts.
+    approvedHash: text("approved_hash"),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    providerMessageId: text("provider_message_id"),
+    error: text("error"),
+    ...timestamps,
+  },
+  (t) => [
+    index("assessment_emails_assessment_idx").on(t.assessmentId),
+    index("assessment_emails_status_idx").on(t.status),
+    uniqueIndex("assessment_emails_assessment_kind_uq").on(
+      t.assessmentId,
+      t.kind,
+    ),
+  ],
+);
 
 export const capabilityMatches = pgTable(
   "capability_matches",
@@ -230,7 +292,18 @@ export const assessmentsRelations = relations(assessments, ({ one, many }) => ({
     references: [assessmentResults.assessmentId],
   }),
   expertReviewRequests: many(expertReviewRequests),
+  emails: many(assessmentEmails),
 }));
+
+export const assessmentEmailsRelations = relations(
+  assessmentEmails,
+  ({ one }) => ({
+    assessment: one(assessments, {
+      fields: [assessmentEmails.assessmentId],
+      references: [assessments.id],
+    }),
+  }),
+);
 
 export const assessmentResultsRelations = relations(
   assessmentResults,

@@ -1015,10 +1015,24 @@ STATUS: shipped on branch feat/phase-3-slice-a. STEP 1-6 done.
   - routes: POST /api/assessments, POST /api/assessments/:id/expert-review
   - form: src/app/business-assessment/page.tsx (+ assessment-form.tsx)
   - result: src/app/business-assessment/[id]/result/ (+ "Why this score?" panel)
-  - Vitest added (21 tests). ADR 0002 recorded. AI calls audited via
+  - Vitest added (28 tests). ADR 0002 + 0003 recorded. AI calls audited via
     ai_gateway.request + Sentry breadcrumb (full ai_runs table deferred).
   - Verified end-to-end vs real Groq + Neon: finance invoice case -> medium/high
     band matched to invoice-po-grn-matching; vague case -> no_confident_match.
+
+  SLICE A+ (emails + solution narrative, ADR 0003) — 2026-08-31:
+  - Form now collects Company + Work email (separate contactSchema, NEVER sent
+    to Groq) + optional note. New cols: assessments.contact_*,
+    assessment_results.solution_narrative{,_source}. New table assessment_emails.
+  - 2nd Groq call: "how we'd solve this", grounded ONLY in matched capabilities,
+    scrubbed for invented metrics/timelines, templated fallback on any failure
+    (free-tier safe). Shown on the result page.
+  - team_alert email sends automatically (Resend). client_result email is
+    DRAFTED as pending_approval; a staff member approves+sends at
+    /admin/assessments/[id]/email (STAFF_EMAILS allowlist until Clerk roles).
+    Recorded approval + exact-body send + audit events (CLAUDE.md #7).
+  - New env (apps/web): RESEND_API_KEY, RESEND_FROM, ASSESSMENT_TEAM_EMAIL,
+    STAFF_EMAILS, GROQ_NARRATIVE_MODEL. Verified: Groq #2 + Resend send live.
   - Deferred (unchanged): see "OUT OF SLICE A" below.
 ================================================================================
 

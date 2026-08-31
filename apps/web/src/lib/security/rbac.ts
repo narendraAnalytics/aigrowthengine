@@ -36,6 +36,7 @@ export const PERMISSIONS = [
   "expert_review:create",
   "expert_review:read:org",
   "expert_review:manage", // internal: triage / contact / close
+  "assessment:email:approve", // internal: approve + send a client result email (CLAUDE.md #7)
 
   "capability:read",
   "capability:write", // author / edit the Capability Library
