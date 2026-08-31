@@ -18,6 +18,8 @@ export const env = createEnv({
     API_BASE_URL: z.string().url().optional(),
     /** Sentry source-map upload — CI only (Phase 1.7). */
     SENTRY_AUTH_TOKEN: z.string().min(1).optional(),
+    /** Cloudflare R2 public bucket host for next/image (Phase 6). */
+    R2_PUBLIC_HOST: z.string().min(1).optional(),
   },
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),

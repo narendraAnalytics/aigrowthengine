@@ -3,6 +3,7 @@
 import { Show, SignUpButton } from "@clerk/nextjs";
 import Link from "next/link";
 
+import type { Route } from "next";
 import type { ReactNode } from "react";
 
 /**
@@ -21,7 +22,7 @@ export function AuthCtaButton({
   /** Label shown once signed in; defaults to `children`. */
   signedInChildren?: ReactNode;
   className: string;
-  signedInHref: string;
+  signedInHref: Route;
 }) {
   return (
     <>
