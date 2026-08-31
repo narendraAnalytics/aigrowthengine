@@ -1,7 +1,7 @@
 /**
  * Lead Scoring Specification — the 7 factors, weights and rubrics (Phase 0.3).
  *
- * Architecture rule (CLAUDE.md #1): Gemini emits SIGNALS ONLY. The score is
+ * Architecture rule (CLAUDE.md #1): the LLM emits SIGNALS ONLY. The score is
  * computed here by a deterministic, versioned, pure function (see ./score.ts).
  * Any prompt that asks the model for a final number is a defect. "Why 91?" is
  * answerable because the score is just: sum over factors of (levelFraction × weight).

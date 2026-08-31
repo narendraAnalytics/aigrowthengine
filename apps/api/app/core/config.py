@@ -48,6 +48,12 @@ class Settings(BaseSettings):
     sentry_traces_sample_rate: float = 0.1
     sentry_release: str | None = None
 
+    # Groq (LLM) — required once the assessment engine lands (Phase 3).
+    # See docs/adr/0001-ai-provider-groq.md.
+    groq_api_key: str | None = None
+    groq_model: str = "openai/gpt-oss-120b"
+    groq_prompt_guard_model: str = "meta-llama/llama-prompt-guard-2-86m"
+
     @field_validator("database_url")
     @classmethod
     def _normalize_database_url(cls, value: str) -> str:

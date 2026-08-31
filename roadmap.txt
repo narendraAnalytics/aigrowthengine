@@ -82,12 +82,12 @@ HOW TO MAKE IT SUCCEED — the operating rules
       value) → fixed-price pilot → retained "Automation as a Service" (AaaS)
       monthly. AaaS is the fastest-growing model in this space in 2026 and turns
       project revenue into recurring revenue. Separate access (subscription) from
-      consumption (usage/credits) so margins stay safe as Gemini spend scales.
+      consumption (usage/credits) so margins stay safe as LLM spend scales.
   [ ] GET 3 REAL CASE STUDIES BEFORE POLISHING THE PLATFORM. The flywheel is dead
       without them and no amount of frontend work substitutes. Deliver the first
       projects manually if necessary — the platform's job is to make project 4–40
       repeatable, not project 1.
-  [ ] DEFINE THE CONTROL BUDGET. No GPU burn here (we call Gemini), but token
+  [ ] DEFINE THE CONTROL BUDGET. No GPU burn here (we call Groq), but token
       spend, Neon, Vercel and Cloud Run add up. Track cost-per-assessment from
       Sprint 3; it must stay well under the value of a qualified lead.
   [ ] DO NOT BUILD THE INVESTOR ROOM UNTIL YOU ARE ACTUALLY RAISING. It is Phase 7
@@ -156,7 +156,7 @@ CRITICAL GAP ANALYSIS — installed but NOT wired up:
 MISSING ENTIRELY:
   [ ] Backend (no FastAPI app, no Python at all)
   [ ] Database (no Neon project, no models, no Alembic)
-  [ ] Any AI integration (no Gemini SDK)
+  [ ] Any AI integration wired (Groq chosen — ADR 0001 — SDK added, no pipeline yet)
   [ ] Linting/formatting (no ESLint, no Prettier — `next lint` was removed in v16)
   [ ] Testing (no Vitest, no Playwright, no pytest)
   [~] CI/CD: Vercel git integration live (auto-deploy main + PR previews).
@@ -247,7 +247,7 @@ Goal: nothing ambiguous remains before production code is written.
   [x] Freeze the 7 factors + weights (25/20/15/15/10/10/5 = 100) — factors.ts
   [x] Per-factor rubric: none(0) / partial(0.5×w) / full(1.0×w) in writing — factors.ts
   [x] Band thresholds: HIGH ≥75, MEDIUM 50–74, LOW <50 — score.ts (BAND_THRESHOLDS)
-  [x] Gemini emits SIGNALS ONLY — signals.ts is the {level,rationale}-per-factor
+  [x] The LLM emits SIGNALS ONLY — signals.ts is the {level,rationale}-per-factor
       contract; computeLeadScore() in score.ts is the deterministic pure fn,
       versioned (SCORING_MODEL_VERSION 1.0.0), returns breakdown for "Why 91?"
   [x] Match thresholds: Strong ≥0.80 · Partial 0.50–0.79 · None <0.50 — match.ts
@@ -647,14 +647,16 @@ Goal: the product's core. THE most important phase.
   [ ] POST /api/v1/assessments with Idempotency-Key
   [ ] Fire PostHog events at every step (start, step_completed, abandon, submit)
 
-3.3 AI pipeline (backend)
-  Pipeline: Form → Validate → Classify → Capability Search → Gemini → Validate
+3.3 AI pipeline (backend)   (provider: Groq — ADR 0001)
+  Pipeline: Form → Validate → Classify → Capability Search → LLM → Validate
             → Assess → Score → Persist → Result Page
   [ ] Input sanitisation + prompt-injection defence on all free-text fields
+      (screen with meta-llama/llama-prompt-guard-2-86m before the main call)
   [ ] Problem classification into the controlled vocabulary
   [ ] Capability shortlisting (keyword/tag filter in Phase 3; vector in Phase 8)
-  [ ] google-genai Python SDK; Gemini call with response_schema (Pydantic model)
-      + response_mime_type="application/json"
+  [ ] groq Python SDK; openai/gpt-oss-120b call with
+      response_format={type:"json_schema", json_schema:{strict:true, schema:<pydantic>}}
+      (all fields required, additionalProperties:false, optional = [T,"null"])
   [ ] Model returns SIGNALS ONLY — never a score, never a capability it invented
   [ ] Re-validate output with Pydantic even though the API claims schema compliance
   [ ] Handle refusals, truncation, empty arrays, enum drift explicitly
@@ -916,7 +918,7 @@ Production    [~] Vercel hosts the web app (aigrowthengine.vercel.app). Still:
   [ ] Migration strategy: expand → deploy → contract (never a breaking migration
       in the same release as the code that needs it)
   [ ] Documented rollback procedure, rehearsed at least once
-  [ ] Cost monitoring + budget alerts (Gemini spend is the one to watch)
+  [ ] Cost monitoring + budget alerts (LLM (Groq) spend is the one to watch)
   [ ] Status page + documented SLOs
   [ ] Nightly DB backup verification
 
@@ -929,7 +931,7 @@ IN:
   [ ] PWA installable                        (Phase 2.5)
   [ ] Assessment form                        (Phase 3.2)
   [ ] Capability Library (10–20 real)        (Phase 3.1)
-  [ ] Gemini assessment, grounded            (Phase 3.3)
+  [ ] Groq assessment, grounded            (Phase 3.3)
   [ ] Explainable lead score                 (Phase 3.4)
   [ ] Result page with "Why this score?"     (Phase 3.5)
   [ ] Lead CRM + sales dashboard             (Phase 4)
@@ -964,7 +966,7 @@ SPRINT SEQUENCE
   [ ] Sprint 2  UI + PWA             → Phase 2 (design system, landing, public
                                         routes, Serwist PWA) — visual layer on top
                                         of the proven skeleton
-  [ ] Sprint 3  Assessment           → Phase 3.1–3.3 (library, form, Gemini)
+  [ ] Sprint 3  Assessment           → Phase 3.1–3.3 (library, form, Groq)
   [ ] Sprint 4  Score + Result       → Phase 3.4–3.6 (scoring, result page, evals)
   [ ] Sprint 5  CRM                  → Phase 4
   [ ] Sprint 6  Conversion           → Phase 5 + Track 3 dashboards
