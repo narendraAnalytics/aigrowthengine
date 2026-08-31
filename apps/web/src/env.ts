@@ -16,6 +16,10 @@ export const env = createEnv({
     CLERK_SECRET_KEY: z.string().min(1),
     /** FastAPI service base URL (Phase 1.5). */
     API_BASE_URL: z.string().url().optional(),
+    /** Groq LLM — assessment signal generation (Phase 3, ADR 0001). Required
+     *  once the assessment pipeline ships. */
+    GROQ_API_KEY: z.string().min(1),
+    GROQ_MODEL: z.string().min(1).default("openai/gpt-oss-120b"),
     /** Sentry source-map upload + release tagging — CI only. */
     SENTRY_AUTH_TOKEN: z.string().min(1).optional(),
     SENTRY_ORG: z.string().min(1).optional(),
