@@ -22,6 +22,8 @@ import {
   type AssessmentQuestion,
 } from "@/lib/assessment/questions";
 
+import { AnalyzingOverlay } from "./analyzing-overlay";
+
 import type { Route } from "next";
 
 /**
@@ -236,6 +238,8 @@ export function AssessmentForm() {
         }
       }}
     >
+      {isSubmitting ? <AnalyzingOverlay /> : null}
+
       <StepProgress step={step} total={STEP_TITLES.length} onJump={setStep} />
 
       <div
