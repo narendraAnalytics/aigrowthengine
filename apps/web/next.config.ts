@@ -1,6 +1,14 @@
+import { fileURLToPath } from "node:url";
+
 import withSerwistInit from "@serwist/next";
+import createJiti from "jiti";
 
 import type { NextConfig } from "next";
+
+// Validate env vars before the build starts — a missing/invalid var fails the
+// build here rather than erroring at runtime. jiti lets us import the TS module
+// from this config. See src/env.ts.
+createJiti(fileURLToPath(import.meta.url))("./src/env");
 
 const isDev = process.env.NODE_ENV === "development";
 

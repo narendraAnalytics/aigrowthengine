@@ -2,10 +2,11 @@
  * Site-wide constants for AI Growth Engine.
  * Image URLs come from imagesurl.txt (Cloudinary).
  */
+import { env } from "@/env";
 
 function resolveSiteUrl() {
-  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
-  // Set automatically by Vercel (server build only).
+  if (env.NEXT_PUBLIC_APP_URL) return env.NEXT_PUBLIC_APP_URL;
+  // Set automatically by Vercel (system var, not one of ours).
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }

@@ -12,3 +12,5 @@ AGENTS.md
 package-lock.json
 next-env.d.ts
 *.tsbuildinfo
+.env
+.env.*
