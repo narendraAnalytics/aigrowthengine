@@ -39,6 +39,7 @@ export async function POST(request: Request) {
     const result = await runAssessment({
       userId: user.id,
       answers: parsed.data.answers,
+      contact: parsed.data.contact,
     });
     return Response.json(
       { id: result.assessmentId, status: result.status },

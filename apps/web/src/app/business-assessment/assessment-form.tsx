@@ -67,7 +67,10 @@ export function AssessmentForm() {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(submitAssessmentRequestSchema),
-    defaultValues: { answers: {} as FormValues["answers"] },
+    defaultValues: {
+      answers: {} as FormValues["answers"],
+      contact: { companyName: "", workEmail: "" },
+    },
   });
 
   const onSubmit = handleSubmit(async (values) => {
@@ -79,12 +82,17 @@ export function AssessmentForm() {
         Array.isArray(v) ? v.length > 0 : v !== "" && v != null,
       ),
     );
+    const contact = {
+      companyName: values.contact.companyName,
+      workEmail: values.contact.workEmail,
+      ...(values.contact.note ? { note: values.contact.note } : {}),
+    };
 
     try {
       const res = await fetch("/api/assessments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers }),
+        body: JSON.stringify({ answers, contact }),
       });
       if (res.status === 401) {
         setSubmitError("Your session expired. Please sign in again.");
@@ -129,6 +137,66 @@ export function AssessmentForm() {
           })}
         </section>
       ))}
+
+      <section className="flex flex-col gap-6">
+        <h2 className="font-heading text-foreground text-lg font-semibold">
+          About you
+        </h2>
+        <p className="text-muted-foreground -mt-3 text-sm">
+          So our team can follow up with your assessment. Not shared with the AI
+          model.
+        </p>
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="contact.companyName"
+            className="text-foreground text-sm font-medium"
+          >
+            Company name <span className="text-muted-foreground">*</span>
+          </label>
+          <Input
+            id="contact.companyName"
+            {...register("contact.companyName")}
+          />
+          {errors.contact?.companyName ? (
+            <p className="text-destructive text-xs" role="alert">
+              {errors.contact.companyName.message}
+            </p>
+          ) : null}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="contact.workEmail"
+            className="text-foreground text-sm font-medium"
+          >
+            Work email <span className="text-muted-foreground">*</span>
+          </label>
+          <Input
+            id="contact.workEmail"
+            type="email"
+            {...register("contact.workEmail")}
+          />
+          {errors.contact?.workEmail ? (
+            <p className="text-destructive text-xs" role="alert">
+              {errors.contact.workEmail.message}
+            </p>
+          ) : null}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="contact.note"
+            className="text-foreground text-sm font-medium"
+          >
+            Anything else for the team?
+          </label>
+          <Textarea
+            id="contact.note"
+            rows={3}
+            {...register("contact.note", {
+              setValueAs: (v: unknown) => (v === "" ? undefined : v),
+            })}
+          />
+        </div>
+      </section>
 
       {submitError ? (
         <p className="text-destructive text-sm" role="alert">

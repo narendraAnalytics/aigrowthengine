@@ -20,6 +20,21 @@ export const env = createEnv({
      *  once the assessment pipeline ships. */
     GROQ_API_KEY: z.string().min(1),
     GROQ_MODEL: z.string().min(1).default("openai/gpt-oss-120b"),
+    /** Model for the compact "how we'd solve this" narrative call (Phase 3).
+     *  Kept separate so it can be a cheaper/faster model than the assessment. */
+    GROQ_NARRATIVE_MODEL: z.string().min(1).default("openai/gpt-oss-120b"),
+    /** Resend — assessment notification + client result emails (Phase 3). */
+    RESEND_API_KEY: z.string().min(1),
+    /** RFC-5322 from address, e.g. `AIGROWTHENGINE <admin@buildflows.shop>`. */
+    RESEND_FROM: z
+      .string()
+      .min(1)
+      .default("AIGROWTHENGINE <admin@buildflows.shop>"),
+    /** Internal inbox that receives the lead-alert email for every assessment. */
+    ASSESSMENT_TEAM_EMAIL: z.string().email(),
+    /** Comma-separated emails allowed to approve + send client result emails.
+     *  Bridge until Clerk roles/orgs land (CLAUDE.md deferred). */
+    STAFF_EMAILS: z.string().default(""),
     /** Sentry source-map upload + release tagging — CI only. */
     SENTRY_AUTH_TOKEN: z.string().min(1).optional(),
     SENTRY_ORG: z.string().min(1).optional(),
