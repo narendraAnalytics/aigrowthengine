@@ -1,30 +1,42 @@
 import { IMAGES } from "@/lib/site";
+
 import type { IconName } from "./icons";
 
 export type Tone = "gold" | "magenta" | "mint";
 
-export const TONE: Record<Tone, { text: string; chip: string; ring: string }> = {
-  gold: {
-    text: "text-gold-300",
-    chip: "bg-gold-400/15 border border-gold-400/35",
-    ring: "shadow-[0_0_26px_rgba(227,168,63,0.22)]",
-  },
-  magenta: {
-    text: "text-magenta-400",
-    chip: "bg-magenta-400/15 border border-magenta-400/35",
-    ring: "shadow-[0_0_26px_rgba(201,85,143,0.22)]",
-  },
-  mint: {
-    text: "text-mint-400",
-    chip: "bg-mint-400/15 border border-mint-400/30",
-    ring: "shadow-[0_0_26px_rgba(111,174,148,0.2)]",
-  },
-};
+export const TONE: Record<Tone, { text: string; chip: string; ring: string }> =
+  {
+    gold: {
+      text: "text-gold-300",
+      chip: "bg-gold-400/15 border border-gold-400/35",
+      ring: "shadow-[0_0_26px_rgba(227,168,63,0.22)]",
+    },
+    magenta: {
+      text: "text-magenta-400",
+      chip: "bg-magenta-400/15 border border-magenta-400/35",
+      ring: "shadow-[0_0_26px_rgba(201,85,143,0.22)]",
+    },
+    mint: {
+      text: "text-mint-400",
+      chip: "bg-mint-400/15 border border-mint-400/30",
+      ring: "shadow-[0_0_26px_rgba(111,174,148,0.2)]",
+    },
+  };
 
 export const STATS = [
-  { value: "250+", label: "Projects Delivered", icon: "rocket", tone: "magenta" },
+  {
+    value: "250+",
+    label: "Projects Delivered",
+    icon: "rocket",
+    tone: "magenta",
+  },
   { value: "40%", label: "Average Cost Saving", icon: "trend", tone: "gold" },
-  { value: "98%", label: "Client Satisfaction", icon: "users", tone: "magenta" },
+  {
+    value: "98%",
+    label: "Client Satisfaction",
+    icon: "users",
+    tone: "magenta",
+  },
   { value: "3x", label: "ROI on Average", icon: "trophy", tone: "gold" },
 ] satisfies ReadonlyArray<{
   value: string;

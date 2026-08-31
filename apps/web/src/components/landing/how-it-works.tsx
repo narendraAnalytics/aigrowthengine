@@ -35,7 +35,11 @@ export function HowItWorks() {
           </SectionHeading>
         </Reveal>
 
-        <Reveal delay={80} as="div" className="glass-panel mt-14 rounded-3xl p-5 sm:p-8">
+        <Reveal
+          delay={80}
+          as="div"
+          className="glass-panel mt-14 rounded-3xl p-5 sm:p-8"
+        >
           <ol className="relative grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {/* connector rail behind the icon row (desktop) */}
             <div
@@ -50,11 +54,11 @@ export function HowItWorks() {
                   key={s.num}
                   as="li"
                   delay={i * 90}
-                  className="group relative overflow-hidden rounded-2xl border border-gold-400/15 bg-foreground/[0.04] p-6 text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-400/35 hover:bg-foreground/[0.07]"
+                  className="group border-gold-400/15 bg-foreground/[0.04] hover:border-gold-400/35 hover:bg-foreground/[0.07] relative overflow-hidden rounded-2xl border p-6 text-center transition-all duration-300 hover:-translate-y-1.5"
                 >
                   <span
                     aria-hidden
-                    className="font-heading pointer-events-none absolute -top-3 right-2 text-[3.5rem] font-bold text-foreground/[0.06] transition-colors group-hover:text-foreground/[0.1]"
+                    className="font-heading text-foreground/[0.06] group-hover:text-foreground/[0.1] pointer-events-none absolute -top-3 right-2 text-[3.5rem] font-bold transition-colors"
                   >
                     {s.num}
                   </span>
@@ -62,14 +66,14 @@ export function HowItWorks() {
                     className={`relative z-10 mx-auto flex size-14 items-center justify-center rounded-full ${t.chip} ${t.ring} ${t.text}`}
                   >
                     <Glyph className="size-6" />
-                    <span className="absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-full border border-gold-400/40 bg-plum-900 text-[0.65rem] font-bold text-gold-300">
+                    <span className="border-gold-400/40 bg-plum-900 text-gold-300 absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-full border text-[0.65rem] font-bold">
                       {s.num}
                     </span>
                   </div>
-                  <h3 className="font-heading mt-5 text-base font-bold text-cream">
+                  <h3 className="font-heading text-cream mt-5 text-base font-bold">
                     {s.title}
                   </h3>
-                  <p className="mt-2 text-[0.9rem] leading-relaxed text-cream-dim/85">
+                  <p className="text-cream-dim/85 mt-2 text-[0.9rem] leading-relaxed">
                     {s.desc}
                   </p>
                 </Reveal>

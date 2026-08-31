@@ -12,10 +12,7 @@ import { INDUSTRIES } from "@/lib/capabilities/schema";
  */
 
 export type AssessmentQuestionType =
-  | "long_text"
-  | "short_text"
-  | "single_select"
-  | "multi_select";
+  "long_text" | "short_text" | "single_select" | "multi_select";
 
 export type AssessmentQuestion = {
   id: string;
@@ -57,7 +54,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
     type: "short_text",
     label:
       "Roughly how much time or money does this consume today? (best estimate)",
-    helpText: "e.g. \"~120 hours/week across 4 people\" or \"₹6 lakh/month\".",
+    helpText: 'e.g. "~120 hours/week across 4 people" or "₹6 lakh/month".',
     required: true,
   },
   {
@@ -96,7 +93,10 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
       { value: "regulated_data", label: "Involves regulated / sensitive data" },
       { value: "security_review", label: "A security review will be required" },
       { value: "limited_it_bandwidth", label: "Limited internal IT bandwidth" },
-      { value: "existing_vendor_lock", label: "Tied to an existing vendor / system" },
+      {
+        value: "existing_vendor_lock",
+        label: "Tied to an existing vendor / system",
+      },
     ],
   },
   {
@@ -118,9 +118,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
     required: true,
     options: INDUSTRIES.map((value) => ({
       value,
-      label: value
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (m) => m.toUpperCase()),
+      label: value.replace(/_/g, " ").replace(/\b\w/g, (m) => m.toUpperCase()),
     })),
   },
   {
@@ -139,7 +137,8 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
 
 /** Copy shown when the matcher has no confident capability match (<50%). */
 export const NO_CONFIDENT_MATCH = {
-  heading: "We can't confidently match this yet — and we won't pretend otherwise.",
+  heading:
+    "We can't confidently match this yet — and we won't pretend otherwise.",
   body: "Your problem doesn't map cleanly to something we've delivered before. That usually means it needs a short conversation with one of our specialists to scope properly, rather than an automated recommendation.",
   ctaLabel: "Request an expert review",
 } as const;

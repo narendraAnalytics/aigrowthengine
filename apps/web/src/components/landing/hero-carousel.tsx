@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
+
 import { HERO_SLIDES } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 const INTERVAL_MS = 6000;
 
@@ -65,8 +66,8 @@ export function HeroCarousel() {
               className={cn(
                 "h-1.5 rounded-full transition-all duration-300",
                 i === active
-                  ? "w-7 bg-gold-300"
-                  : "w-3 bg-cream/30 hover:bg-cream/50",
+                  ? "bg-gold-300 w-7"
+                  : "bg-cream/30 hover:bg-cream/50 w-3",
               )}
             />
           ))}

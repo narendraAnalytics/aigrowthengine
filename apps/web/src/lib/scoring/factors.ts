@@ -75,7 +75,8 @@ export const FACTORS: readonly Factor[] = [
     description: "How soon the business wants or needs to act.",
     rubric: {
       none: "No timeline. Exploring only, or 'someday'.",
-      partial: "Wants progress this year; a trigger exists but no hard deadline.",
+      partial:
+        "Wants progress this year; a trigger exists but no hard deadline.",
       full: "Active this quarter — a deadline, an event, a mandate, or a problem actively costing money now.",
     },
   },
@@ -87,7 +88,8 @@ export const FACTORS: readonly Factor[] = [
       "How well the problem maps to a capability we can actually deliver. Set from the deterministic capability-match result, NOT the model's opinion.",
     rubric: {
       none: "Below the confident-match threshold (< 50%). Route to Request Expert Review; do not invent a match.",
-      partial: "Partial match (50–79%) to one or more capabilities — adaptation or scoping needed.",
+      partial:
+        "Partial match (50–79%) to one or more capabilities — adaptation or scoping needed.",
       full: "Strong match (>= 80%) to a delivered capability, ideally with a related case study.",
     },
   },
@@ -98,7 +100,8 @@ export const FACTORS: readonly Factor[] = [
     description: "Evidence that money exists or can be found for this.",
     rubric: {
       none: "No budget identified; 'just exploring'.",
-      partial: "Budgeted for this year, or a clear intent to fund if value is shown.",
+      partial:
+        "Budgeted for this year, or a clear intent to fund if value is shown.",
       full: "Budget allocated for this quarter, or an explicit spend range stated.",
     },
   },
@@ -106,10 +109,12 @@ export const FACTORS: readonly Factor[] = [
     id: "decision_maker",
     label: "Decision Maker",
     weight: 10,
-    description: "Whether the person engaging can authorise or strongly influence a purchase.",
+    description:
+      "Whether the person engaging can authorise or strongly influence a purchase.",
     rubric: {
       none: "Individual contributor researching; no stated authority or sponsor.",
-      partial: "Influencer or team lead — can champion internally, needs sign-off from others.",
+      partial:
+        "Influencer or team lead — can champion internally, needs sign-off from others.",
       full: "Budget owner / executive sponsor, or explicitly engaging on behalf of one.",
     },
   },
@@ -121,7 +126,8 @@ export const FACTORS: readonly Factor[] = [
       "How hard delivery looks — data access, integrations, security constraints, IT bandwidth.",
     rubric: {
       none: "Serious blockers: no data access, hostile integrations, heavy compliance with no support, or no IT bandwidth.",
-      partial: "Some friction — a few integrations, a security review, moderate data readiness.",
+      partial:
+        "Some friction — a few integrations, a security review, moderate data readiness.",
       full: "Clear path — data available, standard integrations, cooperative IT, no unusual constraints.",
     },
   },

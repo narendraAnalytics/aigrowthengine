@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState, type MouseEvent } from "react";
+import { Show, SignUpButton, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import { Show, SignUpButton, UserButton } from "@clerk/nextjs";
-import { cn } from "@/lib/utils";
-import { IMAGES, NAV_LINKS, SITE } from "@/lib/site";
+import { useEffect, useState, type MouseEvent } from "react";
+
 import { WelcomeName } from "@/components/auth/welcome-name";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { IMAGES, NAV_LINKS, SITE } from "@/lib/site";
+import { cn } from "@/lib/utils";
+
 import { Icon } from "./icons";
 
 export function Navbar() {
@@ -55,7 +57,7 @@ export function Navbar() {
           "mx-auto flex max-w-[1360px] items-center justify-between gap-4 rounded-2xl px-4 py-3 transition-all duration-300 sm:px-5",
           scrolled
             ? "glass-panel border-gold-400/30 py-2.5 shadow-[0_10px_40px_rgba(10,4,14,0.55)]"
-            : "border border-hairline bg-plum-900/70 backdrop-blur-md",
+            : "border-hairline bg-plum-900/70 border backdrop-blur-md",
         )}
       >
         <Link
@@ -76,10 +78,10 @@ export function Navbar() {
             )}
           />
           <span className="flex flex-col leading-none">
-            <span className="font-heading text-[0.95rem] font-bold tracking-wide text-cream sm:text-[1.05rem]">
+            <span className="font-heading text-cream text-[0.95rem] font-bold tracking-wide sm:text-[1.05rem]">
               AI GROWTH
             </span>
-            <span className="text-[0.6rem] font-semibold tracking-[0.25em] text-gold-500">
+            <span className="text-gold-500 text-[0.6rem] font-semibold tracking-[0.25em]">
               ENGINE
             </span>
           </span>
@@ -90,7 +92,7 @@ export function Navbar() {
             <a
               key={l.href}
               href={l.href}
-              className="text-[0.9rem] font-medium text-cream-dim/90 transition hover:text-cream"
+              className="text-cream-dim/90 hover:text-cream text-[0.9rem] font-medium transition"
             >
               {l.label}
             </a>
@@ -110,7 +112,7 @@ export function Navbar() {
             </SignUpButton>
           </Show>
           <Show when="signed-in">
-            <WelcomeName className="text-sm font-semibold text-cream" />
+            <WelcomeName className="text-cream text-sm font-semibold" />
             <UserButton />
           </Show>
         </div>
@@ -122,7 +124,7 @@ export function Navbar() {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            className="flex size-10 items-center justify-center rounded-xl border border-gold-400/25 bg-white/5 text-cream"
+            className="border-gold-400/25 text-cream flex size-10 items-center justify-center rounded-xl border bg-white/5"
           >
             {open ? (
               <Icon.close className="size-5" />
@@ -138,13 +140,13 @@ export function Navbar() {
         onClick={() => setOpen(false)}
         aria-hidden={!open}
         className={cn(
-          "fixed inset-0 -z-10 bg-plum-950/70 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
+          "bg-plum-950/70 fixed inset-0 -z-10 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
           open ? "opacity-100" : "pointer-events-none opacity-0",
         )}
       />
       <div
         className={cn(
-          "mx-auto mt-2 max-w-[1360px] origin-top overflow-hidden rounded-2xl border border-gold-400/30 bg-plum-950 shadow-[0_24px_70px_rgba(8,3,12,0.85)] transition-all duration-300 ease-out lg:hidden",
+          "border-gold-400/30 bg-plum-950 mx-auto mt-2 max-w-[1360px] origin-top overflow-hidden rounded-2xl border shadow-[0_24px_70px_rgba(8,3,12,0.85)] transition-all duration-300 ease-out lg:hidden",
           open
             ? "max-h-[34rem] translate-y-0 p-3 opacity-100"
             : "pointer-events-none max-h-0 -translate-y-2 p-0 opacity-0",
@@ -156,12 +158,12 @@ export function Navbar() {
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="rounded-xl px-4 py-3.5 text-[0.95rem] font-semibold text-cream transition hover:bg-gold-400/10 hover:text-foreground"
+              className="text-cream hover:bg-gold-400/10 hover:text-foreground rounded-xl px-4 py-3.5 text-[0.95rem] font-semibold transition"
             >
               {l.label}
             </a>
           ))}
-          <div className="mx-2 my-3 h-px bg-gold-400/15" />
+          <div className="bg-gold-400/15 mx-2 my-3 h-px" />
           <div className="px-1 pb-1">
             <Show when="signed-out">
               <SignUpButton mode="modal">
@@ -175,8 +177,8 @@ export function Navbar() {
               </SignUpButton>
             </Show>
             <Show when="signed-in">
-              <div className="flex items-center justify-between rounded-xl border border-gold-400/25 px-4 py-2.5">
-                <WelcomeName className="text-sm font-semibold text-cream" />
+              <div className="border-gold-400/25 flex items-center justify-between rounded-xl border px-4 py-2.5">
+                <WelcomeName className="text-cream text-sm font-semibold" />
                 <UserButton />
               </div>
             </Show>

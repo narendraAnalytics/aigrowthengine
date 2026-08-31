@@ -114,8 +114,8 @@
     rgba(255, 255, 255, 0.74)
   );
   --glass-border: color-mix(in oklab, #7a3f66 14%, transparent);
-  --glass-shadow: 0 20px 50px rgba(80, 50, 70, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --glass-shadow:
+    0 20px 50px rgba(80, 50, 70, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7);
   --glass-card-bg: linear-gradient(
     150deg,
     rgba(255, 255, 255, 0.86),
@@ -177,8 +177,8 @@
     color-mix(in oklab, #301c30 32%, transparent)
   );
   --glass-border: color-mix(in oklab, #e3a83f 25%, transparent);
-  --glass-shadow: 0 20px 50px rgba(10, 4, 14, 0.4),
-    inset 0 1px 0 rgba(255, 235, 190, 0.06);
+  --glass-shadow:
+    0 20px 50px rgba(10, 4, 14, 0.4), inset 0 1px 0 rgba(255, 235, 190, 0.06);
   --glass-card-bg: linear-gradient(
     150deg,
     color-mix(in oklab, #46283f 32%, transparent),

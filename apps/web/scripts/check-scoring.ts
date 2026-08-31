@@ -20,7 +20,8 @@ const errors: string[] = [];
 const fail = (m: string) => errors.push(m);
 
 // --- weights + rubric completeness ---
-if (TOTAL_WEIGHT !== 100) fail(`Factor weights sum to ${TOTAL_WEIGHT}, expected 100`);
+if (TOTAL_WEIGHT !== 100)
+  fail(`Factor weights sum to ${TOTAL_WEIGHT}, expected 100`);
 
 const ids = new Set<string>();
 for (const f of FACTORS) {
@@ -45,17 +46,23 @@ const signalsAt = (level: SignalLevel): LeadSignals =>
 
 // --- golden cases ---
 const allFull = computeLeadScore(signalsAt("full"));
-if (allFull.score !== 100) fail(`all-full score = ${allFull.score}, expected 100`);
-if (allFull.band !== "high") fail(`all-full band = ${allFull.band}, expected high`);
-if (allFull.modelVersion !== SCORING_MODEL_VERSION) fail("modelVersion not propagated");
+if (allFull.score !== 100)
+  fail(`all-full score = ${allFull.score}, expected 100`);
+if (allFull.band !== "high")
+  fail(`all-full band = ${allFull.band}, expected high`);
+if (allFull.modelVersion !== SCORING_MODEL_VERSION)
+  fail("modelVersion not propagated");
 
 const allNone = computeLeadScore(signalsAt("none"));
 if (allNone.score !== 0) fail(`all-none score = ${allNone.score}, expected 0`);
-if (allNone.band !== "low") fail(`all-none band = ${allNone.band}, expected low`);
+if (allNone.band !== "low")
+  fail(`all-none band = ${allNone.band}, expected low`);
 
 const allPartial = computeLeadScore(signalsAt("partial"));
-if (allPartial.score !== 50) fail(`all-partial score = ${allPartial.score}, expected 50`);
-if (allPartial.band !== "medium") fail(`all-partial band = ${allPartial.band}, expected medium`);
+if (allPartial.score !== 50)
+  fail(`all-partial score = ${allPartial.score}, expected 50`);
+if (allPartial.band !== "medium")
+  fail(`all-partial band = ${allPartial.band}, expected medium`);
 
 // mixed case: full on the big factors, partial elsewhere
 const mixed = parseLeadSignals({
@@ -69,12 +76,15 @@ const mixed = parseLeadSignals({
 });
 // 25 + 20 + 7.5 + 15 + 5 + 5 + 5 = 82.5 -> round 83
 const mixedScore = computeLeadScore(mixed);
-if (mixedScore.score !== 83) fail(`mixed score = ${mixedScore.score}, expected 83`);
-if (mixedScore.band !== "high") fail(`mixed band = ${mixedScore.band}, expected high`);
+if (mixedScore.score !== 83)
+  fail(`mixed score = ${mixedScore.score}, expected 83`);
+if (mixedScore.band !== "high")
+  fail(`mixed band = ${mixedScore.band}, expected high`);
 
 // breakdown must sum to the pre-round total and cover every factor
 const breakdownSum = mixedScore.breakdown.reduce((s, b) => s + b.points, 0);
-if (Math.abs(breakdownSum - 82.5) > 1e-9) fail(`breakdown sum = ${breakdownSum}, expected 82.5`);
+if (Math.abs(breakdownSum - 82.5) > 1e-9)
+  fail(`breakdown sum = ${breakdownSum}, expected 82.5`);
 if (mixedScore.breakdown.length !== 7) fail("breakdown missing factors");
 
 // --- bands ---
@@ -88,8 +98,10 @@ if (classifyMatch(0.8) !== "strong") fail("0.80 should be strong match");
 if (classifyMatch(0.79) !== "partial") fail("0.79 should be partial match");
 if (classifyMatch(0.5) !== "partial") fail("0.50 should be partial match");
 if (classifyMatch(0.49) !== "none") fail("0.49 should be no match");
-if (matchClassToSignalLevel(classifyMatch(0.3)) !== "none") fail("no match -> none level");
-if (matchClassToSignalLevel(classifyMatch(0.9)) !== "full") fail("strong match -> full level");
+if (matchClassToSignalLevel(classifyMatch(0.3)) !== "none")
+  fail("no match -> none level");
+if (matchClassToSignalLevel(classifyMatch(0.9)) !== "full")
+  fail("strong match -> full level");
 try {
   classifyMatch(1.5);
   fail("classifyMatch(1.5) should throw");

@@ -28,7 +28,7 @@ export default function OfflinePage() {
           <line x1="12" y1="20" x2="12.01" y2="20" />
         </svg>
       </div>
-      <h1 className="text-2xl font-bold text-cream">You&rsquo;re offline</h1>
+      <h1 className="text-cream text-2xl font-bold">You&rsquo;re offline</h1>
       <p className="text-muted-warm text-sm leading-relaxed">
         This page isn&rsquo;t available without a connection. Reconnect and try
         again — your assessment progress is saved locally.

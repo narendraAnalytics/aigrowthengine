@@ -1,8 +1,11 @@
 import Link from "next/link";
-import type { ComponentProps, ReactNode } from "react";
+
 import { cn } from "@/lib/utils";
-import { Icon } from "./icons";
+
 import { TONE, type Tone } from "./content";
+import { Icon } from "./icons";
+
+import type { ComponentProps, ReactNode } from "react";
 
 export function SectionHeading({
   eyebrow,
@@ -19,11 +22,7 @@ export function SectionHeading({
 }) {
   return (
     <div
-      className={cn(
-        "max-w-2xl",
-        center && "mx-auto text-center",
-        className,
-      )}
+      className={cn("max-w-2xl", center && "mx-auto text-center", className)}
     >
       <p className="section-eyebrow mb-4">{eyebrow}</p>
       <h2 className="text-cream text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.12] font-bold">
@@ -56,9 +55,7 @@ export function IconBadge({
         t.chip,
         t.ring,
         t.text,
-        size === "md"
-          ? "h-13 w-13 [&_svg]:size-6"
-          : "h-10 w-10 [&_svg]:size-5",
+        size === "md" ? "h-13 w-13 [&_svg]:size-6" : "h-10 w-10 [&_svg]:size-5",
       )}
     >
       <Glyph />

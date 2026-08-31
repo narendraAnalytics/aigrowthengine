@@ -35,9 +35,7 @@ export const IDEMPOTENT_ENDPOINTS = [
  * different payload. Order-independent for plain JSON objects.
  */
 export function fingerprintBody(body: unknown): string {
-  return createHash("sha256")
-    .update(stableStringify(body))
-    .digest("hex");
+  return createHash("sha256").update(stableStringify(body)).digest("hex");
 }
 
 function stableStringify(value: unknown): string {

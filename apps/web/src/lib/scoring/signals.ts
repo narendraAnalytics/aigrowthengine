@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { FACTOR_IDS, SIGNAL_LEVELS } from "./factors";
 
 /**

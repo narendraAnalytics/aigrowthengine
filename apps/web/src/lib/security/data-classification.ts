@@ -64,7 +64,9 @@ export function classifyField(tableColumn: string): DataClass | undefined {
   return FIELD_CLASSIFICATION[tableColumn];
 }
 
-export function retentionForField(tableColumn: string): number | null | undefined {
+export function retentionForField(
+  tableColumn: string,
+): number | null | undefined {
   const cls = classifyField(tableColumn);
   return cls ? RETENTION_DAYS[cls] : undefined;
 }

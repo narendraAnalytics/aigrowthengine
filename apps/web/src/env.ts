@@ -21,6 +21,7 @@ export const env = createEnv({
   },
   // Let the landing-page deploy build before the DB integration is configured.
   skipValidation:
-    !!process.env.SKIP_ENV_VALIDATION || process.env.npm_lifecycle_event === "lint",
+    !!process.env.SKIP_ENV_VALIDATION ||
+    process.env.npm_lifecycle_event === "lint",
   emptyStringAsUndefined: true,
 });

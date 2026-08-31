@@ -1,8 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
-import Link from "next/link";
 import { Show, SignUpButton } from "@clerk/nextjs";
+import Link from "next/link";
+
+import type { ReactNode } from "react";
 
 /**
  * A call-to-action that opens the Clerk sign-up modal for signed-out

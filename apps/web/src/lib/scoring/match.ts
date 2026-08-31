@@ -18,7 +18,9 @@ export type MatchClass = "strong" | "partial" | "none";
 
 export function classifyMatch(confidence: number): MatchClass {
   if (!Number.isFinite(confidence) || confidence < 0 || confidence > 1) {
-    throw new RangeError(`match confidence must be in [0, 1], got ${confidence}`);
+    throw new RangeError(
+      `match confidence must be in [0, 1], got ${confidence}`,
+    );
   }
   if (confidence >= MATCH_THRESHOLDS.strong) return "strong";
   if (confidence >= MATCH_THRESHOLDS.partial) return "partial";

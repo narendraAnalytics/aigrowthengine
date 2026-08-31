@@ -1,4 +1,5 @@
 import { AuthCtaButton } from "@/components/auth/auth-cta-button";
+
 import { TRUST_LOGOS } from "./content";
 import { HeroCarousel } from "./hero-carousel";
 import { Icon } from "./icons";
@@ -13,9 +14,9 @@ export function Hero() {
 
       <div className="mx-auto max-w-[1360px] px-4 pt-28 pb-14 sm:px-6 sm:pt-36 lg:px-14">
         <Reveal>
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/10 px-4 py-2">
-            <Icon.sparkle className="size-3.5 text-gold-300" />
-            <span className="text-[0.72rem] font-bold tracking-[0.14em] text-gold-300">
+          <span className="border-gold-400/40 bg-gold-400/10 inline-flex items-center gap-2 rounded-full border px-4 py-2">
+            <Icon.sparkle className="text-gold-300 size-3.5" />
+            <span className="text-gold-300 text-[0.72rem] font-bold tracking-[0.14em]">
               AI-POWERED GROWTH PLATFORM
             </span>
           </span>
@@ -26,9 +27,9 @@ export function Hero() {
           </h1>
 
           <p className="mt-6 max-w-xl text-[clamp(1rem,1.6vw,1.2rem)] leading-relaxed text-white/80">
-            AI Growth Engine helps businesses discover high-impact opportunities,
-            implement AI solutions, and achieve measurable results that drive real
-            growth.
+            AI Growth Engine helps businesses discover high-impact
+            opportunities, implement AI solutions, and achieve measurable
+            results that drive real growth.
           </p>
 
           <div className="mt-9 flex flex-wrap gap-4">

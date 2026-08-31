@@ -30,7 +30,11 @@ const errBody = buildApiErrorBody("validation_error", "bad", {
 if (!apiErrorBodySchema.safeParse(errBody).success) {
   fail("buildApiErrorBody does not satisfy apiErrorBodySchema");
 }
-if (apiErrorBodySchema.safeParse({ error: { code: "nope", message: "x", request_id: "r" } }).success) {
+if (
+  apiErrorBodySchema.safeParse({
+    error: { code: "nope", message: "x", request_id: "r" },
+  }).success
+) {
   fail("apiErrorBodySchema accepted an unknown code");
 }
 
@@ -38,16 +42,22 @@ if (apiErrorBodySchema.safeParse({ error: { code: "nope", message: "x", request_
 const cur = encodeCursor({ createdAt: "2026-01-01T00:00:00Z", id: "abc" });
 const back = decodeCursor<{ createdAt: string; id: string }>(cur);
 if (!back || back.id !== "abc") fail("cursor round-trip failed");
-if (decodeCursor("not-base64-json!") !== null) fail("bad cursor should decode to null");
+if (decodeCursor("not-base64-json!") !== null)
+  fail("bad cursor should decode to null");
 
 const params = cursorPageParamsSchema.parse({ limit: "5" });
 if (params.limit !== 5) fail("cursorPageParamsSchema did not coerce limit");
-if (cursorPageParamsSchema.safeParse({ limit: 9999 }).success) fail("limit over max accepted");
+if (cursorPageParamsSchema.safeParse({ limit: 9999 }).success)
+  fail("limit over max accepted");
 
-const page = toCursorPage([{ id: "1" }, { id: "2" }, { id: "3" }], 2, (r) => ({ id: r.id }));
-if (page.items.length !== 2 || page.next_cursor === null) fail("toCursorPage did not paginate");
+const page = toCursorPage([{ id: "1" }, { id: "2" }, { id: "3" }], 2, (r) => ({
+  id: r.id,
+}));
+if (page.items.length !== 2 || page.next_cursor === null)
+  fail("toCursorPage did not paginate");
 const lastPage = toCursorPage([{ id: "1" }], 2, (r) => ({ id: r.id }));
-if (lastPage.next_cursor !== null) fail("toCursorPage set a cursor with no more rows");
+if (lastPage.next_cursor !== null)
+  fail("toCursorPage set a cursor with no more rows");
 
 // --- idempotency fingerprint is order-independent ---
 if (fingerprintBody({ a: 1, b: 2 }) !== fingerprintBody({ b: 2, a: 1 })) {
@@ -60,12 +70,17 @@ if (fingerprintBody({ a: 1 }) === fingerprintBody({ a: 2 })) {
 // --- submit request schema is derived from the questions ---
 const validAnswers: Record<string, unknown> = {};
 for (const q of ASSESSMENT_QUESTIONS) {
-  if (q.type === "long_text") validAnswers[q.id] = "We spend 120 hours a week keying invoices.";
+  if (q.type === "long_text")
+    validAnswers[q.id] = "We spend 120 hours a week keying invoices.";
   else if (q.type === "short_text") validAnswers[q.id] = "~120 hrs/week";
-  else if (q.type === "single_select") validAnswers[q.id] = q.options![0]!.value;
-  else if (q.type === "multi_select") validAnswers[q.id] = [q.options![0]!.value];
+  else if (q.type === "single_select")
+    validAnswers[q.id] = q.options![0]!.value;
+  else if (q.type === "multi_select")
+    validAnswers[q.id] = [q.options![0]!.value];
 }
-if (!submitAssessmentRequestSchema.safeParse({ answers: validAnswers }).success) {
+if (
+  !submitAssessmentRequestSchema.safeParse({ answers: validAnswers }).success
+) {
   fail("submitAssessmentRequestSchema rejected a well-formed submission");
 }
 
@@ -73,8 +88,12 @@ if (!submitAssessmentRequestSchema.safeParse({ answers: validAnswers }).success)
 const requiredQ = ASSESSMENT_QUESTIONS.find((q) => q.required)!;
 const missingRequired = { ...validAnswers };
 delete missingRequired[requiredQ.id];
-if (submitAssessmentRequestSchema.safeParse({ answers: missingRequired }).success) {
-  fail(`submit schema accepted a submission missing required "${requiredQ.id}"`);
+if (
+  submitAssessmentRequestSchema.safeParse({ answers: missingRequired }).success
+) {
+  fail(
+    `submit schema accepted a submission missing required "${requiredQ.id}"`,
+  );
 }
 
 // unknown answer key must fail (strict)
@@ -127,11 +146,14 @@ const sampleResult = {
 };
 const parsedResult = assessmentResultResponseSchema.safeParse(sampleResult);
 if (!parsedResult.success) {
-  fail(`assessmentResultResponseSchema rejected a valid result: ${parsedResult.error.message}`);
+  fail(
+    `assessmentResultResponseSchema rejected a valid result: ${parsedResult.error.message}`,
+  );
 }
 
 // expert review note is optional but capped
-if (!expertReviewRequestSchema.safeParse({}).success) fail("expert review should allow empty body");
+if (!expertReviewRequestSchema.safeParse({}).success)
+  fail("expert review should allow empty body");
 if (expertReviewRequestSchema.safeParse({ note: "x".repeat(3000) }).success) {
   fail("expert review note over 2000 chars accepted");
 }

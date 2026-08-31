@@ -20,8 +20,7 @@ export const SITE = {
   url: resolveSiteUrl(),
 } as const;
 
-const CLOUDINARY_BASE =
-  "https://res.cloudinary.com/dkqbzwicr/image/upload";
+const CLOUDINARY_BASE = "https://res.cloudinary.com/dkqbzwicr/image/upload";
 
 /** Build a Cloudinary URL with optional transformation string. */
 function cld(path: string, transform?: string) {

@@ -38,13 +38,13 @@ export function Platform() {
               className="glass-card group rounded-2xl p-7 transition-transform duration-300 hover:-translate-y-1.5"
             >
               <IconBadge name={f.icon} tone={f.tone} />
-              <h3 className="mt-5 font-heading text-lg font-bold text-cream">
+              <h3 className="font-heading text-cream mt-5 text-lg font-bold">
                 {f.title}
               </h3>
-              <p className="mt-2.5 text-[0.92rem] leading-relaxed text-muted-warm">
+              <p className="text-muted-warm mt-2.5 text-[0.92rem] leading-relaxed">
                 {f.desc}
               </p>
-              <span className="mt-4 inline-flex text-gold-300 transition-transform group-hover:translate-x-1">
+              <span className="text-gold-300 mt-4 inline-flex transition-transform group-hover:translate-x-1">
                 <Icon.arrowRight className="size-4" />
               </span>
             </Reveal>
