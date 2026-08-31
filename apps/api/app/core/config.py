@@ -43,6 +43,11 @@ class Settings(BaseSettings):
 
     rate_limit_default: str = "60/minute"
 
+    # Sentry — SDK no-ops when the DSN is unset.
+    sentry_dsn: str | None = None
+    sentry_traces_sample_rate: float = 0.1
+    sentry_release: str | None = None
+
     @field_validator("database_url")
     @classmethod
     def _normalize_database_url(cls, value: str) -> str:

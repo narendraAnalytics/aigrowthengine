@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+import os
 from collections.abc import AsyncIterator
+
+# Keep Sentry inert during tests — set before app.main imports (which calls
+# init_sentry). An explicit env var beats the value in .env.
+os.environ.setdefault("SENTRY_DSN", "")
 
 import pytest
 from asgi_lifespan import LifespanManager
