@@ -81,6 +81,10 @@ The web app is deployed on **Vercel** at
 - **Framework / build:** pinned in `apps/web/vercel.json`
   (`npm run build` → `next build --webpack`, required for Serwist)
 - Every push to `main` auto-deploys; pull requests get preview URLs.
+- **Secrets** live only in Vercel → Project → Settings → Environment Variables
+  (and, later, the Cloud Run secret manager for the API) — never in the repo.
+  The schema and which vars are required is `apps/web/src/env.ts`; a missing
+  required var fails the build.
 
 ## Core principles
 
