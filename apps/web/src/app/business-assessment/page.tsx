@@ -1,6 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
-import Link from "next/link";
 import { redirect } from "next/navigation";
+
+import { AssessmentForm } from "./assessment-form";
 
 import type { Metadata } from "next";
 
@@ -8,43 +9,26 @@ export const metadata: Metadata = {
   title: "Business Assessment",
 };
 
-// Auth-gated placeholder — reads the Clerk session (request-time). `instant =
-// false` lets it block under `cacheComponents` without a Suspense split; the
-// real assessment flow (Phase 3.2) will be built shell-first.
+// Reads the Clerk session at request time. `instant = false` lets it block under
+// `cacheComponents` without a Suspense split.
 export const instant = false;
 
 export default async function BusinessAssessmentPage() {
   const user = await currentUser();
-
-  // Auth always returns visitors to the landing page; this route is only
-  // meaningful once signed in.
   if (!user) redirect("/");
 
-  const name =
-    user.username ??
-    user.firstName ??
-    user.primaryEmailAddress?.emailAddress?.split("@")[0] ??
-    "there";
-
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-6 py-24 text-center">
-      <p className="section-eyebrow mb-4">AI Opportunity Assessment</p>
-      <h1 className="font-heading text-cream text-[clamp(2rem,5vw,3rem)] leading-tight font-bold">
-        Welcome, {name}
+    <main className="mx-auto max-w-2xl px-6 py-20">
+      <p className="section-eyebrow mb-3">AI Opportunity Assessment</p>
+      <h1 className="font-heading text-foreground text-[clamp(1.9rem,4vw,2.6rem)] leading-tight font-bold">
+        Describe a business problem
       </h1>
-      <p className="text-cream-dim mt-5">
-        Your account is ready. The guided assessment — describe a business
-        problem, get an explainable opportunity score and a capability-backed
-        match — is coming next.
+      <p className="text-muted-foreground mt-4 mb-12">
+        Plain language is fine — no need to mention AI or technology.
+        You&apos;ll get an explainable opportunity score and a capability-backed
+        match.
       </p>
-      <div className="mt-9">
-        <Link
-          href="/"
-          className="btn-glass inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-[0.95rem] font-semibold"
-        >
-          Back to Home
-        </Link>
-      </div>
+      <AssessmentForm />
     </main>
   );
 }

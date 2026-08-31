@@ -156,9 +156,11 @@ CRITICAL GAP ANALYSIS — installed but NOT wired up:
 MISSING ENTIRELY:
   [ ] Backend (no FastAPI app, no Python at all)
   [ ] Database (no Neon project, no models, no Alembic)
-  [ ] Any AI integration wired (Groq chosen — ADR 0001 — SDK added, no pipeline yet)
+  [x] AI integration wired — Groq assessment pipeline (Slice A, ADR 0001/0002):
+      src/server/ai/{groq,prompt,assessment-schema,log}.ts + run-assessment.ts
   [ ] Linting/formatting (no ESLint, no Prettier — `next lint` was removed in v16)
-  [ ] Testing (no Vitest, no Playwright, no pytest)
+  [~] Testing — Vitest added (Slice A: matcher, schema, pipeline core). No
+      Playwright, no pytest yet.
   [~] CI/CD: Vercel git integration live (auto-deploy main + PR previews).
       No .github/ workflows yet (lint/typecheck/test gates still TODO).
   [x] Repo root fixed 2026-08-30 — git root at aigrowthengine/, frontend/ nested,
@@ -1000,9 +1002,24 @@ RATIONALE: the roadmap's own guiding principle — "do not spend months on
 
 
 ================================================================================
-NEXT SESSION — PHASE 3 SLICE A ("problem in → assessment out")
+PHASE 3 SLICE A ("problem in → assessment out")   [x] DONE 2026-08-31
 Goal: a signed-in user submits a plain-language business problem and gets back a
 capability-backed, explainable opportunity assessment. ONE branch, demoable.
+================================================================================
+STATUS: shipped on branch feat/phase-3-slice-a. STEP 1-6 done.
+  - Groq wrapper + hand-written strict JSON schema + Zod re-validate + repair
+    retry + fail-closed:  src/server/ai/{groq,prompt,assessment-schema,log}.ts
+  - deterministic matcher (MATCHER_VERSION 1.0.0):  src/lib/matching/
+  - pipeline (db.batch persist — neon-http has no interactive tx):
+    src/server/assessment/{run-assessment,get-result,request-expert-review}.ts
+  - routes: POST /api/assessments, POST /api/assessments/:id/expert-review
+  - form: src/app/business-assessment/page.tsx (+ assessment-form.tsx)
+  - result: src/app/business-assessment/[id]/result/ (+ "Why this score?" panel)
+  - Vitest added (21 tests). ADR 0002 recorded. AI calls audited via
+    ai_gateway.request + Sentry breadcrumb (full ai_runs table deferred).
+  - Verified end-to-end vs real Groq + Neon: finance invoice case -> medium/high
+    band matched to invoice-po-grn-matching; vague case -> no_confident_match.
+  - Deferred (unchanged): see "OUT OF SLICE A" below.
 ================================================================================
 
 WHERE IT RUNS (slice decision — revisit at full Phase 3 / when apps/api needs it)
