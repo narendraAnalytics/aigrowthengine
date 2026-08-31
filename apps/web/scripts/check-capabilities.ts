@@ -29,7 +29,8 @@ for (const pt of PROBLEM_TYPES) {
 const qIds = new Set<string>();
 for (const q of ASSESSMENT_QUESTIONS) {
   if (!q.id) errors.push("Assessment question with empty id");
-  if (qIds.has(q.id)) errors.push(`Duplicate assessment question id: "${q.id}"`);
+  if (qIds.has(q.id))
+    errors.push(`Duplicate assessment question id: "${q.id}"`);
   qIds.add(q.id);
   if (
     (q.type === "single_select" || q.type === "multi_select") &&

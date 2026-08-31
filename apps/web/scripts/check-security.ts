@@ -30,22 +30,29 @@ const fail = (m: string) => errors.push(m);
 for (const role of USER_ROLES) {
   if (!ROLE_PERMISSIONS[role]) fail(`role "${role}" has no permission set`);
   for (const p of ROLE_PERMISSIONS[role]) {
-    if (!isKnownPermission(p)) fail(`role "${role}" references unknown permission "${p}"`);
+    if (!isKnownPermission(p))
+      fail(`role "${role}" references unknown permission "${p}"`);
   }
 }
 if (ROLE_PERMISSIONS.admin.size !== PERMISSIONS.length) {
-  fail(`admin should hold all ${PERMISSIONS.length} permissions, has ${ROLE_PERMISSIONS.admin.size}`);
+  fail(
+    `admin should hold all ${PERMISSIONS.length} permissions, has ${ROLE_PERMISSIONS.admin.size}`,
+  );
 }
-if (!can("prospect", "assessment:create")) fail("prospect must be able to create an assessment");
+if (!can("prospect", "assessment:create"))
+  fail("prospect must be able to create an assessment");
 if (can("prospect", "crm:read")) fail("prospect must NOT read CRM");
 if (!can("security", "audit:read")) fail("security must read the audit log");
-if (can("investor", "assessment:read:any")) fail("investor must not read assessments");
+if (can("investor", "assessment:read:any"))
+  fail("investor must not read assessments");
 
 // --- tenant scoping ---
 const org = orgScope("org_1");
 const personal = personalScope("user_1");
-if (!matchesScope({ organizationId: "org_1" }, org)) fail("org scope should match its org row");
-if (matchesScope({ organizationId: "org_2" }, org)) fail("org scope leaked across orgs");
+if (!matchesScope({ organizationId: "org_1" }, org))
+  fail("org scope should match its org row");
+if (matchesScope({ organizationId: "org_2" }, org))
+  fail("org scope leaked across orgs");
 if (!matchesScope({ organizationId: null, userId: "user_1" }, personal)) {
   fail("personal scope should match the user's personal row");
 }
@@ -63,8 +70,15 @@ try {
 for (let i = 0; i < INVESTOR_ACCESS_LEVELS.length; i++) {
   for (let j = 0; j < INVESTOR_ACCESS_LEVELS.length; j++) {
     const expected = i >= j;
-    if (meetsInvestorAccess(INVESTOR_ACCESS_LEVELS[i]!, INVESTOR_ACCESS_LEVELS[j]!) !== expected) {
-      fail(`meetsInvestorAccess(${INVESTOR_ACCESS_LEVELS[i]}, ${INVESTOR_ACCESS_LEVELS[j]}) wrong`);
+    if (
+      meetsInvestorAccess(
+        INVESTOR_ACCESS_LEVELS[i]!,
+        INVESTOR_ACCESS_LEVELS[j]!,
+      ) !== expected
+    ) {
+      fail(
+        `meetsInvestorAccess(${INVESTOR_ACCESS_LEVELS[i]}, ${INVESTOR_ACCESS_LEVELS[j]}) wrong`,
+      );
     }
   }
 }
@@ -82,7 +96,8 @@ for (const f of requiredFields) {
   if (!classifyField(f)) fail(`field "${f}" is not classified`);
 }
 for (const [field, cls] of Object.entries(FIELD_CLASSIFICATION)) {
-  if (!(cls in RETENTION_DAYS)) fail(`field "${field}" has unknown class "${cls}"`);
+  if (!(cls in RETENTION_DAYS))
+    fail(`field "${field}" has unknown class "${cls}"`);
 }
 
 // --- audit catalogue ---
@@ -90,9 +105,11 @@ const auditTypes = new Set<string>();
 for (const e of AUDIT_EVENTS) {
   if (auditTypes.has(e.type)) fail(`duplicate audit event type "${e.type}"`);
   auditTypes.add(e.type);
-  if (e.retentionDays <= 0) fail(`audit event "${e.type}" has non-positive retention`);
+  if (e.retentionDays <= 0)
+    fail(`audit event "${e.type}" has non-positive retention`);
 }
-if (!isKnownAuditEvent("assessment.submitted")) fail("expected assessment.submitted in catalogue");
+if (!isKnownAuditEvent("assessment.submitted"))
+  fail("expected assessment.submitted in catalogue");
 const sampleEvent = auditEventSchema.safeParse({
   type: "assessment.submitted",
   actorId: "user_1",
@@ -104,8 +121,20 @@ const sampleEvent = auditEventSchema.safeParse({
   at: new Date(),
   metadata: {},
 });
-if (!sampleEvent.success) fail(`auditEventSchema rejected a valid event: ${sampleEvent.error.message}`);
-if (auditEventSchema.safeParse({ type: "made.up", actorId: null, actorRole: null, tenant: null, resourceType: "x", resourceId: null, requestId: null, at: new Date() }).success) {
+if (!sampleEvent.success)
+  fail(`auditEventSchema rejected a valid event: ${sampleEvent.error.message}`);
+if (
+  auditEventSchema.safeParse({
+    type: "made.up",
+    actorId: null,
+    actorRole: null,
+    tenant: null,
+    resourceType: "x",
+    resourceId: null,
+    requestId: null,
+    at: new Date(),
+  }).success
+) {
   fail("auditEventSchema accepted an unknown event type");
 }
 
@@ -114,7 +143,8 @@ for (const component of THREAT_COMPONENTS) {
   const ts = THREATS.filter((t) => t.component === component);
   if (ts.length === 0) fail(`threat model has no entries for "${component}"`);
   for (const t of ts) {
-    if (!STRIDE.includes(t.stride)) fail(`threat in "${component}" has bad STRIDE "${t.stride}"`);
+    if (!STRIDE.includes(t.stride))
+      fail(`threat in "${component}" has bad STRIDE "${t.stride}"`);
     if (!t.mitigation || t.mitigation.length < 20) {
       fail(`threat "${t.threat.slice(0, 40)}..." has no real mitigation`);
     }

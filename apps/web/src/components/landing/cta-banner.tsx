@@ -1,6 +1,8 @@
 import Image from "next/image";
-import { IMAGES } from "@/lib/site";
+
 import { AuthCtaButton } from "@/components/auth/auth-cta-button";
+import { IMAGES } from "@/lib/site";
+
 import { Icon } from "./icons";
 import { Reveal } from "./reveal";
 
@@ -17,11 +19,11 @@ export function CtaBanner() {
             className="size-13 shrink-0 object-contain"
           />
           <div>
-            <h2 className="font-heading text-[clamp(1.25rem,2.6vw,1.75rem)] font-bold text-cream">
+            <h2 className="font-heading text-cream text-[clamp(1.25rem,2.6vw,1.75rem)] font-bold">
               Ready to Unlock Your{" "}
               <span className="text-gradient-gold">Growth Potential?</span>
             </h2>
-            <p className="mt-1.5 max-w-md text-[0.9rem] text-muted-warm">
+            <p className="text-muted-warm mt-1.5 max-w-md text-[0.9rem]">
               Start your free assessment today and discover how AI can transform
               your business.
             </p>

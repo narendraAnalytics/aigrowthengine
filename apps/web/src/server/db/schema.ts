@@ -148,27 +148,24 @@ export const assessments = pgTable(
   ],
 );
 
-export const assessmentResults = pgTable(
-  "assessment_results",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    assessmentId: uuid("assessment_id")
-      .notNull()
-      .unique()
-      .references(() => assessments.id, { onDelete: "cascade" }),
-    // string[] of problem_type vocabulary values.
-    problemTypes: jsonb("problem_types").notNull(),
-    industry: text("industry"),
-    // The validated LeadSignals object ({ [factorId]: { level, rationale } }).
-    signals: jsonb("signals").notNull(),
-    leadScore: integer("lead_score").notNull(),
-    scoreBand: scoreBand("score_band").notNull(),
-    scoringModelVersion: text("scoring_model_version").notNull(),
-    summary: text("summary"),
-    noConfidentMatch: boolean("no_confident_match").notNull().default(false),
-    ...timestamps,
-  },
-);
+export const assessmentResults = pgTable("assessment_results", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  assessmentId: uuid("assessment_id")
+    .notNull()
+    .unique()
+    .references(() => assessments.id, { onDelete: "cascade" }),
+  // string[] of problem_type vocabulary values.
+  problemTypes: jsonb("problem_types").notNull(),
+  industry: text("industry"),
+  // The validated LeadSignals object ({ [factorId]: { level, rationale } }).
+  signals: jsonb("signals").notNull(),
+  leadScore: integer("lead_score").notNull(),
+  scoreBand: scoreBand("score_band").notNull(),
+  scoringModelVersion: text("scoring_model_version").notNull(),
+  summary: text("summary"),
+  noConfidentMatch: boolean("no_confident_match").notNull().default(false),
+  ...timestamps,
+});
 
 export const capabilityMatches = pgTable(
   "capability_matches",

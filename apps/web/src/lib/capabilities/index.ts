@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { CAPABILITY_DATA } from "./data";
 import {
   capabilitySchema,

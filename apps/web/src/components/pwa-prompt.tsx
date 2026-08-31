@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import { Icon } from "@/components/landing/icons";
 
 type BeforeInstallPromptEvent = Event & {
@@ -89,7 +90,7 @@ function Toast({
       role="status"
       className="glass-panel fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-md items-center gap-3 rounded-2xl p-4 sm:inset-x-auto sm:right-6"
     >
-      <p className="flex-1 text-[0.85rem] text-cream-dim">{label}</p>
+      <p className="text-cream-dim flex-1 text-[0.85rem]">{label}</p>
       <button
         type="button"
         onClick={onAction}
@@ -101,7 +102,7 @@ function Toast({
         type="button"
         onClick={onClose}
         aria-label="Dismiss"
-        className="text-faint transition hover:text-cream"
+        className="text-faint hover:text-cream transition"
       >
         <Icon.close className="size-4" />
       </button>

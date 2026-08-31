@@ -1,5 +1,6 @@
 import "server-only";
 import { currentUser } from "@clerk/nextjs/server";
+
 import { upsertUser } from "@/server/sync/clerk-sync";
 
 /**

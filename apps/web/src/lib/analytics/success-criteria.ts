@@ -11,7 +11,12 @@
  * not code — re-pick the vertical before Phase 6+.
  */
 
-export const CRITERION_CATEGORIES = ["funnel", "quality", "ai", "security"] as const;
+export const CRITERION_CATEGORIES = [
+  "funnel",
+  "quality",
+  "ai",
+  "security",
+] as const;
 export type CriterionCategory = (typeof CRITERION_CATEGORIES)[number];
 
 export type Comparator = "gte" | "lte" | "eq";
@@ -65,7 +70,8 @@ export const SUCCESS_CRITERIA: readonly SuccessCriterion[] = [
     target: 0.2,
     comparator: "gte",
     unit: "ratio",
-    measurement: "count(qualified_opportunity_created) / count(assessment_completed)",
+    measurement:
+      "count(qualified_opportunity_created) / count(assessment_completed)",
   },
   {
     id: "qualified_to_consultation",
@@ -74,7 +80,8 @@ export const SUCCESS_CRITERIA: readonly SuccessCriterion[] = [
     target: 0.3,
     comparator: "gte",
     unit: "ratio",
-    measurement: "count(consultation_booked) / count(qualified_opportunity_created)",
+    measurement:
+      "count(consultation_booked) / count(qualified_opportunity_created)",
   },
   {
     id: "consultation_to_pilot",

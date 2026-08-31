@@ -42,30 +42,100 @@ function def(
 }
 
 export const AUDIT_EVENTS: readonly AuditEventDef[] = [
-  def("assessment.submitted", "assessment", "A prospect submitted assessment answers", true),
-  def("assessment.scored", "assessment", "The engine produced a result + lead score"),
+  def(
+    "assessment.submitted",
+    "assessment",
+    "A prospect submitted assessment answers",
+    true,
+  ),
+  def(
+    "assessment.scored",
+    "assessment",
+    "The engine produced a result + lead score",
+  ),
   def("assessment.failed", "assessment", "The assessment pipeline failed"),
-  def("expert_review.requested", "assessment", "A prospect requested an expert review", true),
-  def("expert_review.status_changed", "assessment", "Staff changed an expert-review status"),
+  def(
+    "expert_review.requested",
+    "assessment",
+    "A prospect requested an expert review",
+    true,
+  ),
+  def(
+    "expert_review.status_changed",
+    "assessment",
+    "Staff changed an expert-review status",
+  ),
 
-  def("capability.created", "capability", "A capability was added to the library"),
+  def(
+    "capability.created",
+    "capability",
+    "A capability was added to the library",
+  ),
   def("capability.updated", "capability", "A capability was edited"),
 
-  def("lead.score_overridden", "crm", "Staff manually overrode a lead score (reason recorded)", true),
+  def(
+    "lead.score_overridden",
+    "crm",
+    "Staff manually overrode a lead score (reason recorded)",
+    true,
+  ),
   def("crm.record_exported", "crm", "CRM data was exported", true),
 
-  def("investor_room.access_granted", "investor_room", "An investor was granted an access level", true),
-  def("investor_room.access_revoked", "investor_room", "An investor's access was revoked", true),
-  def("investor_room.document_viewed", "investor_room", "An investor viewed a restricted document", true),
+  def(
+    "investor_room.access_granted",
+    "investor_room",
+    "An investor was granted an access level",
+    true,
+  ),
+  def(
+    "investor_room.access_revoked",
+    "investor_room",
+    "An investor's access was revoked",
+    true,
+  ),
+  def(
+    "investor_room.document_viewed",
+    "investor_room",
+    "An investor viewed a restricted document",
+    true,
+  ),
 
-  def("access_control.role_assigned", "access_control", "A user's role was changed", true),
-  def("access_control.user_deactivated", "access_control", "A user account was deactivated", true),
+  def(
+    "access_control.role_assigned",
+    "access_control",
+    "A user's role was changed",
+    true,
+  ),
+  def(
+    "access_control.user_deactivated",
+    "access_control",
+    "A user account was deactivated",
+    true,
+  ),
 
-  def("data_lifecycle.erasure_requested", "data_lifecycle", "A data-subject erasure request was received", true),
-  def("data_lifecycle.record_deleted", "data_lifecycle", "A record was hard-deleted per policy", true),
+  def(
+    "data_lifecycle.erasure_requested",
+    "data_lifecycle",
+    "A data-subject erasure request was received",
+    true,
+  ),
+  def(
+    "data_lifecycle.record_deleted",
+    "data_lifecycle",
+    "A record was hard-deleted per policy",
+    true,
+  ),
 
-  def("ai_gateway.request", "ai_gateway", "An outbound model call was made (model, tokens, purpose)"),
-  def("ai_gateway.blocked", "ai_gateway", "A model call or output was blocked by a guardrail"),
+  def(
+    "ai_gateway.request",
+    "ai_gateway",
+    "An outbound model call was made (model, tokens, purpose)",
+  ),
+  def(
+    "ai_gateway.blocked",
+    "ai_gateway",
+    "A model call or output was blocked by a guardrail",
+  ),
 ] as const;
 
 export const AUDIT_EVENT_TYPES = AUDIT_EVENTS.map((e) => e.type);

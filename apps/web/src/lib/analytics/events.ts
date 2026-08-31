@@ -65,10 +65,17 @@ function evt(
 
 export const ANALYTICS_EVENTS: readonly AnalyticsEventDef[] = [
   // --- top of funnel ---
-  evt("page_viewed", "product", "A page was viewed", "Client-side route change / initial load", "visitor", {
-    referrer: "string",
-    utm_source: "string",
-  }),
+  evt(
+    "page_viewed",
+    "product",
+    "A page was viewed",
+    "Client-side route change / initial load",
+    "visitor",
+    {
+      referrer: "string",
+      utm_source: "string",
+    },
+  ),
   evt(
     "assessment_started",
     "product",
@@ -114,7 +121,11 @@ export const ANALYTICS_EVENTS: readonly AnalyticsEventDef[] = [
     "One or more capability matches were shown to the user",
     "Result page renders with >=1 match",
     "capability_matched",
-    { assessment_id: "string", capability_ids: "string[]", top_confidence: "number" },
+    {
+      assessment_id: "string",
+      capability_ids: "string[]",
+      top_confidence: "number",
+    },
   ),
   evt(
     "no_confident_match_shown",
@@ -150,20 +161,55 @@ export const ANALYTICS_EVENTS: readonly AnalyticsEventDef[] = [
   ),
 
   // --- down funnel (CRM — Phase 4/5) ---
-  evt("qualified_opportunity_created", "growth", "An assessment became a qualified opportunity", "Lead marked qualified in CRM", "qualified", {
-    assessment_id: "string",
-    lead_score: "number",
-  }),
-  evt("consultation_booked", "growth", "A consultation was scheduled", "Consultation created in CRM", "consultation", {
-    opportunity_id: "string",
-  }),
-  evt("proposal_sent", "growth", "A proposal/pilot offer was sent", "Proposal marked sent", "proposal", {
-    opportunity_id: "string",
-  }),
-  evt("pilot_started", "growth", "A paid pilot began", "Pilot project created", "pilot", { opportunity_id: "string" }),
-  evt("deal_won", "growth", "A pilot converted to a project / win", "Opportunity marked won", "won", {
-    opportunity_id: "string",
-  }),
+  evt(
+    "qualified_opportunity_created",
+    "growth",
+    "An assessment became a qualified opportunity",
+    "Lead marked qualified in CRM",
+    "qualified",
+    {
+      assessment_id: "string",
+      lead_score: "number",
+    },
+  ),
+  evt(
+    "consultation_booked",
+    "growth",
+    "A consultation was scheduled",
+    "Consultation created in CRM",
+    "consultation",
+    {
+      opportunity_id: "string",
+    },
+  ),
+  evt(
+    "proposal_sent",
+    "growth",
+    "A proposal/pilot offer was sent",
+    "Proposal marked sent",
+    "proposal",
+    {
+      opportunity_id: "string",
+    },
+  ),
+  evt(
+    "pilot_started",
+    "growth",
+    "A paid pilot began",
+    "Pilot project created",
+    "pilot",
+    { opportunity_id: "string" },
+  ),
+  evt(
+    "deal_won",
+    "growth",
+    "A pilot converted to a project / win",
+    "Opportunity marked won",
+    "won",
+    {
+      opportunity_id: "string",
+    },
+  ),
 
   // --- quality / security signals ---
   evt(

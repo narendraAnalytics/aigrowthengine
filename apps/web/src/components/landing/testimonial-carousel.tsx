@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+
 import { cn } from "@/lib/utils";
+
 import { TESTIMONIALS } from "./content";
 
 const INTERVAL_MS = 7000;
@@ -53,10 +55,10 @@ export function TestimonialCarousel() {
               i === active ? "opacity-100" : "pointer-events-none opacity-0",
             )}
           >
-            <div className="font-heading text-4xl leading-none text-gold-300">
+            <div className="font-heading text-gold-300 text-4xl leading-none">
               &ldquo;
             </div>
-            <p className="mt-3 text-[0.95rem] leading-relaxed text-cream-dim italic">
+            <p className="text-cream-dim mt-3 text-[0.95rem] leading-relaxed italic">
               {t.quote}
             </p>
             <div className="mt-5 flex items-center gap-3">
@@ -69,20 +71,20 @@ export function TestimonialCarousel() {
                   className="size-11 shrink-0 rounded-full object-cover"
                 />
               ) : (
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-gold-400/30 bg-gold-400/15 text-[0.8rem] font-bold text-gold-200">
+                <span className="border-gold-400/30 bg-gold-400/15 text-gold-200 flex size-11 shrink-0 items-center justify-center rounded-full border text-[0.8rem] font-bold">
                   {initials(t.name)}
                 </span>
               )}
               <div>
-                <div className="text-[0.88rem] font-bold text-cream">
+                <div className="text-cream text-[0.88rem] font-bold">
                   {t.name}
                 </div>
-                <div className="text-[0.78rem] text-faint">{t.role}</div>
+                <div className="text-faint text-[0.78rem]">{t.role}</div>
               </div>
             </div>
             <div
               aria-label={`${t.rating} out of 5 stars`}
-              className="mt-4 tracking-[0.2em] text-gold-400"
+              className="text-gold-400 mt-4 tracking-[0.2em]"
             >
               {"★".repeat(t.rating)}
             </div>
@@ -101,7 +103,9 @@ export function TestimonialCarousel() {
               onClick={() => setActive(i)}
               className={cn(
                 "h-1.5 rounded-full transition-all duration-300",
-                i === active ? "w-6 bg-gold-300" : "w-2.5 bg-cream/25 hover:bg-cream/45",
+                i === active
+                  ? "bg-gold-300 w-6"
+                  : "bg-cream/25 hover:bg-cream/45 w-2.5",
               )}
             />
           ))}
@@ -111,7 +115,7 @@ export function TestimonialCarousel() {
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous testimonial"
-            className="flex size-8 items-center justify-center rounded-lg border border-gold-400/25 text-cream-dim transition hover:border-gold-400/50 hover:text-cream"
+            className="border-gold-400/25 text-cream-dim hover:border-gold-400/50 hover:text-cream flex size-8 items-center justify-center rounded-lg border transition"
           >
             &#8249;
           </button>
@@ -119,7 +123,7 @@ export function TestimonialCarousel() {
             type="button"
             onClick={() => go(1)}
             aria-label="Next testimonial"
-            className="flex size-8 items-center justify-center rounded-lg border border-gold-400/25 text-cream-dim transition hover:border-gold-400/50 hover:text-cream"
+            className="border-gold-400/25 text-cream-dim hover:border-gold-400/50 hover:text-cream flex size-8 items-center justify-center rounded-lg border transition"
           >
             &#8250;
           </button>

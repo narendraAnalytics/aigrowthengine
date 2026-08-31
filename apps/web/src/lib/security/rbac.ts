@@ -67,7 +67,12 @@ const NONE: Permission[] = [];
 
 /** Every role's permission set. `admin` is expanded to all permissions below. */
 const BASE_MATRIX: Record<UserRole, Permission[]> = {
-  prospect: ["assessment:create", "assessment:read:own", "expert_review:create", "capability:read"],
+  prospect: [
+    "assessment:create",
+    "assessment:read:own",
+    "expert_review:create",
+    "capability:read",
+  ],
   client: [
     "assessment:create",
     "assessment:read:own",
@@ -87,8 +92,18 @@ const BASE_MATRIX: Record<UserRole, Permission[]> = {
     "crm:write",
     "score:override",
   ],
-  engineer: ["assessment:read:any", "capability:read", "capability:write", "crm:read"],
-  security: ["audit:read", "security:manage", "capability:read", "assessment:read:any"],
+  engineer: [
+    "assessment:read:any",
+    "capability:read",
+    "capability:write",
+    "crm:read",
+  ],
+  security: [
+    "audit:read",
+    "security:manage",
+    "capability:read",
+    "assessment:read:any",
+  ],
   management: [
     "assessment:read:any",
     "expert_review:read:org",
@@ -118,7 +133,10 @@ export function can(role: UserRole, permission: Permission): boolean {
 }
 
 /** Any of the roles grants the permission. */
-export function canAny(roles: readonly UserRole[], permission: Permission): boolean {
+export function canAny(
+  roles: readonly UserRole[],
+  permission: Permission,
+): boolean {
   return roles.some((r) => can(r, permission));
 }
 

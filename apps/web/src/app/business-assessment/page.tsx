@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { currentUser } from "@clerk/nextjs/server";
+
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Business Assessment",
@@ -23,10 +24,10 @@ export default async function BusinessAssessmentPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-6 py-24 text-center">
       <p className="section-eyebrow mb-4">AI Opportunity Assessment</p>
-      <h1 className="font-heading text-[clamp(2rem,5vw,3rem)] leading-tight font-bold text-cream">
+      <h1 className="font-heading text-cream text-[clamp(2rem,5vw,3rem)] leading-tight font-bold">
         Welcome, {name}
       </h1>
-      <p className="mt-5 text-cream-dim">
+      <p className="text-cream-dim mt-5">
         Your account is ready. The guided assessment — describe a business
         problem, get an explainable opportunity score and a capability-backed
         match — is coming next.

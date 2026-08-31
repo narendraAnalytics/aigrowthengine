@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 import { CASES } from "./content";
 import { SectionHeading } from "./primitives";
 import { Reveal } from "./reveal";
@@ -41,14 +42,16 @@ export function SuccessStories() {
                   />
                 </div>
                 <div className="p-5">
-                  <div className="text-[0.82rem] font-semibold text-cream-dim">
+                  <div className="text-cream-dim text-[0.82rem] font-semibold">
                     {c.company}
                   </div>
-                  <div className="mt-0.5 text-[0.75rem] text-faint">{c.tag}</div>
-                  <div className="mt-3 font-heading text-[1.75rem] font-bold text-gold-300">
+                  <div className="text-faint mt-0.5 text-[0.75rem]">
+                    {c.tag}
+                  </div>
+                  <div className="font-heading text-gold-300 mt-3 text-[1.75rem] font-bold">
                     {c.metric}
                   </div>
-                  <div className="mt-0.5 text-[0.78rem] text-muted-warm">
+                  <div className="text-muted-warm mt-0.5 text-[0.78rem]">
                     {c.metricLabel}
                   </div>
                 </div>

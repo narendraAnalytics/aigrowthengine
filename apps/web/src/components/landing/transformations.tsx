@@ -1,5 +1,7 @@
 import Image from "next/image";
+
 import { IMAGES } from "@/lib/site";
+
 import { OUTCOMES } from "./content";
 import { Icon } from "./icons";
 import { GoldLink } from "./primitives";
@@ -24,16 +26,16 @@ export function Transformations() {
               return (
                 <li
                   key={o.title}
-                  className="flex items-start gap-4 border-b border-gold-400/10 pb-4"
+                  className="border-gold-400/10 flex items-start gap-4 border-b pb-4"
                 >
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-magenta-400/30 bg-magenta-400/15 text-magenta-400">
+                  <span className="border-magenta-400/30 bg-magenta-400/15 text-magenta-400 flex size-10 shrink-0 items-center justify-center rounded-lg border">
                     <Glyph className="size-5" />
                   </span>
                   <div>
-                    <h3 className="font-heading text-[0.98rem] font-bold text-cream">
+                    <h3 className="font-heading text-cream text-[0.98rem] font-bold">
                       {o.title}
                     </h3>
-                    <p className="mt-1 text-[0.86rem] leading-relaxed text-muted-warm">
+                    <p className="text-muted-warm mt-1 text-[0.86rem] leading-relaxed">
                       {o.desc}
                     </p>
                   </div>
@@ -49,7 +51,7 @@ export function Transformations() {
 
         <Reveal
           delay={100}
-          className="relative aspect-[6/5] overflow-hidden rounded-3xl border border-gold-400/20 shadow-[0_20px_50px_rgba(10,4,14,0.4)]"
+          className="border-gold-400/20 relative aspect-[6/5] overflow-hidden rounded-3xl border shadow-[0_20px_50px_rgba(10,4,14,0.4)]"
         >
           <Image
             src={IMAGES.businessTransformation}

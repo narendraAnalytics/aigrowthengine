@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+
 import { Icon } from "@/components/landing/icons";
 
 const STORAGE_KEY = "intro-seen";
@@ -47,7 +48,6 @@ export function IntroVideo() {
       body.style.overflow = prevOverflow;
       window.removeEventListener("keydown", onKey);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   function dismiss() {
@@ -115,7 +115,7 @@ export function IntroVideo() {
       {/* Sharp video, edges feathered into the backdrop so the corner watermark dissolves */}
       <video
         ref={videoRef}
-        className="absolute inset-0 h-full w-full object-cover [mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)] [-webkit-mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)]"
+        className="absolute inset-0 h-full w-full [mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)] object-cover [-webkit-mask-image:radial-gradient(125%_125%_at_50%_45%,#000_52%,transparent_90%)]"
         src={VIDEO_SRC}
         autoPlay
         muted
@@ -131,7 +131,7 @@ export function IntroVideo() {
 
       {/* Full-width smoky band across the bottom — hides the source watermark
           and seats the Enter button */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] [mask-image:linear-gradient(to_top,#000_35%,transparent)] [-webkit-mask-image:linear-gradient(to_top,#000_35%,transparent)] sm:h-1/3 sm:[backdrop-filter:blur(24px)] sm:[-webkit-backdrop-filter:blur(24px)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 [mask-image:linear-gradient(to_top,#000_35%,transparent)] [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] [-webkit-mask-image:linear-gradient(to_top,#000_35%,transparent)] sm:h-1/3 sm:[backdrop-filter:blur(24px)] sm:[-webkit-backdrop-filter:blur(24px)]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
       {/* Scrim for control legibility over any frame */}
@@ -142,7 +142,7 @@ export function IntroVideo() {
           type="button"
           onClick={tryPlay}
           aria-label="Play intro video"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/25 bg-white/10 p-5 text-white backdrop-blur-md transition hover:scale-105 hover:bg-white/15"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/25 bg-white/10 p-5 text-white backdrop-blur-md transition hover:scale-105 hover:bg-white/15"
         >
           <Icon.play className="size-7" />
         </button>
@@ -152,7 +152,7 @@ export function IntroVideo() {
         type="button"
         onClick={toggleSound}
         aria-label={muted ? "Unmute video" : "Mute video"}
-        className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] rounded-full border border-white/25 bg-white/10 p-3 text-white backdrop-blur-md transition hover:scale-105 hover:bg-white/15 sm:right-6 sm:top-[calc(1.5rem+env(safe-area-inset-top))]"
+        className="absolute top-[calc(1rem+env(safe-area-inset-top))] right-4 rounded-full border border-white/25 bg-white/10 p-3 text-white backdrop-blur-md transition hover:scale-105 hover:bg-white/15 sm:top-[calc(1.5rem+env(safe-area-inset-top))] sm:right-6"
       >
         {muted ? (
           <VolumeXIcon className="size-5" />

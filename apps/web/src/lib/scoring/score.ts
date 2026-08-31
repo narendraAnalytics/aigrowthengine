@@ -4,6 +4,7 @@ import {
   type FactorId,
   type SignalLevel,
 } from "./factors";
+
 import type { LeadSignals } from "./signals";
 
 /**

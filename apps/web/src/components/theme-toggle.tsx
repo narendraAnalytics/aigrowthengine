@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 type ThemeToggleProps = {
   className?: string;
@@ -33,7 +34,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
               onClick={() => setTheme(isDark ? "light" : "dark")}
               aria-label={label}
               className={cn(
-                "flex size-10 items-center justify-center rounded-xl border border-gold-400/25 bg-white/5 text-cream transition hover:bg-gold-400/10",
+                "border-gold-400/25 text-cream hover:bg-gold-400/10 flex size-10 items-center justify-center rounded-xl border bg-white/5 transition",
                 className,
               )}
             >

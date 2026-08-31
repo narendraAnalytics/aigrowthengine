@@ -354,15 +354,27 @@ Goal: a production-shaped skeleton that deploys on day one.
       (@commitlint/config-conventional) + husky commit-msg hook +
       .github/CODEOWNERS (* @narendraAnalytics).
 
-1.2 Frontend tooling (currently absent)
-  [ ] ESLint 9 flat config (`next lint` was removed in v16 — use eslint directly)
-      eslint-config-next, @typescript-eslint, jsx-a11y, import ordering
-  [ ] Prettier + prettier-plugin-tailwindcss
-  [ ] Husky + lint-staged pre-commit hook
-  [ ] package.json scripts: lint, format, typecheck, test, test:e2e, analyze
-  [ ] Tighten tsconfig: target ES2022, noUncheckedIndexedAccess,
-      noImplicitOverride, exactOptionalPropertyTypes
-  [ ] Add `--turbopack` explicitly to dev/build scripts (document the choice)
+1.2 Frontend tooling  (2026-08-31 — Phase 1.2)
+  [x] ESLint 9 flat config — apps/web/eslint.config.mjs: eslint-config-next
+      /core-web-vitals + /typescript (bundles react, react-hooks, jsx-a11y,
+      import) + eslint-config-prettier/flat + import/order rule. `next lint`
+      removed in v16 → `npm run lint` = `eslint .`. Baseline: 0 errors,
+      4 warnings (all react-hooks/set-state-in-effect — mount-guard pattern,
+      rule downgraded to warn on purpose). samplefolder/ + drizzle/ ignored.
+  [x] Prettier + prettier-plugin-tailwindcss — .prettierrc.json + .prettierignore.
+      Repo-wide `prettier --write` pass applied (separate commit).
+  [x] Husky + lint-staged pre-commit hook — .husky/pre-commit runs
+      `cd apps/web && lint-staged` (eslint --fix + prettier --write on staged
+      JS/TS; prettier --write on json/css/md). husky installed at repo root in 1.1.
+  [x] package.json scripts: lint, lint:fix, format, format:check, typecheck
+      (already), test + test:e2e (informative stubs — Vitest/Playwright = Track 2),
+      analyze (stub — real wiring in 1.4 next.config)
+  [x] Tighten tsconfig: target ES2022 (already) + noUncheckedIndexedAccess +
+      noImplicitOverride + exactOptionalPropertyTypes. 4 type errors surfaced,
+      all fixed (sw.ts precacheEntries ?? [], stats-panel regex guard,
+      providers.tsx Clerk appearance NonNullable cast for EOPT/Clerk friction).
+  [x] Add `--turbopack` explicitly to `dev`. `build` stays `next build --webpack`
+      (Serwist needs webpack — documented in apps/web/CLAUDE.md).
 
 1.3 Environment & config
   [~] Create src/env.ts using @t3-oss/env-nextjs (already installed — wire it)
@@ -914,7 +926,7 @@ IMMEDIATE NEXT 10 ACTIONS (do these in order, this week)
 ================================================================================
   [x] 1.  Decide and execute the git-root move (aigrowthengine/, not frontend/)
   [x] 2.  Restructure to apps/web + apps/api + .github (2026-08-31 — Phase 1.1)
-  [ ] 3.  Add ESLint 9 flat config + Prettier + husky + lint-staged
+  [x] 3.  Add ESLint 9 flat config + Prettier + husky + lint-staged (2026-08-31 — Phase 1.2)
   [ ] 4.  Write src/env.ts (t3-env) + .env.example; make missing env fail the build
   [~] 5.  Fill next.config.ts: security headers + poweredByHeader:false + images
           remotePatterns + Serwist DONE. Still: nonce CSP, cacheComponents, Sentry.

@@ -1,0 +1,14 @@
+.next/
+out/
+build/
+node_modules/
+coverage/
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
+drizzle/
+samplefolder/
+AGENTS.md
+package-lock.json
+next-env.d.ts
+*.tsbuildinfo

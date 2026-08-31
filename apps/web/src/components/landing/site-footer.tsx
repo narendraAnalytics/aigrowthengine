@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+
 import { FOOTER_COLUMNS, IMAGES, SITE } from "@/lib/site";
+import { cn } from "@/lib/utils";
+
 import { Icon } from "./icons";
 
 const SOCIALS = [
@@ -9,7 +11,8 @@ const SOCIALS = [
     label: "LinkedIn",
     icon: Icon.linkedin,
     href: "#",
-    hover: "hover:border-[#0A66C2]/60 hover:bg-[#0A66C2]/15 hover:text-[#4aa3ff]",
+    hover:
+      "hover:border-[#0A66C2]/60 hover:bg-[#0A66C2]/15 hover:text-[#4aa3ff]",
   },
   {
     label: "Twitter",
@@ -21,13 +24,15 @@ const SOCIALS = [
     label: "YouTube",
     icon: Icon.youtube,
     href: "#",
-    hover: "hover:border-[#FF0000]/60 hover:bg-[#FF0000]/15 hover:text-[#ff5c5c]",
+    hover:
+      "hover:border-[#FF0000]/60 hover:bg-[#FF0000]/15 hover:text-[#ff5c5c]",
   },
   {
     label: "Instagram",
     icon: Icon.instagram,
     href: "#",
-    hover: "hover:border-[#E4405F]/60 hover:bg-[#E4405F]/15 hover:text-[#f27196]",
+    hover:
+      "hover:border-[#E4405F]/60 hover:bg-[#E4405F]/15 hover:text-[#f27196]",
   },
 ] as const;
 
@@ -35,9 +40,9 @@ export function SiteFooter() {
   return (
     <footer
       id="about"
-      className="scroll-mt-24 border-t border-gold-400/15 px-4 sm:px-6 lg:px-14"
+      className="border-gold-400/15 scroll-mt-24 border-t px-4 sm:px-6 lg:px-14"
     >
-      <div className="mx-auto grid max-w-[1360px] grid-cols-2 gap-x-6 gap-y-9 py-12 sm:gap-10 sm:grid-cols-2 lg:grid-cols-6">
+      <div className="mx-auto grid max-w-[1360px] grid-cols-2 gap-x-6 gap-y-9 py-12 sm:grid-cols-2 sm:gap-10 lg:grid-cols-6">
         <div className="col-span-2 lg:col-span-2">
           <div className="flex items-center gap-2.5">
             <Image
@@ -47,11 +52,11 @@ export function SiteFooter() {
               height={30}
               className="size-8 object-contain"
             />
-            <span className="font-heading text-[0.95rem] font-bold tracking-wide text-cream">
+            <span className="font-heading text-cream text-[0.95rem] font-bold tracking-wide">
               AI GROWTH ENGINE
             </span>
           </div>
-          <p className="mt-4 max-w-xs text-[0.85rem] leading-relaxed text-muted-warm">
+          <p className="text-muted-warm mt-4 max-w-xs text-[0.85rem] leading-relaxed">
             {SITE.description}
           </p>
           <div className="mt-5 flex gap-3">
@@ -63,7 +68,7 @@ export function SiteFooter() {
                   href={s.href}
                   aria-label={s.label}
                   className={cn(
-                    "flex size-9 items-center justify-center rounded-lg border border-gold-400/20 bg-white/5 text-muted-warm transition duration-200 hover:-translate-y-0.5",
+                    "border-gold-400/20 text-muted-warm flex size-9 items-center justify-center rounded-lg border bg-white/5 transition duration-200 hover:-translate-y-0.5",
                     s.hover,
                   )}
                 >
@@ -76,13 +81,13 @@ export function SiteFooter() {
 
         {FOOTER_COLUMNS.map((col) => (
           <nav key={col.title} aria-label={col.title}>
-            <h3 className="text-[0.8rem] font-bold text-cream">{col.title}</h3>
+            <h3 className="text-cream text-[0.8rem] font-bold">{col.title}</h3>
             <ul className="mt-4 flex flex-col gap-2.5">
               {col.links.map((l) => (
                 <li key={l}>
                   <Link
                     href="#"
-                    className="text-[0.82rem] text-muted-warm transition hover:text-cream"
+                    className="text-muted-warm hover:text-cream text-[0.82rem] transition"
                   >
                     {l}
                   </Link>
@@ -93,8 +98,8 @@ export function SiteFooter() {
         ))}
 
         <div className="col-span-2 lg:col-span-2">
-          <h3 className="text-[0.8rem] font-bold text-cream">Stay Updated</h3>
-          <p className="mt-4 text-[0.82rem] leading-relaxed text-muted-warm">
+          <h3 className="text-cream text-[0.8rem] font-bold">Stay Updated</h3>
+          <p className="text-muted-warm mt-4 text-[0.82rem] leading-relaxed">
             Get the latest insights on AI and business transformation.
           </p>
           <form className="mt-4 flex gap-2" aria-label="Newsletter signup">
@@ -102,7 +107,7 @@ export function SiteFooter() {
               type="email"
               required
               placeholder="Enter your email"
-              className="min-w-0 flex-1 rounded-xl border border-gold-400/25 bg-white/5 px-4 py-2.5 text-[0.82rem] text-cream outline-none placeholder:text-faint focus-visible:border-gold-400/60"
+              className="border-gold-400/25 text-cream placeholder:text-faint focus-visible:border-gold-400/60 min-w-0 flex-1 rounded-xl border bg-white/5 px-4 py-2.5 text-[0.82rem] outline-none"
             />
             <button
               type="submit"
@@ -115,15 +120,15 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-[1360px] flex-col items-center gap-3 border-t border-gold-400/12 py-6 text-center sm:flex-row sm:justify-between sm:text-left">
-        <span className="text-[0.78rem] text-faint">
+      <div className="border-gold-400/12 mx-auto flex max-w-[1360px] flex-col items-center gap-3 border-t py-6 text-center sm:flex-row sm:justify-between sm:text-left">
+        <span className="text-faint text-[0.78rem]">
           &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
         </span>
         <div className="flex gap-6">
-          <Link href="#" className="text-[0.78rem] text-faint hover:text-cream">
+          <Link href="#" className="text-faint hover:text-cream text-[0.78rem]">
             Privacy Policy
           </Link>
-          <Link href="#" className="text-[0.78rem] text-faint hover:text-cream">
+          <Link href="#" className="text-faint hover:text-cream text-[0.78rem]">
             Terms of Service
           </Link>
         </div>
