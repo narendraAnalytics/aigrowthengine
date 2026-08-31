@@ -55,7 +55,23 @@ const QUESTIONS_BY_ID = new Map(
 type FormValues = SubmitAssessmentRequest;
 
 const selectClass =
-  "border-input bg-background text-foreground focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full rounded-lg border px-2.5 text-sm outline-none focus-visible:ring-3";
+  "border-input bg-background/60 text-foreground focus-visible:border-ring focus-visible:ring-ring/50 h-10 w-full rounded-lg border px-3 text-sm outline-none transition focus-visible:ring-3";
+
+function SectionHeader({ num, title }: { num: number; title: string }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-3">
+        <span className="border-gold-400/30 bg-gold-400/10 text-gold-400 flex size-7 flex-none items-center justify-center rounded-full border text-xs font-bold">
+          {num}
+        </span>
+        <h2 className="font-heading text-foreground text-lg font-semibold">
+          {title}
+        </h2>
+      </div>
+      <span className="via-gold-400/40 h-px bg-linear-to-r from-transparent to-transparent" />
+    </div>
+  );
+}
 
 export function AssessmentForm() {
   const router = useRouter();
@@ -117,11 +133,9 @@ export function AssessmentForm() {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-10" noValidate>
-      {SECTIONS.map((section) => (
+      {SECTIONS.map((section, i) => (
         <section key={section.title} className="flex flex-col gap-6">
-          <h2 className="font-heading text-foreground text-lg font-semibold">
-            {section.title}
-          </h2>
+          <SectionHeader num={i + 1} title={section.title} />
           {section.questionIds.map((id) => {
             const q = QUESTIONS_BY_ID.get(id);
             if (!q) return null;
@@ -139,9 +153,7 @@ export function AssessmentForm() {
       ))}
 
       <section className="flex flex-col gap-6">
-        <h2 className="font-heading text-foreground text-lg font-semibold">
-          About you
-        </h2>
+        <SectionHeader num={SECTIONS.length + 1} title="About you" />
         <p className="text-muted-foreground -mt-3 text-sm">
           So our team can follow up with your assessment. Not shared with the AI
           model.
@@ -204,8 +216,12 @@ export function AssessmentForm() {
         </p>
       ) : null}
 
-      <div className="flex items-center gap-4">
-        <Button type="submit" disabled={isSubmitting}>
+      <div className="border-hairline flex flex-wrap items-center gap-4 border-t pt-8">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="btn-gold h-auto rounded-xl px-7 py-3.5 text-sm font-bold transition hover:-translate-y-0.5 disabled:translate-y-0"
+        >
           {isSubmitting ? "Analysing…" : "Get my assessment"}
         </Button>
         {isSubmitting ? (
@@ -289,12 +305,12 @@ function QuestionInput({
           {(question.options ?? []).map((o) => (
             <label
               key={o.value}
-              className="text-foreground flex items-center gap-2 text-sm"
+              className="border-hairline bg-background/40 text-foreground hover:border-gold-400/40 flex cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-sm transition"
             >
               <input
                 type="checkbox"
                 value={o.value}
-                className="border-input size-4 rounded border"
+                className="border-input accent-gold-400 size-4 rounded border"
                 {...register(name)}
               />
               {o.label}

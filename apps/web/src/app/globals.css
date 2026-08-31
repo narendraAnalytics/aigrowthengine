@@ -70,8 +70,13 @@
   --animate-float-glow: floatGlow 7s ease-in-out infinite;
 }
 
-/* ----------------------------- LIGHT (default base) ----------------------------- */
-:root {
+/* ----------------------------- LIGHT (default base) ----------------------------- *
+ * `.light` re-applies the light palette on a subtree, so a single page can opt
+ * out of the dark-by-default theme (e.g. /business-assessment) without touching
+ * the global default. Custom props set here inherit down and win over `.dark`.
+ * ------------------------------------------------------------------------------ */
+:root,
+.light {
   --radius: 0.75rem;
 
   /* surface scale — warm cream paper */
