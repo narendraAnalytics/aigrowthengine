@@ -209,7 +209,11 @@ export const expertReviewRequests = pgTable(
     status: expertReviewStatus("status").notNull().default("open"),
     ...timestamps,
   },
-  (t) => [index("expert_review_requests_status_idx").on(t.status)],
+  (t) => [
+    index("expert_review_requests_status_idx").on(t.status),
+    // Tenant-scoped: every tenant-filtered query hits organization_id.
+    index("expert_review_requests_organization_idx").on(t.organizationId),
+  ],
 );
 
 export const assessmentsRelations = relations(assessments, ({ one, many }) => ({
