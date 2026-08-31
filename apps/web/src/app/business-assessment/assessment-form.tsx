@@ -61,7 +61,7 @@ function SectionHeader({ num, title }: { num: number; title: string }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-3">
-        <span className="border-gold-400/30 bg-gold-400/10 text-gold-300 flex size-7 flex-none items-center justify-center rounded-full border text-xs font-bold">
+        <span className="border-gold-400/30 bg-gold-400/10 text-gold-400 flex size-7 flex-none items-center justify-center rounded-full border text-xs font-bold">
           {num}
         </span>
         <h2 className="font-heading text-foreground text-lg font-semibold">

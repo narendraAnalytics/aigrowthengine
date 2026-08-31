@@ -39,14 +39,20 @@ export default async function BusinessAssessmentPage() {
   if (!user) redirect("/");
 
   return (
-    <main className="relative isolate overflow-hidden">
+    <main
+      className="light text-foreground relative isolate min-h-screen overflow-hidden"
+      style={{
+        background:
+          "linear-gradient(165deg, #f6f5fd 0%, #eef1fb 42%, #f9eef6 78%, #fef6f0 100%)",
+      }}
+    >
       {/* soft brand glow behind the two-column layout */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 opacity-70"
+        className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(ellipse 70% 55% at 15% 0%, color-mix(in oklab, var(--color-magenta-400) 18%, transparent) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 100% 20%, color-mix(in oklab, var(--color-gold-400) 16%, transparent) 0%, transparent 55%)",
+            "radial-gradient(ellipse 55% 45% at 12% 0%, color-mix(in oklab, var(--color-magenta-400) 16%, transparent) 0%, transparent 60%), radial-gradient(ellipse 50% 45% at 100% 12%, color-mix(in oklab, var(--color-gold-400) 20%, transparent) 0%, transparent 55%)",
         }}
       />
 
@@ -68,7 +74,7 @@ export default async function BusinessAssessmentPage() {
           <ul className="mt-9 flex flex-col gap-5">
             {HIGHLIGHTS.map((h) => (
               <li key={h.title} className="flex items-start gap-3.5">
-                <span className="border-gold-400/30 bg-gold-400/10 text-gold-300 mt-0.5 flex size-9 flex-none items-center justify-center rounded-xl border [&_svg]:size-4">
+                <span className="border-gold-400/30 bg-gold-400/10 text-gold-400 mt-0.5 flex size-9 flex-none items-center justify-center rounded-xl border [&_svg]:size-4">
                   <h.icon />
                 </span>
                 <span>
@@ -84,7 +90,7 @@ export default async function BusinessAssessmentPage() {
           </ul>
 
           <div className="glass-card text-muted-foreground mt-9 flex items-center gap-3 rounded-2xl px-4 py-3 text-xs">
-            <Icon.shield className="text-gold-300 size-4 flex-none" />
+            <Icon.shield className="text-gold-400 size-4 flex-none" />
             Your contact details are only used for team follow-up — never sent
             to the AI model.
           </div>
