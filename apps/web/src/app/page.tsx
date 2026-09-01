@@ -18,6 +18,7 @@ export default function HomePage() {
       >
         Skip to content
       </a>
+      <span id="top" aria-hidden />
       <Navbar />
       <main>
         <Hero />

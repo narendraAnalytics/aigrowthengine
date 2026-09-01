@@ -8,7 +8,7 @@ import { getAssessmentResult } from "@/server/assessment/get-result";
 
 import { ExpertReviewButton } from "./expert-review-button";
 
-import type { Metadata } from "next";
+import type { Metadata, Route } from "next";
 
 export const metadata: Metadata = {
   title: "Your assessment",
@@ -253,7 +253,7 @@ export default async function AssessmentResultPage({
 
       <div className="mt-12 flex flex-wrap gap-3">
         <Link
-          href="/"
+          href={"/#top" as Route}
           className="btn-glass inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold"
         >
           Back to home

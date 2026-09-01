@@ -64,7 +64,7 @@ const OPTIONS: Option[] = [
       "Build and launch with confidence",
     ],
     cta: "Explore My Idea",
-    href: "/business-assessment",
+    href: "/idea-assessment",
     delay: "0.12s",
   },
   {
@@ -118,7 +118,7 @@ export function AiOpportunitiesOptions() {
       <style>{STYLES}</style>
 
       <div className="aio-wrap">
-        <Link href="/" className="aio-back">
+        <Link href={"/#top" as Route} className="aio-back">
           <span aria-hidden>←</span> Back to Home
         </Link>
 

@@ -103,6 +103,52 @@ export const AUDIT_EVENTS: readonly AuditEventDef[] = [
   ),
 
   def(
+    "idea_assessment.submitted",
+    "assessment",
+    "A founder submitted an AI idea for assessment",
+    true,
+  ),
+  def(
+    "idea_assessment.scored",
+    "assessment",
+    "The engine produced an idea verdict + potential score",
+  ),
+  def(
+    "idea_assessment.failed",
+    "assessment",
+    "The idea-assessment pipeline failed",
+  ),
+  def(
+    "idea_assessment.contact_added",
+    "assessment",
+    "A founder added lead contact details after seeing the idea result",
+    true,
+  ),
+  def(
+    "idea_assessment_email.client_sent",
+    "assessment",
+    "Idea result email sent to the founder",
+    true,
+  ),
+  def(
+    "idea_assessment_email.client_failed",
+    "assessment",
+    "Idea result email failed to send",
+    true,
+  ),
+  def(
+    "idea_assessment_email.team_alert_sent",
+    "assessment",
+    "Idea lead-alert email sent to the internal team",
+    true,
+  ),
+  def(
+    "idea_assessment_email.team_alert_failed",
+    "assessment",
+    "Idea lead-alert email to the internal team failed to send",
+  ),
+
+  def(
     "capability.created",
     "capability",
     "A capability was added to the library",
