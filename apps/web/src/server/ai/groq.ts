@@ -8,6 +8,7 @@ import {
   ASSESSMENT_SIGNALS_SCHEMA_NAME,
   buildAssessmentJsonSchema,
 } from "./assessment-schema";
+import { IDEA_SIGNALS_SCHEMA_NAME, buildIdeaJsonSchema } from "./idea-schema";
 
 /**
  * Groq client wrapper (Phase 3). Provider decision: docs/adr/0001-ai-provider-groq.md.
@@ -110,6 +111,20 @@ export function createAssessmentCompletion(
     model: assessmentModel(),
     schemaName: ASSESSMENT_SIGNALS_SCHEMA_NAME,
     schema: buildAssessmentJsonSchema(),
+    maxCompletionTokens: 2048,
+    reasoningEffort: "medium",
+  });
+}
+
+/** The idea-assessment signals call. Same model + params as the business one. */
+export function createIdeaCompletion(
+  messages: readonly AssessmentMessage[],
+): Promise<GroqCompletion> {
+  return runStructuredCompletion({
+    messages,
+    model: assessmentModel(),
+    schemaName: IDEA_SIGNALS_SCHEMA_NAME,
+    schema: buildIdeaJsonSchema(),
     maxCompletionTokens: 2048,
     reasoningEffort: "medium",
   });

@@ -341,6 +341,166 @@ export const expertReviewRequestsRelations = relations(
 );
 
 /* ---------------------------------------------------------------------------
+ * AI Idea Assessment domain (Phase 3, "AI Ideas" path).
+ *
+ * Parallel to the business assessment but a different question: "is this new
+ * idea worth building?". Flow: a signed-in founder submits `idea_assessments
+ * .answers` -> one Groq signals call -> deterministic `computeIdeaVerdict()`
+ * writes one `idea_assessment_results` row (signals + potential score + a
+ * BUILD/REFINE/VALIDATE/RETHINK verdict). The result is emailed to the address
+ * entered on the form (auto-send — same client-result exception as CLAUDE.md #7).
+ *
+ * `signals` / `ai_approaches` / `recommended_path` are jsonb validated in app
+ * code (see @/lib/idea), not by DB constraints.
+ * ------------------------------------------------------------------------- */
+
+export const ideaAssessmentStatus = pgEnum("idea_assessment_status", [
+  "analyzing",
+  "scored",
+  "failed",
+]);
+
+export const ideaVerdict = pgEnum("idea_verdict", [
+  "build",
+  "refine",
+  "validate",
+  "rethink",
+]);
+
+export const ideaScoreBand = pgEnum("idea_score_band", [
+  "strong",
+  "promising",
+  "moderate",
+  "weak",
+]);
+
+export const ideaEmailKind = pgEnum("idea_email_kind", [
+  "client_result",
+  "team_alert",
+]);
+
+export const ideaEmailStatus = pgEnum("idea_email_status", ["sent", "failed"]);
+
+export const ideaAssessments = pgTable(
+  "idea_assessments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organizations.id, {
+      onDelete: "cascade",
+    }),
+    status: ideaAssessmentStatus("status").notNull().default("analyzing"),
+    // Record<questionId, string> — shape enforced in app code.
+    answers: jsonb("answers").notNull(),
+    // Collected on the form, emailed the result. NEVER sent to the LLM.
+    contactEmail: text("contact_email"),
+    contactName: text("contact_name"),
+    // Richer lead details, captured after the result via the "talk to us" CTA.
+    leadName: text("lead_name"),
+    leadCompany: text("lead_company"),
+    leadPhone: text("lead_phone"),
+    leadNote: text("lead_note"),
+    ...timestamps,
+  },
+  (t) => [
+    index("idea_assessments_user_idx").on(t.userId),
+    index("idea_assessments_organization_idx").on(t.organizationId),
+  ],
+);
+
+export const ideaAssessmentResults = pgTable("idea_assessment_results", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ideaAssessmentId: uuid("idea_assessment_id")
+    .notNull()
+    .unique()
+    .references(() => ideaAssessments.id, { onDelete: "cascade" }),
+  // The validated IdeaSignals object ({ [dimensionId]: { level, rationale } }).
+  signals: jsonb("signals").notNull(),
+  potentialScore: integer("potential_score").notNull(),
+  scoreBand: ideaScoreBand("score_band").notNull(),
+  verdict: ideaVerdict("verdict").notNull(),
+  verdictReason: text("verdict_reason").notNull(),
+  verdictModelVersion: text("verdict_model_version").notNull(),
+  summary: text("summary"),
+  mainRisk: text("main_risk"),
+  // string[] — illustrative AI building blocks from the model.
+  aiApproaches: jsonb("ai_approaches").notNull().default([]),
+  // string[] — deterministic recommended next steps.
+  recommendedPath: jsonb("recommended_path").notNull().default([]),
+  ...timestamps,
+});
+
+/* Outbound idea-assessment emails. `client_result` auto-sends to the form
+ * address (CLAUDE.md #7 exception); `team_alert` auto-sends to the internal
+ * inbox. One row per (assessment, kind); no approval workflow. */
+export const ideaAssessmentEmails = pgTable(
+  "idea_assessment_emails",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ideaAssessmentId: uuid("idea_assessment_id")
+      .notNull()
+      .references(() => ideaAssessments.id, { onDelete: "cascade" }),
+    kind: ideaEmailKind("kind").notNull(),
+    status: ideaEmailStatus("status").notNull(),
+    toEmail: text("to_email").notNull(),
+    subject: text("subject").notNull(),
+    bodyHtml: text("body_html").notNull(),
+    providerMessageId: text("provider_message_id"),
+    error: text("error"),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    index("idea_assessment_emails_assessment_idx").on(t.ideaAssessmentId),
+    uniqueIndex("idea_assessment_emails_assessment_kind_uq").on(
+      t.ideaAssessmentId,
+      t.kind,
+    ),
+  ],
+);
+
+export const ideaAssessmentsRelations = relations(
+  ideaAssessments,
+  ({ one, many }) => ({
+    user: one(users, {
+      fields: [ideaAssessments.userId],
+      references: [users.id],
+    }),
+    organization: one(organizations, {
+      fields: [ideaAssessments.organizationId],
+      references: [organizations.id],
+    }),
+    result: one(ideaAssessmentResults, {
+      fields: [ideaAssessments.id],
+      references: [ideaAssessmentResults.ideaAssessmentId],
+    }),
+    emails: many(ideaAssessmentEmails),
+  }),
+);
+
+export const ideaAssessmentResultsRelations = relations(
+  ideaAssessmentResults,
+  ({ one }) => ({
+    assessment: one(ideaAssessments, {
+      fields: [ideaAssessmentResults.ideaAssessmentId],
+      references: [ideaAssessments.id],
+    }),
+  }),
+);
+
+export const ideaAssessmentEmailsRelations = relations(
+  ideaAssessmentEmails,
+  ({ one }) => ({
+    assessment: one(ideaAssessments, {
+      fields: [ideaAssessmentEmails.ideaAssessmentId],
+      references: [ideaAssessments.id],
+    }),
+  }),
+);
+
+/* ---------------------------------------------------------------------------
  * Audit log (Phase 0.5, CLAUDE.md #8) — append-only.
  *
  * No updated_at / deleted_at: rows are never modified or soft-deleted. Only a

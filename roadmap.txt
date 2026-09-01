@@ -1037,8 +1037,9 @@ STATUS: shipped on branch feat/phase-3-slice-a. STEP 1-6 done.
 
   SLICE A UX PASS — 2026-08-31 (branch feat/ai-opportunities-path-picker):
   - NEW ROUTE /ai-opportunities — bright, animated "Where should we start?"
-    path picker (3 cards: Business Growth / AI Ideas -> /business-assessment,
-    Investor Room -> /investor-room placeholder). The hero's signed-in CTA
+    path picker (3 cards: Business Growth -> /business-assessment, AI Ideas ->
+    /idea-assessment [see "AI IDEAS PATH" below], Investor Room ->
+    /investor-room placeholder). The hero's signed-in CTA
     "View Your AI Opportunities" now points here (was /business-assessment).
     Self-contained light palette + scoped <style> (theme-proof).
     Files: src/app/ai-opportunities/{page,ai-opportunities-options}.tsx.
@@ -1075,6 +1076,40 @@ STATUS: shipped on branch feat/phase-3-slice-a. STEP 1-6 done.
   - OPS: Vercel env vars must be enabled for ALL environments (Production +
     Preview + Development), not Production-only — else preview/branch builds
     fail env validation in next.config.ts. Same Neon DB for all envs for now.
+
+  AI IDEAS PATH — 2026-09-01 (branch feat/ai-opportunities-path-picker):
+  A second, parallel assessment engine for the "AI Ideas" card: "is this new
+  idea worth building?" (vs. Business Growth's "which capability do we sell?").
+  Same infra (Groq wrapper, Zod repair-retry/fail-closed, audit, Resend, .light
+  surface, wizard UX), new domain logic + own tables.
+  - DOMAIN (src/lib/idea/): dimensions.ts (5 weighted dims — Problem Strength 25
+    / Demand Evidence 20 / Market Potential 20 / Competition Gap 20 / AI
+    Feasibility 15, weights=100), signals.ts (Zod signal contract), verdict.ts
+    (deterministic + versioned "idea-verdict-1.0.0": potential score 0-100 +
+    ordered decision table -> BUILD/REFINE/VALIDATE/RETHINK + deterministic
+    recommendedIdeaPath()), questions.ts (5-step: idea / problem / market /
+    business+tech / contact), contract.ts (derived submit + lead-contact Zod).
+  - AI: src/server/ai/idea-{prompt,schema}.ts + createIdeaCompletion() in
+    groq.ts. Model emits SIGNALS ONLY (level+rationale per dim, summary,
+    main_risk, illustrative ai_approaches[]) — never a score/verdict. ONE Groq
+    call (no 2nd narrative call — the path is deterministic).
+  - PIPELINE: src/server/idea-assessment/{run-idea-assessment,get-idea-result,
+    add-idea-contact}.ts. run -> 1 Groq call -> Zod -> computeIdeaVerdict() ->
+    persist -> auto-send client result email + team alert (best-effort).
+  - DB (migration 0006): idea_assessments, idea_assessment_results,
+    idea_assessment_emails + enums. Applied to Neon.
+  - EMAIL: src/emails/idea-result.tsx + src/server/email/idea-emails.tsx.
+    client_result auto-sends to the form address (CLAUDE.md #7 exception);
+    team_alert to ASSESSMENT_TEAM_EMAIL.
+  - ROUTES: /idea-assessment (wizard, email prefilled from Clerk),
+    /idea-assessment/[id]/result (staged cinematic reveal — score count-up,
+    verdict badge, typed summary, staggered dimension cards, why-this-score
+    table, prefers-reduced-motion aware), + "talk to our team" contact CTA ->
+    POST /api/idea-assessments/[id]/contact. AI Ideas card now -> /idea-assessment.
+  - TESTS: src/lib/idea/verdict.test.ts, src/server/ai/idea-schema.test.ts
+    (46 tests total green). typecheck + lint + next build all pass.
+  - DEFERRED (kept tight): /admin review page, PDF/share links, PostHog step
+    events, lead auto-creation into CRM.
 ================================================================================
 
 WHERE IT RUNS (slice decision — revisit at full Phase 3 / when apps/api needs it)

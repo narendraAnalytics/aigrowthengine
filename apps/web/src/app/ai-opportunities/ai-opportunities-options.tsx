@@ -64,7 +64,7 @@ const OPTIONS: Option[] = [
       "Build and launch with confidence",
     ],
     cta: "Explore My Idea",
-    href: "/business-assessment",
+    href: "/idea-assessment",
     delay: "0.12s",
   },
   {
