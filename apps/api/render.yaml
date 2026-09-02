@@ -1,0 +1,54 @@
+# Render deployment for the AI Growth Engine API (apps/api).
+#
+# Currently this service hosts the stateless voice "Call Me" orchestrator
+# (voiceplan.txt / docs/adr/0002). The assessment FastAPI port (full Phase 3)
+# will land on the same service later.
+#
+# Setup: New > Blueprint, point at this repo, root = apps/api. Set the secret
+# env vars in the Render dashboard (they are marked sync:false below).
+
+services:
+  - type: web
+    name: aigrowthengine-api
+    runtime: docker
+    rootDir: apps/api
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /healthz
+    autoDeploy: false
+    envVars:
+      - key: ENVIRONMENT
+        value: prod
+      - key: LOG_LEVEL
+        value: INFO
+      - key: SARVAM_API_BASE
+        value: https://apps.sarvam.ai
+      - key: SARVAM_VOICE_APP_VERSION
+        sync: false
+      # --- secrets / per-env: set in the Render dashboard ---
+      - key: DATABASE_URL
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: SARVAM_API_KEY
+        sync: false
+      - key: SARVAM_VOICE_APP_ID
+        sync: false
+      - key: SARVAM_VOICE_CONNECTION_ID
+        sync: false
+      - key: SARVAM_VOICE_AGENT_PHONE_NUMBER
+        sync: false
+      - key: SARVAM_VOICE_ORG_ID
+        sync: false
+      - key: SARVAM_VOICE_WORKSPACE_ID
+        sync: false
+      - key: VOICE_WEBHOOK_SECRET
+        sync: false
+      # PUBLIC_API_URL must equal this service's own public URL (for the Sarvam
+      # on-end webhook); WEB_APP_URL is the deployed apps/web origin.
+      - key: PUBLIC_API_URL
+        sync: false
+      - key: WEB_APP_URL
+        sync: false
+      - key: CORS_ORIGINS
+        value: '["https://aigrowthengine.vercel.app"]'

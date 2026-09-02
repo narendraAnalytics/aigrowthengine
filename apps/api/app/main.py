@@ -22,7 +22,7 @@ from slowapi.util import get_remote_address
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.api.v1.routers import health
+from app.api.v1.routers import health, voice
 from app.core.config import get_settings
 from app.core.errors import (
     HTTP_STATUS_FOR_CODE,
@@ -152,6 +152,7 @@ def create_app() -> FastAPI:
         return _envelope("internal_error", "internal server error", _request_id(request))
 
     app.include_router(health.router)
+    app.include_router(voice.router)
     return app
 
 

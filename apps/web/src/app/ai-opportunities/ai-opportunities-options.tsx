@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+
+import { ConnectMeModal } from "./connect-me-modal";
 
 import type { Route } from "next";
 import type { CSSProperties, ReactNode } from "react";
@@ -83,7 +86,6 @@ const OPTIONS: Option[] = [
     ],
     cta: "Enter Investor Room",
     href: "/investor-room",
-    external: true,
     delay: "0.24s",
   },
 ];
@@ -113,14 +115,32 @@ const TRUST = [
 ];
 
 export function AiOpportunitiesOptions() {
+  const [callOpen, setCallOpen] = useState(false);
+
   return (
     <div className="aio-root">
       <style>{STYLES}</style>
 
       <div className="aio-wrap">
-        <Link href={"/#top" as Route} className="aio-back">
-          <span aria-hidden>←</span> Back to Home
-        </Link>
+        <div className="aio-topbar">
+          <Link href={"/#top" as Route} className="aio-back">
+            <span aria-hidden>←</span> Back to Home
+          </Link>
+
+          <button
+            type="button"
+            className="aio-callcta"
+            onClick={() => setCallOpen(true)}
+          >
+            <span className="aio-callcta-icon" aria-hidden>
+              📞
+            </span>
+            <span className="aio-callcta-text">
+              <strong>Meet Me</strong>
+              <span>Bored filling forms?</span>
+            </span>
+          </button>
+        </div>
 
         <div className="aio-head">
           <span className="aio-pill">
@@ -158,6 +178,8 @@ export function AiOpportunitiesOptions() {
           ))}
         </div>
       </div>
+
+      <ConnectMeModal open={callOpen} onClose={() => setCallOpen(false)} />
     </div>
   );
 }
@@ -293,12 +315,38 @@ const STYLES = `
 }
 .aio-wrap { max-width: 1180px; margin: 0 auto; }
 
+.aio-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 24px;
+}
 .aio-back {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 14px; font-weight: 600; color: #475569;
-  text-decoration: none; margin-bottom: 24px;
+  text-decoration: none;
 }
 .aio-back:hover { color: #0f172a; }
+
+.aio-callcta {
+  display: inline-flex; align-items: center; gap: 11px;
+  padding: 9px 16px 9px 12px; border-radius: 100px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.5);
+  background: linear-gradient(90deg,#7c3aed,#4f46e5);
+  color: #fff; box-shadow: 0 12px 28px rgba(79,70,229,0.32);
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+  animation: aioPill 0.5s ease both;
+}
+.aio-callcta:hover {
+  transform: translateY(-2px); filter: brightness(1.07);
+  box-shadow: 0 18px 38px rgba(79,70,229,0.4);
+}
+.aio-callcta-icon {
+  width: 30px; height: 30px; flex: none; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.18); font-size: 15px;
+}
+.aio-callcta-text { display: flex; flex-direction: column; line-height: 1.15; text-align: left; }
+.aio-callcta-text strong { font-size: 14px; font-weight: 800; letter-spacing: 0.2px; }
+.aio-callcta-text span { font-size: 11px; opacity: 0.85; }
 
 .aio-head { text-align: center; max-width: 720px; margin: 0 auto clamp(40px,6vw,60px); }
 .aio-pill {

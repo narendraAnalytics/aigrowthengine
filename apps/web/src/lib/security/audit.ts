@@ -13,6 +13,7 @@ export const AUDIT_CATEGORIES = [
   "capability",
   "crm",
   "investor_room",
+  "voice_call",
   "access_control",
   "data_lifecycle",
   "ai_gateway",
@@ -180,6 +181,91 @@ export const AUDIT_EVENTS: readonly AuditEventDef[] = [
     "investor_room",
     "An investor viewed a restricted document",
     true,
+  ),
+  def(
+    "investor_interest.submitted",
+    "investor_room",
+    "A visitor submitted the Request Investor Access form",
+    true,
+  ),
+  def(
+    "investor_interest_email.confirmation_sent",
+    "investor_room",
+    "Investor-access confirmation email sent to the requester",
+    true,
+  ),
+  def(
+    "investor_interest_email.confirmation_failed",
+    "investor_room",
+    "Investor-access confirmation email failed to send",
+  ),
+  def(
+    "investor_interest_email.team_alert_sent",
+    "investor_room",
+    "Investor-interest alert email sent to the internal team",
+    true,
+  ),
+  def(
+    "investor_interest_email.team_alert_failed",
+    "investor_room",
+    "Investor-interest alert email to the internal team failed to send",
+  ),
+
+  def(
+    "voice_call.requested",
+    "voice_call",
+    "A visitor requested an AI follow-up call via the Connect Me form",
+    true,
+  ),
+  def(
+    "voice_call.dispatched",
+    "voice_call",
+    "The outbound call request was handed to the voice service",
+    true,
+  ),
+  def(
+    "voice_call.dispatch_failed",
+    "voice_call",
+    "Handing the call request to the voice service failed",
+  ),
+  def(
+    "voice_call.completed",
+    "voice_call",
+    "The voice service reported a call outcome (interest level + transcript)",
+    true,
+  ),
+  def(
+    "voice_call_email.confirmation_sent",
+    "voice_call",
+    "Call-request confirmation email sent to the requester",
+    true,
+  ),
+  def(
+    "voice_call_email.confirmation_failed",
+    "voice_call",
+    "Call-request confirmation email failed to send",
+  ),
+  def(
+    "voice_call_email.team_alert_sent",
+    "voice_call",
+    "New-call-request alert email sent to the internal team",
+    true,
+  ),
+  def(
+    "voice_call_email.team_alert_failed",
+    "voice_call",
+    "New-call-request alert email to the internal team failed to send",
+  ),
+  def(
+    "voice_call_email.team_summary_sent",
+    "voice_call",
+    "Post-call summary email sent to the internal team",
+    true,
+  ),
+  def(
+    "voice_call_email.team_summary_failed",
+    "voice_call",
+    "Post-call summary email to the internal team failed to send",
   ),
 
   def(
