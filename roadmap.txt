@@ -1112,6 +1112,101 @@ STATUS: shipped on branch feat/phase-3-slice-a. STEP 1-6 done.
     events, lead auto-creation into CRM.
 ================================================================================
 
+  INVESTOR ROOM V1 — 2026-09-01 (branch feat/ai-opportunities-path-picker):
+  The "Investor Room" path-picker card now -> /investor-room, a PUBLIC,
+  self-contained investor presentation (Level-1 only). Deliberately a different
+  design language from the assessment flows: dark sophisticated hero ->
+  bright spacious sections, hard-coded palette + scoped <style> (same pattern
+  as ai-opportunities-options.tsx), IntersectionObserver scroll-reveal
+  (prefers-reduced-motion aware), sticky section nav + persistent "Request
+  Investor Access" button.
+  - PRODUCT DECISION: Phase 0 note (line 93) + investor-access.ts said "do not
+    build the Investor Room until raising / Phase 7". V1 here is the PUBLIC
+    acquisition surface + interest capture only — it does NOT build the gated
+    data room (Level 2: approved/restricted access, pitch deck, financials,
+    cap table). That stays deferred to Phase 7. The access-level vocabulary in
+    src/lib/security/investor-access.ts is unchanged.
+  - CONTENT (all qualitative / points at the live platform — NO invented
+    traction, market-size, valuation or funding numbers): Hero -> Opportunity
+    (Discover->Build->Secure->Scale) -> Platform (4 capability cards) ->
+    Technology (architecture viz + restrained stack) -> "AI That Businesses Can
+    Trust" (TRiSM differentiator) -> Business Model (value flow + revenue
+    streams) -> Why We Can Win (5 points) -> Traction (qualitative timeline,
+    "try the live platform" link) -> Roadmap (Discovery->Enterprise AI) ->
+    Investment ("exploring strategic partnerships", use-of-funds = relative
+    bars, no amounts) -> Request Investor Access form -> Thank-you state.
+  - FORM (src/lib/investor/): submitInvestorInterestSchema (Zod) — Full Name*,
+    Work Email*, Company/Fund*, Role, Interests[] (multi), Stage, Geography,
+    "learn more" free-text. NO "how much are you investing" field. Free-text is
+    stored + emailed only, NEVER sent to an LLM (no prompt-injection guard
+    needed). Page is public — no Clerk session required; user id attached if
+    present.
+  - PIPELINE: src/server/investor-access/create-request.ts -> insert row ->
+    audit -> auto-send confirmation + team alert (best-effort). API:
+    POST /api/investor-access.
+  - DB (migration 0007): investor_interest_requests, investor_access_emails +
+    enums (investor_role / _stage / _geography / _request_status / _email_kind
+    / _email_status). Applied to Neon.
+  - EMAIL: src/emails/investor-access.tsx + src/server/email/investor-emails.tsx.
+    confirmation auto-sends to the form address (CLAUDE.md #7 exception);
+    team_alert to ASSESSMENT_TEAM_EMAIL (reply-to = requester). No new env vars.
+  - AUDIT: investor_interest.submitted + investor_interest_email.{confirmation,
+    team_alert}_{sent,failed} added to lib/security/audit.ts (investor_room
+    category). Field classification + retention added to data-classification.ts.
+  - ROUTES: /investor-room (public). Investor Room card no longer `external`.
+  - TESTS: src/lib/investor/schema.test.ts.
+  - DEFERRED: Level-2 gated data room, Clerk-gated /investor-room/room,
+    pitch-deck/financials, access grants/revokes, /admin triage UI (rows land
+    in DB + team email), PDF/share, PostHog events.
+================================================================================
+
+  VOICE "CALL ME" FOLLOW-UP — 2026-09-01 (branch feat/ai-opportunities-path-picker):
+  A "Get a Call" CTA (top-right of /ai-opportunities, "Bored filling forms?")
+  opens the "Connect Me" modal (Full Name*, Company, Phone*, Email, Requirement*,
+  consent*). On submit the web app stores the lead, auto-sends confirmation +
+  team-alert emails, and hands the request to a STANDALONE FastAPI voice service
+  (apps/api) which places a Sarvam Voice Agents outbound call from a Sarvam-
+  rented number. Agent qualifies + offers a consultation (NO calendar booking);
+  humans do the rest. English only for V1.
+  - ARCHITECTURE (ADR 0004): the voice service is a STATELESS orchestrator —
+    no DB, no models, no Alembic migration. request_id round-trips through
+    Sarvam's webhook_config.metadata. ALL persistence stays in apps/web/Drizzle
+    (Drizzle stays the sole schema owner; the schema-owner ADR stays deferred).
+    Sarvam is never in the web form's request path.
+  - FLOW: web POST /api/voice/call-request -> create-call-request.ts (insert +
+    audit + emails) -> authenticated POST {VOICE_SERVICE_URL}/v1/voice/calls
+    (x-voice-secret) -> voice_agent.py calls Sarvam instant-outbound
+    (POST {sarvam}/api/outbounds/v1/orgs/{org}/workspaces/{ws}/outbounds) ->
+    Sarvam POST /v1/voice/sarvam/on-end -> voice_outcome.derive_outcome() ->
+    authenticated POST {WEB_APP_URL}/api/voice/call-result -> record-call-result.ts
+    (idempotent on request_id: terminal status -> no-op) -> team summary email.
+  - OUTCOMES (voice_call_outcome enum, src/lib/voice/outcome.ts): interested |
+    consultation_requested | callback_requested | not_interested | no_answer |
+    completed_unclear. Derived deterministically from Sarvam status +
+    final_agent_variables (interest / wants_consultation / callback_window) +
+    transcript. The model/agent does not decide the stored outcome label.
+  - DB (migration 0008, applied to Neon): voice_call_requests, voice_call_emails
+    + enums (voice_call_status / _outcome / _email_kind / _email_status).
+  - CODE: apps/web src/lib/voice/, src/server/voice/, src/server/email/
+    voice-emails.tsx, src/emails/voice-call.tsx, src/app/api/voice/{call-request,
+    call-result}, src/app/ai-opportunities/connect-me-modal.tsx.
+    apps/api app/services/{voice_agent,voice_outcome,voice_notify}.py,
+    app/schemas/voice.py, app/api/v1/routers/voice.py, render.yaml (Render deploy).
+  - ENV: apps/web VOICE_SERVICE_URL, VOICE_WEBHOOK_SECRET, VOICE_TEAM_EMAIL
+    (falls back to ASSESSMENT_TEAM_EMAIL). apps/api SARVAM_* , VOICE_WEBHOOK_SECRET
+    (shared), PUBLIC_API_URL, WEB_APP_URL, VOICE_TEAM_EMAIL.
+  - AUDIT: voice_call.{requested,dispatched,dispatch_failed,completed} +
+    voice_call_email.{confirmation,team_alert,team_summary}_{sent,failed}
+    (voice_call category). Field classification + retention in data-classification.ts.
+  - TESTS: src/lib/voice/schema.test.ts (web); tests/test_voice_outcome.py +
+    tests/test_voice_router.py (api, Sarvam mocked).
+  - TO CONFIRM before real traffic: Sarvam auth header name (assumed
+    api-subscription-key), configure the agent prompt in the Sarvam dashboard,
+    Indian telephony / DND / calling-hours compliance sign-off.
+  - DEFERRED: /admin/voice-calls UI, CRM lead auto-create, HMAC-signed webhooks,
+    PostHog events, call-recording storage, retry/callback scheduler, multi-language.
+================================================================================
+
 WHERE IT RUNS (slice decision — revisit at full Phase 3 / when apps/api needs it)
   The whole pipeline runs in apps/web as a Next.js route handler (server-side).
   Reuses what already exists and is tested:

@@ -58,6 +58,25 @@ export const FIELD_CLASSIFICATION: Record<string, DataClass> = {
 
   "audit_events.actor_id": "restricted",
   "audit_events.metadata": "restricted",
+
+  // Investor Room interest capture (V1).
+  "investor_interest_requests.full_name": "confidential",
+  "investor_interest_requests.work_email": "confidential",
+  "investor_interest_requests.company": "confidential",
+  "investor_interest_requests.learn_more": "confidential",
+  "investor_access_emails.to_email": "confidential",
+  "investor_access_emails.body_html": "confidential",
+
+  // Voice "Call Me" follow-up (V1).
+  "voice_call_requests.full_name": "confidential",
+  "voice_call_requests.company": "confidential",
+  "voice_call_requests.phone_e164": "confidential",
+  "voice_call_requests.email": "confidential",
+  "voice_call_requests.requirement": "confidential",
+  "voice_call_requests.transcript": "confidential",
+  "voice_call_requests.summary": "confidential",
+  "voice_call_emails.to_email": "confidential",
+  "voice_call_emails.body_html": "confidential",
 };
 
 export function classifyField(tableColumn: string): DataClass | undefined {

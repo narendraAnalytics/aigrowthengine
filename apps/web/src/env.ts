@@ -32,6 +32,14 @@ export const env = createEnv({
       .default("AIGROWTHENGINE <admin@buildflows.shop>"),
     /** Internal inbox that receives the lead-alert email for every assessment. */
     ASSESSMENT_TEAM_EMAIL: z.string().email(),
+    /** Internal inbox for voice "Call Me" alerts + post-call summaries.
+     *  Falls back to ASSESSMENT_TEAM_EMAIL when unset. */
+    VOICE_TEAM_EMAIL: z.string().email().optional(),
+    /** Base URL of the standalone FastAPI voice service (apps/api).
+     *  e.g. http://localhost:8000 locally, the Render URL in prod. */
+    VOICE_SERVICE_URL: z.string().url().optional(),
+    /** Shared secret for the web <-> voice-service webhooks (both directions). */
+    VOICE_WEBHOOK_SECRET: z.string().min(16).optional(),
     /** Comma-separated emails allowed to approve + send client result emails.
      *  Bridge until Clerk roles/orgs land (CLAUDE.md deferred). */
     STAFF_EMAILS: z.string().default(""),

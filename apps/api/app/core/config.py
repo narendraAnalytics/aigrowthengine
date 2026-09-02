@@ -54,6 +54,40 @@ class Settings(BaseSettings):
     groq_model: str = "openai/gpt-oss-120b"
     groq_prompt_guard_model: str = "meta-llama/llama-prompt-guard-2-86m"
 
+    # Voice "Call Me" follow-up (Sarvam Voice Agents). This service is a
+    # stateless orchestrator — see voiceplan.txt / docs/adr/0002.
+    sarvam_api_key: str | None = None
+    sarvam_api_base: str = "https://apps.sarvam.ai"
+    sarvam_voice_app_id: str | None = None
+    # Plain integer, e.g. 1 — confirmed against the dashboard's own generated
+    # curl example (voiceai.txt), which uses "app_version": 1 even while the
+    # agent shows "v1 · Draft" in the UI.
+    sarvam_voice_app_version: int = 1
+    sarvam_voice_connection_id: str | None = None
+    sarvam_voice_agent_phone_number: str | None = None
+    sarvam_voice_org_id: str | None = None
+    sarvam_voice_workspace_id: str | None = None
+    # Shared secret for the web <-> voice-service webhooks (both directions).
+    voice_webhook_secret: str | None = None
+    # Public base URL of THIS service (for the Sarvam on-end webhook URL).
+    public_api_url: str = "http://localhost:8000"
+    # Base URL of apps/web (for the call-result callback).
+    web_app_url: str = "http://localhost:3000"
+
+    @property
+    def voice_configured(self) -> bool:
+        return all(
+            [
+                self.sarvam_api_key,
+                self.sarvam_voice_app_id,
+                self.sarvam_voice_connection_id,
+                self.sarvam_voice_agent_phone_number,
+                self.sarvam_voice_org_id,
+                self.sarvam_voice_workspace_id,
+                self.voice_webhook_secret,
+            ]
+        )
+
     @field_validator("database_url")
     @classmethod
     def _normalize_database_url(cls, value: str) -> str:

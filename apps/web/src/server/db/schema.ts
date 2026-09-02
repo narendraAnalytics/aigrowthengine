@@ -501,6 +501,252 @@ export const ideaAssessmentEmailsRelations = relations(
 );
 
 /* ---------------------------------------------------------------------------
+ * Investor Room — interest capture (V1, "Investor Room" path).
+ *
+ * The public Level-1 presentation at /investor-room ends in a short
+ * "Request Investor Access" form. Each submit writes one
+ * `investor_interest_requests` row and auto-sends two emails (mirrors the idea
+ * flow): a `confirmation` to the address entered and a `team_alert` to the
+ * internal inbox. The gated data room (Level 2 — `approved` / `restricted` in
+ * @/lib/security/investor-access) is still deferred to Phase 7.
+ *
+ * Free-text (`learn_more`) is stored + emailed only — NEVER sent to an LLM.
+ * ------------------------------------------------------------------------- */
+
+export const investorRole = pgEnum("investor_role", [
+  "founder",
+  "angel",
+  "vc",
+  "pe",
+  "corporate",
+  "family_office",
+  "other",
+]);
+
+export const investorStage = pgEnum("investor_stage", [
+  "pre_seed",
+  "seed",
+  "series_a_plus",
+  "growth",
+  "not_specified",
+]);
+
+export const investorGeography = pgEnum("investor_geography", [
+  "india",
+  "apac",
+  "us",
+  "europe",
+  "global",
+]);
+
+export const investorRequestStatus = pgEnum("investor_request_status", [
+  "new",
+  "contacted",
+  "approved",
+  "declined",
+]);
+
+export const investorEmailKind = pgEnum("investor_email_kind", [
+  "confirmation",
+  "team_alert",
+]);
+
+export const investorEmailStatus = pgEnum("investor_email_status", [
+  "sent",
+  "failed",
+]);
+
+export const investorInterestRequests = pgTable(
+  "investor_interest_requests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    // Null — the page is public and does not require a Clerk session. No FK:
+    // an interest request is a lead, not tenant data, and should outlive the
+    // (optional) Clerk account that filed it.
+    clerkUserId: text("clerk_user_id"),
+    fullName: text("full_name").notNull(),
+    workEmail: text("work_email").notNull(),
+    company: text("company").notNull(),
+    role: investorRole("role"),
+    // string[] of investor_interest vocabulary values — validated in app code.
+    interests: jsonb("interests").notNull().default([]),
+    stage: investorStage("stage"),
+    geography: investorGeography("geography"),
+    learnMore: text("learn_more"),
+    status: investorRequestStatus("status").notNull().default("new"),
+    ...timestamps,
+  },
+  (t) => [
+    index("investor_interest_requests_status_idx").on(t.status),
+    index("investor_interest_requests_created_at_idx").on(t.createdAt),
+  ],
+);
+
+/* Outbound investor-interest emails. `confirmation` auto-sends to the address
+ * entered on the form (CLAUDE.md #7 exception); `team_alert` auto-sends to the
+ * internal inbox. One row per (request, kind); no approval workflow. */
+export const investorAccessEmails = pgTable(
+  "investor_access_emails",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    requestId: uuid("request_id")
+      .notNull()
+      .references(() => investorInterestRequests.id, { onDelete: "cascade" }),
+    kind: investorEmailKind("kind").notNull(),
+    status: investorEmailStatus("status").notNull(),
+    toEmail: text("to_email").notNull(),
+    subject: text("subject").notNull(),
+    bodyHtml: text("body_html").notNull(),
+    providerMessageId: text("provider_message_id"),
+    error: text("error"),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    index("investor_access_emails_request_idx").on(t.requestId),
+    uniqueIndex("investor_access_emails_request_kind_uq").on(
+      t.requestId,
+      t.kind,
+    ),
+  ],
+);
+
+export const investorInterestRequestsRelations = relations(
+  investorInterestRequests,
+  ({ many }) => ({
+    emails: many(investorAccessEmails),
+  }),
+);
+
+export const investorAccessEmailsRelations = relations(
+  investorAccessEmails,
+  ({ one }) => ({
+    request: one(investorInterestRequests, {
+      fields: [investorAccessEmails.requestId],
+      references: [investorInterestRequests.id],
+    }),
+  }),
+);
+
+/* ---------------------------------------------------------------------------
+ * Voice "Call Me" follow-up (Sarvam Voice Agents) — "Get a Call" path.
+ *
+ * The /ai-opportunities "Get a Call" CTA opens a short "Connect Me" form. On
+ * submit we write one `voice_call_requests` row, auto-send a confirmation +
+ * team-alert email (mirrors the investor flow), and fire an authenticated
+ * webhook to the standalone FastAPI voice service, which places a Sarvam
+ * outbound call. When the call ends Sarvam POSTs the transcript + status to the
+ * voice service, which maps an outcome and calls back here — we update the same
+ * row and send the team a call summary.
+ *
+ * The voice service is a STATELESS orchestrator; ALL persistence lives here
+ * (see voiceplan.txt / docs/adr/0002). `requirement` + `transcript` are stored
+ * + emailed and passed to Sarvam as agent variables — never sent to Groq.
+ * ------------------------------------------------------------------------- */
+
+export const voiceCallStatus = pgEnum("voice_call_status", [
+  "pending",
+  "calling",
+  "completed",
+  "failed",
+]);
+
+export const voiceCallOutcome = pgEnum("voice_call_outcome", [
+  "interested",
+  "consultation_requested",
+  "callback_requested",
+  "not_interested",
+  "no_answer",
+  "completed_unclear",
+]);
+
+export const voiceCallEmailKind = pgEnum("voice_call_email_kind", [
+  "confirmation",
+  "team_alert",
+  "team_summary",
+]);
+
+export const voiceCallEmailStatus = pgEnum("voice_call_email_status", [
+  "sent",
+  "failed",
+]);
+
+export const voiceCallRequests = pgTable(
+  "voice_call_requests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    // Idempotency key shared end-to-end (web -> service -> Sarvam metadata ->
+    // service -> web). The result callback dedupes on this.
+    requestId: uuid("request_id").notNull().unique().defaultRandom(),
+    // Null — the CTA is public. No FK: a lead should outlive the optional
+    // Clerk account that filed it.
+    clerkUserId: text("clerk_user_id"),
+    fullName: text("full_name").notNull(),
+    company: text("company"),
+    phoneE164: text("phone_e164").notNull(),
+    email: text("email"),
+    requirement: text("requirement").notNull(),
+    consent: boolean("consent").notNull(),
+    status: voiceCallStatus("status").notNull().default("pending"),
+    outcome: voiceCallOutcome("outcome"),
+    attemptId: text("attempt_id"),
+    callStatus: text("call_status"),
+    durationSeconds: integer("duration_seconds"),
+    transcript: jsonb("transcript"),
+    summary: text("summary"),
+    error: text("error"),
+    calledAt: timestamp("called_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    index("voice_call_requests_status_idx").on(t.status),
+    index("voice_call_requests_created_at_idx").on(t.createdAt),
+    uniqueIndex("voice_call_requests_request_id_uq").on(t.requestId),
+  ],
+);
+
+export const voiceCallEmails = pgTable(
+  "voice_call_emails",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    requestId: uuid("request_id")
+      .notNull()
+      .references(() => voiceCallRequests.requestId, { onDelete: "cascade" }),
+    kind: voiceCallEmailKind("kind").notNull(),
+    status: voiceCallEmailStatus("status").notNull(),
+    toEmail: text("to_email").notNull(),
+    subject: text("subject").notNull(),
+    bodyHtml: text("body_html").notNull(),
+    providerMessageId: text("provider_message_id"),
+    error: text("error"),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    index("voice_call_emails_request_idx").on(t.requestId),
+    uniqueIndex("voice_call_emails_request_kind_uq").on(t.requestId, t.kind),
+  ],
+);
+
+export const voiceCallRequestsRelations = relations(
+  voiceCallRequests,
+  ({ many }) => ({
+    emails: many(voiceCallEmails),
+  }),
+);
+
+export const voiceCallEmailsRelations = relations(
+  voiceCallEmails,
+  ({ one }) => ({
+    request: one(voiceCallRequests, {
+      fields: [voiceCallEmails.requestId],
+      references: [voiceCallRequests.requestId],
+    }),
+  }),
+);
+
+/* ---------------------------------------------------------------------------
  * Audit log (Phase 0.5, CLAUDE.md #8) — append-only.
  *
  * No updated_at / deleted_at: rows are never modified or soft-deleted. Only a
